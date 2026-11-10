@@ -1,0 +1,60 @@
+# Starship 提示符配置 - 由 linux-tune 管理
+# 文档: https://starship.rs/config/
+add_newline = true
+
+format = """
+$directory$git_branch$git_status$cmd_duration$time$python$nodejs$rust$character"""
+
+palette = "tokyo_night"
+
+[palettes.tokyo_night]
+blue = "#7aa2f7"
+cyan = "#7dcfff"
+green = "#9ece6a"
+purple = "#bb9af7"
+red = "#f7768e"
+yellow = "#e0af68"
+fg = "#c0caf5"
+gray = "#565f89"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+[directory]
+style = "bold blue"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+style = "bold purple"
+format = "on [$symbol$branch]($style) "
+symbol = " "
+
+[git_status]
+style = "bold yellow"
+format = '([$all_status$ahead_behind]($style) )'
+
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "bold yellow"
+
+[time]
+disabled = false
+format = "at [$time]($style) "
+style = "gray"
+time_format = "%H:%M"
+
+[python]
+format = 'via [🐍 $pyenv_prefix($version)]($style) '
+style = "bold yellow"
+
+[nodejs]
+format = 'via [⬢ $version]($style) '
+style = "bold green"
+
+[rust]
+format = 'via [🦀 $version]($style) '
+style = "bold red"

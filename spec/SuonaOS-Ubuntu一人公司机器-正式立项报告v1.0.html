@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html data-page-node-id="n8ljyhkZpJFEVYZ9hlEbQb" lang="zh-CN">
+<head data-page-node-id="GlsY4usnzkBstKNFikDl3Y">
+<script data-page-node-id="7dFiZqWX6Hb7Br0RmNrhNC" src="/page/page_comm/inject.js"></script>
+<meta data-page-node-id="RzJmaNp4HrQ6Ab4GeEaQmu" charset="UTF-8">
+<meta data-page-node-id="h5J6O56dS8oSXX10dQrOky" content="width=device-width, initial-scale=1.0" name="viewport">
+<title data-page-node-id="AeYzq3NK1vnbRkg2KU3P1r" data-pnid-children="knVVlsauSUPNbtHjQvuWXk">SuonaOS · Ubuntu 一人公司机器 · 正式立项报告 v1.0</title>
+<style data-page-node-id="5xwn2gargSARYjCaY57xDN" data-pnid-children="UDFAKUgP8YEetTEiusONgw">
+  :root{
+    --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f6f7fb;
+    --primary:#7c2d12;        /* 唢呐红铜 - 主色 */
+    --primary-dk:#451a03;
+    --gold:#b45309;           /* 黄铜亮色 */
+    --jade:#0f766e;           /* 玉色辅助 */
+    --blue:#1d4ed8;
+    --green:#059669; --amber:#d97706; --red:#dc2626;
+    --card:#ffffff;
+    --bg-section:#fdf6ec;     /* 米色背景呼应唢呐 */
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif; color:var(--ink); background:var(--bg); line-height:1.75; font-size:15px;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px 80px;}
+
+  /* ===== Hero ===== */
+  .hero{background:radial-gradient(ellipse at top right, var(--primary), var(--primary-dk) 70%); color:#fff; padding:60px 30px 48px; margin-bottom:36px; position:relative; overflow:hidden;}
+  .hero::after{content:""; position:absolute; right:-40px; top:-40px; width:240px; height:240px; background:radial-gradient(circle, rgba(245,158,11,.18), transparent 70%); border-radius:50%;}
+  .hero-inner{max-width:1100px; margin:0 auto; position:relative; z-index:1;}
+  .hero .tag{display:inline-block; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); border-radius:999px; padding:4px 16px; font-size:12.5px; letter-spacing:1.5px; margin-bottom:20px; font-weight:600;}
+  .hero h1{font-size:34px; line-height:1.35; font-weight:800; margin-bottom:14px; letter-spacing:-.5px;}
+  .hero h1 .brand{color:#fbbf24; font-style:italic;}
+  .hero .sub{color:rgba(255,255,255,.88); font-size:16px; max-width:880px; line-height:1.65;}
+  .hero .meta{margin-top:24px; font-size:13px; color:rgba(255,255,255,.7); display:flex; flex-wrap:wrap; gap:24px;}
+  .hero .meta b{color:#fbbf24;}
+
+  /* ===== 章节 ===== */
+  section{margin-top:48px;}
+  h2{font-size:23px; padding-bottom:12px; border-bottom:2px solid var(--line); margin-bottom:24px; display:flex; align-items:baseline; gap:14px; color:var(--primary-dk);}
+  h2 .no{color:var(--primary); font-size:14px; font-weight:700; background:#fef3c7; border:1px solid #fde68a; border-radius:6px; padding:3px 12px; letter-spacing:1px;}
+  h3{font-size:18px; margin:28px 0 12px; color:var(--primary-dk); font-weight:700;}
+  h4{font-size:15.5px; margin:20px 0 10px; color:var(--ink); font-weight:700;}
+  p{margin-bottom:13px;}
+  ul,ol{margin:0 0 16px 24px;}
+  li{margin-bottom:6px;}
+  strong{color:var(--ink);}
+
+  /* ===== 评级卡 ===== */
+  .score-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:24px 0;}
+  .score{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:0 1px 3px rgba(15,23,42,.05);}
+  .score .dim{font-size:13px; color:var(--muted); margin-bottom:6px;}
+  .score .val{font-size:22px; font-weight:800; color:var(--primary-dk);}
+  .score .stars{letter-spacing:1.5px; font-size:14px;}
+  .score .note{font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5;}
+  .g{color:var(--green);} .a{color:var(--amber);} .r{color:var(--red);}
+
+  /* ===== 结论框 ===== */
+  .verdict{background:linear-gradient(135deg, #fef3c7, #fde68a); border-left:5px solid var(--gold); border-radius:0 12px 12px 0; padding:22px 26px; margin:24px 0; border-top:1px solid #fde68a; border-right:1px solid #fde68a; border-bottom:1px solid #fde68a;}
+  .verdict h3{color:var(--primary-dk); font-size:18px; margin-bottom:10px;}
+  .verdict p{margin-bottom:8px; color:#3f1d04;}
+
+  .warn{background:#fffbeb; border-left:4px solid var(--amber); border-radius:0 10px 10px 0; padding:18px 22px; margin:20px 0; border:1px solid #fde68a; border-left:4px solid var(--amber);}
+  .warn h3{color:#92400e; font-size:16px; margin-bottom:8px;}
+  .info{background:#eff6ff; border-left:4px solid var(--blue); border-radius:0 10px 10px 0; padding:18px 22px; margin:20px 0; border:1px solid #bfdbfe;}
+  .info h3{color:#1e40af; font-size:16px; margin-bottom:8px;}
+  .success{background:#f0fdf4; border-left:4px solid var(--green); border-radius:0 10px 10px 0; padding:18px 22px; margin:20px 0; border:1px solid #bbf7d0;}
+  .success h3{color:#065f46; font-size:16px; margin-bottom:8px;}
+
+  /* ===== 表格 ===== */
+  table{width:100%; border-collapse:collapse; margin:14px 0 22px; font-size:13.5px; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 1px 3px rgba(15,23,42,.06);}
+  th{background:#fef3c7; color:#451a03; text-align:left; padding:10px 12px; font-weight:700; border-bottom:2px solid #fde68a; white-space:nowrap;}
+  td{padding:9px 12px; border-bottom:1px solid #eef2f7; vertical-align:top;}
+  tr:nth-child(even) td{background:#fffbf2;}
+  tr:last-child td{border-bottom:none;}
+  .ok{color:var(--green); font-weight:600;} .mid{color:var(--amber); font-weight:600;} .bad{color:var(--red); font-weight:600;}
+
+  /* ===== 徽章 ===== */
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; border-radius:6px; padding:2px 10px; margin:1px 2px; white-space:nowrap;}
+  .pill-g{background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;}
+  .pill-y{background:#fffbeb; color:#b45309; border:1px solid #fde68a;}
+  .pill-r{background:#fef2f2; color:#b91c1c; border:1px solid #fecaca;}
+  .pill-b{background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;}
+  .pill-j{background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4;}   /* 玉色 */
+
+  /* ===== 用户画像卡 ===== */
+  .persona{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:18px 0;}
+  .persona-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; border-top:4px solid var(--primary);}
+  .persona-card h4{font-size:15px; margin-bottom:4px; color:var(--primary-dk);}
+  .persona-card .role{font-size:12.5px; color:var(--muted); margin-bottom:10px;}
+  .persona-card .pain{font-size:13px; line-height:1.6;}
+  .persona-card .pain b{color:var(--red);}
+
+  /* ===== 关键数字 ===== */
+  .kgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0;}
+  .kpi{background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; text-align:center;}
+  .kpi .v{font-size:24px; font-weight:800; color:var(--primary-dk);}
+  .kpi .l{font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.45;}
+
+  /* ===== 路线图 ===== */
+  .phase{display:flex; gap:0; margin:22px 0; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(15,23,42,.1);}
+  .phase .p{flex:1; padding:20px 18px 18px; color:#fff;}
+  .p1{background:linear-gradient(160deg, var(--primary), #b45309);}
+  .p2{background:linear-gradient(160deg, #7c2d12, #ea580c);}
+  .p3{background:linear-gradient(160deg, #991b1b, #dc2626);}
+  .phase .t{font-size:12.5px; opacity:.88; letter-spacing:1.5px; font-weight:600;}
+  .phase .n{font-size:17px; font-weight:800; margin:6px 0 10px;}
+  .phase ul{margin-left:18px; font-size:13px; line-height:1.7;}
+  .phase li{margin-bottom:4px;}
+
+  /* ===== 来源 ===== */
+  .src{font-size:12.5px; color:var(--muted); margin:-6px 0 18px;}
+  .src a{color:var(--blue); text-decoration:none;}
+
+  /* ===== 工具栈分层 ===== */
+  .stack{display:grid; grid-template-columns:1fr; gap:0; margin:18px 0; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(15,23,42,.1);}
+  .stack .s{padding:14px 18px; color:#fff;}
+  .s-l1{background:#7c2d12;}
+  .s-l2{background:#9a3412;}
+  .s-l3{background:#c2410c;}
+  .s-l4{background:#ea580c;}
+  .s-l5{background:#f97316;}
+  .stack .name{font-size:13.5px; font-weight:700; letter-spacing:1px;}
+  .stack .desc{font-size:12.5px; opacity:.92; margin-top:3px;}
+
+  /* ===== 财务表 ===== */
+  .finance-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin:18px 0;}
+  @media (max-width: 720px){ .finance-grid{grid-template-columns:1fr;} }
+  .finance-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; border-top:4px solid var(--primary);}
+  .finance-card h4{color:var(--primary-dk); font-size:15px; margin-bottom:8px;}
+  .finance-card .row{display:flex; justify-content:space-between; padding:4px 0; font-size:13px; border-bottom:1px dashed #e4e7e9;}
+  .finance-card .row:last-child{border-bottom:none; font-weight:700; color:var(--primary-dk); padding-top:8px;}
+  .finance-card .row .l{color:var(--muted);} .finance-card .row .v{font-variant-numeric:tabular-nums;}
+
+  /* ===== 风险矩阵 ===== */
+  .risk-grid{display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin:18px 0;}
+  @media (max-width: 800px){ .risk-grid{grid-template-columns:repeat(2, 1fr);} }
+  .risk-cell{padding:10px 12px; border-radius:8px; text-align:center; font-size:12.5px; font-weight:600;}
+  .risk-cell .lvl{font-size:11px; opacity:.75; margin-top:2px;}
+  .r-h{background:#fee2e2; color:#7f1d1d;}
+  .r-m{background:#fef3c7; color:#92400e;}
+  .r-l{background:#d1fae5; color:#064e3b;}
+
+  /* ===== 引用 ===== */
+  .quote{border-left:3px solid var(--gold); padding:8px 16px; margin:14px 0; color:var(--muted); font-style:italic; background:#fef3c7; border-radius:0 8px 8px 0;}
+
+  /* ===== 名称解释卡 ===== */
+  .name-card{background:linear-gradient(135deg, #fef3c7, #fff); border:2px solid var(--gold); border-radius:14px; padding:24px 28px; margin:20px 0; display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center;}
+  .name-card .chinese{font-size:48px; font-weight:800; color:var(--primary-dk); font-family:"STKaiti","KaiTi","Songti SC",serif; line-height:1; text-align:center; min-width:120px;}
+  .name-card .chinese small{font-size:14px; color:var(--gold); font-weight:600; display:block; margin-top:6px; font-family:"PingFang SC", sans-serif;}
+  .name-card .meaning{font-size:14px; line-height:1.75; color:var(--ink);}
+  .name-card .meaning b{color:var(--primary-dk);}
+
+  footer{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); line-height:1.7;}
+</style>
+</head>
+<body data-page-node-id="HBRb8Vu7vz7yBLTqUMqu80">
+<div data-page-node-id="M0y8swUMxorQDdU8R2sO3H" class="wrap">
+
+<!--pnid:4uGy0tmB9udmIAFYQwfa74--><!-- ===== Hero ===== -->
+<div data-page-node-id="lseNzvPt0JMKCkaYXycqW4" class="hero">
+  <div data-page-node-id="ku2E6wZhU5o1A8s8jpzY3j" class="hero-inner">
+    <div data-page-node-id="7YwiFF5p9mwi6pNbFSbAxm" class="tag"><!--pnid:3dsMvopJuU1kamYQLs1auj-->📜 正式立项报告 v1.0</div>
+    <h1 data-page-node-id="dBNaMJ0YxsmjonmP4IccoO"><!--pnid:GCUzdgYhBkc5QmzbeJ9n6z-->唢呐 <span data-page-node-id="zUAm5MqdoiqdaB14xRtPXj" class="brand"><!--pnid:5CCwMx84TVs8u8mM4T1zmM-->SuonaOS</span><br data-page-node-id="PiwaG5K1IjouYsph3N0JII"><!--pnid:M0ZSoDEEiFT024U9VTkEkr-->Ubuntu 一人公司机器 · 正式立项报告</h1>
+    <div data-page-node-id="kF7CrECbfPqfjGwy6fFRPw" class="sub"><!--pnid:oItxUmzJj63MayCYXGKTLR-->基于 Ubuntu 26.04 LTS 深度调优的开源操作系统 + 国产软件开箱即用 + 64GB 双通道本地大模型 + UM870/T14s 锁定机型矩阵 —— 卖给中国大陆 1600 万一家公司的"一台顶一个人"的物理工作台。</div>
+    <div data-page-node-id="QMsusVMHqJShI81KEHi3uF" class="meta">
+      <span data-page-node-id="YeDH5R4PfWw9Xf1mCJ6fF4"><!--pnid:oAgR6Izbc96wSzSHJzdxCI-->📅 2026-09-10</span>
+      <span data-page-node-id="QUP1jEGIK8BjjI5GIVROAw"><!--pnid:Kb60KdJRfBwDAFCtTyV7rr-->📊 项目阶段：<b data-page-node-id="GP7F97HVmvOdWlA1mWamzS"><!--pnid:2LKTAEfQlztlr0AaF98Fdj-->正式立项</b></span>
+      <span data-page-node-id="rNDNMGF6ivqs2aIQmBpl9a"><!--pnid:FpHGbjaNsItnIj6RUZbbeg-->📂 承接文档：可行性调研 / Phase1 硬件清单 / mini 调研 / 采购基准 v2 / 二手补充</span>
+      <span data-page-node-id="BuKLrT5mxMaHiP7OKX5CXC"><!--pnid:e8DDEMRFi1aO4Jx8kL1bKJ-->🎯 目标市场：<b data-page-node-id="E7weHXvjbC39O12wfzFHGU"><!--pnid:3kJWlgrBvFxSM6PM3Vp6jx-->中国大陆一人公司 / 自由职业者</b></span>
+      <span data-page-node-id="tyzXlwe346a8Aur0XdyLrJ"><!--pnid:mqiMMaCGeRz3axGn26pRMj-->🛠 硬件路线：<b data-page-node-id="LvhqzyRxVz84LCnZtELw2I"><!--pnid:T3Aq6eMPZPc3fAcpi4dVZj-->1L mini 单机型深耕（UM870）</b><!--pnid:JdceetvLDVDKdV8oIzKZPX--> · 砍掉笔记本档</span>
+    </div>
+  </div>
+</div>
+
+<!--pnid:aWS63rzGswTQnXxcNiTUc6--><!-- ===== 名称解释 ===== -->
+<div data-page-node-id="escZzw8gIUWeAKMtbp81Ez" class="name-card">
+  <div data-page-node-id="ufIsz0VQPFgOTNmH0hrTZK" class="chinese"><!--pnid:JCp021KZtfnRQHog0nxspa-->唢呐<small data-page-node-id="oVAqKwgQ547FlkkuqMZWNt"><!--pnid:IddRRfvty3iyz5cyslMc0a-->SUONAOS</small></div>
+  <div data-page-node-id="5s2NguNOzGNejKC3zauSpx" class="meaning">
+    <b data-page-node-id="TxCV8ixJOsZsEl3Av8XrmC"><!--pnid:V42GkhO5kQnhh7kM5KHiP9-->命名哲学：一人独奏，全场撑住</b><br data-page-node-id="9JHsWtGEgQVjQHtH4qTerL"><!--pnid:rpm8kWLm58qsTZfNUsmm1m-->
+    唢呐是中国乐器里<b data-page-node-id="DJnBn027gCW2awan6Y31IR"><!--pnid:S2rYL8S1fybVksq5MIFNEk-->穿透力最强、独奏性最高</b><!--pnid:F0hsmQZZE6PLMUqCiQ7bCw-->的代表——一把乐器就能撑起一场红白喜事的全场，<b data-page-node-id="V08WnzaZs9j6wXzO33Mlou"><!--pnid:FXlByndv1oASQnrAVPppQv-->对应"一人公司"以一人之力撑起完整业务的隐喻</b><!--pnid:BvxBEjoG7vKWB8KhMi0M82-->。
+    SuonaOS 借用唢呐的"声音势能"对标 Mac 的"品牌势能"——名字辨识度拉满，<b data-page-node-id="8Pka3Dvi4EyPQTSoDdebYB"><!--pnid:1Ipm0v47GLzaciiGMUkWs0-->不靠营销预算靠符号强度</b><!--pnid:6HtI6WRDeLF3nj93hY8rdX-->。<br data-page-node-id="m2wl9QKlyZHxVrg66njYsq">
+    <span data-page-node-id="psFzIbwYjaQo7WlN51z1Od" style="color:var(--muted); font-size:12.5px"><!--pnid:MiaEB5d8YpR2qexxmv5W8E-->
+      域名注册局验证：suonaos.com / suonaos.org <b data-page-node-id="MKQcQHpDcfHdT6gbPK68wF" style="color:var(--green)"><!--pnid:tw3LryAwHmEYKOBa8UCGQt-->未注册可购买</b><!--pnid:TkFCX7DwhA8mOzUXL9cjb3-->（com/org 已通过 RDAP 接口 404 确认）；suonaos.cn 需本机浏览器手动复核（CNNIC 接口沙箱超时）。
+    </span>
+  </div>
+</div>
+
+<!--pnid:4LaBl0BB5ioLTLgXyjeZX2--><!-- ===== 00 结论先行 ===== -->
+<section data-page-node-id="ccFpho7i7Et9wQAWORvQeI" id="s-0">
+  <h2 data-page-node-id="cUCwe2BjoD7uWu8YnGLKfE"><span data-page-node-id="sBuPn3P07VMfJ5Xva2JryU" class="no"><!--pnid:WKXtDWG6ipjtGZ6KizsQW0-->00</span><!--pnid:d1iJwlcG6ZRmonfazapbNA-->结论先行</h2>
+
+  <div data-page-node-id="S2Li1XzmuLFXvY025wpCL1" class="verdict">
+    <h3 data-page-node-id="6qeWbpekvjco9rHUi4qRyN"><!--pnid:Z1rsvfCXhB2j9GGxqT1ec2-->🎯 一句话立项建议</h3>
+    <p data-page-node-id="RoMnzbad6aOHOrlMSg9QI3"><b data-page-node-id="yChs2D70oH9Aq9C9QWzXRB"><!--pnid:gQ9cyvZt2kprDM3DEW4SMf-->值得立项，按"Ubuntu 26.04 深度调优 + 锁定 UM870/T14s 机型 + 国产软件开箱即用 + 14B 本地 LLM 一键启动"四件套切入，3 个月出第一台 MVP 整机，6 个月出 SuonaOS v1.0 公开版。</b></p>
+    <p data-page-node-id="tRgn7Iqr51aUPAzx8Ib4jv"><!--pnid:l4ncPgpNz4OrTIzIuGK33H-->SuonaOS 不是"另一个 Ubuntu 衍生版"，而是<b data-page-node-id="zbaHANn5ZFaODoC12s4x9w"><!--pnid:JPKdSiKjiIIJTUOvLdT0F0-->"卖给中国大陆 1600 万一人公司的预装机器"</b><!--pnid:TSPVzQ7N90Ju8gIhDb0Hry-->——软件栈定义、硬件选型、定价、营销话语全部围绕这一个用户群重构。</p>
+  </div>
+
+  <div data-page-node-id="p2P5UMK62jqbZM86WkBopO" class="score-grid">
+    <div data-page-node-id="6efVHpRzJM3mCIxgaDKext" class="score"><div data-page-node-id="mbwst9pW0y1x1I3yAuJKSO" class="dim"><!--pnid:fYtSnDcynJNzsd9BsSfzdW-->市场时机</div><div data-page-node-id="tADcMvHQOGOwgujCaKdTew" class="val g"><!--pnid:NZ5a1hdruHg8tWokb3dGPi-->★★★★★</div><div data-page-node-id="1BxTInO4twutcwPCFRLRXa" class="note"><!--pnid:iz4ba1NcEJitzT2ARjlzml-->OPC 1600 万家 + Windows 10 EOL 流量 + 信创外溢消费 + AI 平民化</div></div>
+    <div data-page-node-id="z0Gk74zISiWOTZAqV7qpnm" class="score"><div data-page-node-id="GXV6E2xmD74y6fYfGYv9yn" class="dim"><!--pnid:8DvVap47QPK41b4M4RHrCP-->技术可行性</div><div data-page-node-id="sxcpBPpURMGsgmajk8Aj3l" class="val g"><!--pnid:yyHsGSUV2mvdQJJlyI6JL8-->★★★★☆</div><div data-page-node-id="Z3KJ3ArM7l1XSqwXfi5zzZ" class="note"><!--pnid:p3HKRRpLWpTssuSoOuE6g1-->Ubuntu 26.04 + GNOME 50 + 三重缓冲；国产软件适配 2026 已基本解</div></div>
+    <div data-page-node-id="2T6ugPzpSufse6cCIu3Wsg" class="score"><div data-page-node-id="7F8RJRpyHNMJ36Sa3ob26f" class="dim"><!--pnid:Ga9Hqha9RctXOpEXArkAm6-->差异化护城河</div><div data-page-node-id="OhNUCScPj7KZ8n5hjTYHjl" class="val g"><!--pnid:gRFQkIEkwstp6d0xP7Idpu-->★★★★★</div><div data-page-node-id="ioqUprZKvpGb0FFExfIxG7" class="note"><!--pnid:HuRVyaQueYA0H1z3DgA8up-->一人公司整机 + 中文 AI 开箱 + 国产软件栈 + 锁定机型，无对手在位</div></div>
+    <div data-page-node-id="GC3l6fUkGxzXTGUtkuyUrk" class="score"><div data-page-node-id="fdGfgtxeozm1PFC21Hf7Jn" class="dim"><!--pnid:t284dHanclbHe2FmAb7EER-->商业闭环</div><div data-page-node-id="RqJ1W7MBcQbXnvhCfkucLB" class="val a"><!--pnid:ByfcD3rTUgNGXPtTVgGs4L-->★★★★☆</div><div data-page-node-id="RuYvpQz8RXXbYFWeHJpClv" class="note"><!--pnid:9qLrj9w0nXRAr0HYemVJCV-->硬件 + 订阅 + 服务的三档收入模型清晰；首年盈亏平衡需要 ~500 台</div></div>
+    <div data-page-node-id="X6oOfvsSOtBL61uXqv6Jxl" class="score"><div data-page-node-id="tyaEI5zexZQ3U7xe0Q3mB5" class="dim"><!--pnid:IdCRK4uRqPHUkDN2j3we2g-->团队与资源</div><div data-page-node-id="QEiDl8STb2wrJQx4X0bM4b" class="val a"><!--pnid:4osMIA998XEyWfGrtGO6Hn-->★★★☆☆</div><div data-page-node-id="EEhYHV0AaETMqK9nJlezFG" class="note"><!--pnid:tA7L0FYNoi7lYc94bVjIGZ-->3–5 人 MVP 起步，3 个月可出活；标准档需要 8–10 人 / 12 个月</div></div>
+    <div data-page-node-id="oTBdYn0Ks2zy1AAvqHfO42" class="score"><div data-page-node-id="1vxzQWdll70xK7CmSTAGrV" class="dim"><!--pnid:BeBNUS07YGc9WlMrHeTfx2-->总判定</div><div data-page-node-id="Xc3rtNvHmb8woyMXZOoAOm" class="val g" style="font-size:18px"><!--pnid:VfnpFtaREH6NG0lqOg2NOV-->立即启动</div><div data-page-node-id="yBprJAjjRmuf9Ei7Yh9k03" class="note"><!--pnid:UJKl99qGds7qz6jr5evfni-->3 个月 MVP 验证，6 个月公开发行，12 个月决定是否扩到海外</div></div>
+  </div>
+
+  <div data-page-node-id="WhifIPMkAK4QWihRod5jky" class="kgrid">
+    <div data-page-node-id="xUVBmkUp9kQcYO3uxFP2QY" class="kpi"><div data-page-node-id="MoGaYA3sCtCZj8ILgHXcrF" class="v"><!--pnid:TDZDTzQ4MmxhSHdPAxgft0-->1600万</div><div data-page-node-id="VY5pKvwAW0bEEzKtgaz0qp" class="l"><!--pnid:wWOdU9iFzYqFHjybiL6Kou-->中国大陆 OPC 总量<br data-page-node-id="oAYZspFrljrSIHChiQIRuK"><!--pnid:KzA31XlbOMi3AC6k52zNdl-->占企业总数 27.4%</div></div>
+    <div data-page-node-id="PezOYYQLZASJbfHLO2U7oa" class="kpi"><div data-page-node-id="0u7QcNU8drqnn7NpeOmJ5e" class="v"><!--pnid:ZPdoqZ5obcrBRtaPxtwrtw-->+47%</div><div data-page-node-id="gQuOmLIJhxghIPs2Ygku1i" class="l"><!--pnid:drORAfJqhz8sRwWJh31iJh-->2025 年新增一人公司<br data-page-node-id="X1hOS2Xviw9GX62cVtdNgq"><!--pnid:MHLbVCiLPY5on1b0J5ae10-->同比暴涨</div></div>
+    <div data-page-node-id="WcszJAfDMMRWjN2XtbNKkY" class="kpi"><div data-page-node-id="Rkl0SMJZGYTPd5SRhIVW0U" class="v"><!--pnid:Gybr7FZsRBimIxyzaUxGPV-->2.5×</div><div data-page-node-id="WRhMJMrIko5TLw27Er3ic8" class="l"><!--pnid:Fmiu90xZVOhr2iKPgVW42z-->AI 增强型超级个体<br data-page-node-id="AV6vx08Hqfx2TUvHBXwVdM"><!--pnid:JZqwntWdq1ApVT1ob0aYwZ-->收入 vs 传统自由职业者</div></div>
+    <div data-page-node-id="HJxYX9yR6KL5jGvyLagsuz" class="kpi"><div data-page-node-id="UL0PzIg2FPnXmJCR3oAVeE" class="v"><!--pnid:hYZDEExhPNuFOI6IpgjIpq-->¥4,999</div><div data-page-node-id="IgeyXPhGAtZjxvS6Xoxcll" class="l"><!--pnid:eG7z10WcWV9oZu0ATWyXbs-->MVP 首发整机定价<br data-page-node-id="0ntI2BvJCaXJJ3v2vTmPQI"><!--pnid:rzn6K2Uq2fVdpT24SNJCxR-->（UM870 64GB + 一年服务）</div></div>
+    <div data-page-node-id="O7ddyKHIF5AK00lfUEHXv4" class="kpi"><div data-page-node-id="5H65rvqRtXChPoebCUmKgp" class="v"><!--pnid:RLK1eYYd13Qa7S6NDNzPGp-->3个月</div><div data-page-node-id="CebZajCKMbMahSZKjGijmR" class="l"><!--pnid:x9BCZtRLR6bhRQhTSchsGs-->第一台可售卖整机<br data-page-node-id="PHmq0i4pSvVzA9V1DykqIj"><!--pnid:czgdCRtDhJq57qZFgqmWgt-->交付周期</div></div>
+    <div data-page-node-id="doPTHvecnqkYR93KYcls9Y" class="kpi"><div data-page-node-id="WgJ9ZkAcj1XTZSUaNRCPck" class="v"><!--pnid:fhhqX42MAv7saOKPrwQVbV-->14B</div><div data-page-node-id="R3TmT9HTW1weeS1dGwNdNy" class="l"><!--pnid:mk58QWZNvkifuF4yhGqQ8h-->Qwen3 本地模型<br data-page-node-id="mjSaaqM0M4QBOgvhTOtJuf"><!--pnid:i97FrIOX8mjgYQOLAqqg1b-->开箱即跑（30+ tok/s）</div></div>
+  </div>
+</section>
+
+<!--pnid:a4VuKvdmPuo3IOViFEQRbI--><!-- ===== 01 定位 ===== -->
+<section data-page-node-id="cTBeVdL2g09plkEIPDtujL" id="s-1">
+  <h2 data-page-node-id="6BP7lpj6GWTA85SctlsmtK"><span data-page-node-id="zFxCBhOqk5b7O0rkVDrDqq" class="no"><!--pnid:G20v8H85nGGr3XNLNuxTwa-->01</span><!--pnid:FKXNq1FUMAxuz6BHweyTfD-->项目定位：卖给"一个人"的工作台</h2>
+
+  <h3 data-page-node-id="tEgEgszXO9KA0pjmzH9TX7"><!--pnid:fnFitU06Lii4m6b8QYLXPB-->1.1 目标用户画像（6 类核心人群）</h3>
+  <p data-page-node-id="X9MRqgYNZl4XSG9GHkQB8n"><!--pnid:THYxFCb2ca2grkjRobdfEJ-->中国大陆一人公司不是抽象概念，按 2026 年现状可以细分到 6 类核心人群，每类痛点不同、对 SuonaOS 的诉求不同：</p>
+
+  <div data-page-node-id="I4z4Hs2AfEjSPhMtgcX6yh" class="persona">
+    <div data-page-node-id="ONd1Sewf0xd3HL3k9WAucl" class="persona-card">
+      <h4 data-page-node-id="Wp8ZU970ijTo5vMOw5HWQy"><!--pnid:jwKIdrF6APHnKVpRLTADWY-->👨‍💻 独立开发者 / 程序员</h4>
+      <div data-page-node-id="J27BY4zZMNw6FnXGw82ltl" class="role"><!--pnid:HDvirTkNfxZAIV0lzZ5fxY-->占比 17.9% · OPC 中最大的科技群体</div>
+      <div data-page-node-id="mSOG25PdYUvsA8Vv2N2Cvc" class="pain"><!--pnid:tBz8vZvHdTJ8jAC2xnjYEK-->痛点：Mac mini ¥4,499 起太贵、<b data-page-node-id="zg2gxGKxNKz2osnsJBiprm"><!--pnid:o0NaUsRmqACAn75VsGZNzY-->想跑 14B 大模型但 Mac mini 32GB 要 $1,399</b><!--pnid:DqQecDpHxlk3H6qNGMDglf-->、想要 Linux 的开发环境但不想折腾 Ubuntu 装系统。SuonaOS 价值：<b data-page-node-id="dHsLiiXyToXLo2flUVy9Fr"><!--pnid:1oXPDki2tUODURQ6xLx1vl-->开发即用 + 本地 LLM + 价格比 Mac mini 低 40%</b><!--pnid:sTj8phBGhmWrt3qZcLBb1E-->。</div>
+    </div>
+    <div data-page-node-id="qmwO5wKSjmUZ11IqlQkfQM" class="persona-card">
+      <h4 data-page-node-id="mPMXiwyGY5xvUIXkHx1XY6"><!--pnid:9xhY08s2UArbm3j1sOHIU5-->✍️ 内容创作者 / 自媒体</h4>
+      <div data-page-node-id="PREW1AtuMGrclMS07zXJqi" class="role"><!--pnid:1qzfPnIdIZj2ai6RqVIzpB-->90 后 34% / 00 后 7% · 年轻化</div>
+      <div data-page-node-id="EBf6hYdhbuPxyqkohfNwgG" class="pain"><!--pnid:QLwUDijVw5voRrVxWvrSwG-->痛点：要写稿 + 剪视频 + 跑数据 + 同步飞书/微信协同、<b data-page-node-id="G1xiHecfj7n3QWK58SHBrN"><!--pnid:J59dqY0b9KJVBc0pL27R7h-->经常被"装系统"打断创作</b><!--pnid:XfqJ17xlgFhTZ8GhF7gMmj-->。SuonaOS 价值：<b data-page-node-id="aHatIL7DLlq13HY8tqkJR5"><!--pnid:UItn5gBE7oNl5r3sm0JAeM-->国产软件栈开箱即用 + 14B AI 辅助文案 + OBS/Blender 预装</b><!--pnid:QsQGYxnJ4nM5HFqxTAbzIQ-->。</div>
+    </div>
+    <div data-page-node-id="s9ewZ172KV5YqMtrQcFPJE" class="persona-card">
+      <h4 data-page-node-id="uLtJNg25aQO4MaNe3oRv1r"><!--pnid:oTGzvKwz1MZyMTtjMJ7ksZ-->🎨 设计师 / 自由职业</h4>
+      <div data-page-node-id="4xu64vEE1reP4dhuVjwVad" class="role"><!--pnid:Ubgt9QohDvTdf9wqZCSKGP-->占比约 12% · 创意产业主体</div>
+      <div data-page-node-id="M41pNxv5XMVqWLQO66rVTc" class="pain"><!--pnid:zVrlcX5uhbgr5PcirBIofX-->痛点：<b data-page-node-id="2EtEjjTcPSgEcnCWpaXPSI"><!--pnid:iKuBNXrBwJt1sCmywld2F6-->Adobe 全套年费 ¥5,000+</b><!--pnid:IawutE9NJRQmLG9p8MNvlb-->、Mac 是默认选择但没预算、想要开源替代品但"装 GIMP 都要调半天"。SuonaOS 价值：<b data-page-node-id="gWaHxLtlRrZlqdIP9Pk3jb"><!--pnid:XRBMXrbTECFTuBKD0UETCs-->Blender/Krita/Penpot 预装 + 显示器色彩管理开箱调好</b><!--pnid:ZTCisQcN7mIjMa2pNLm525-->。</div>
+    </div>
+    <div data-page-node-id="PK3hTdWqHRRfTUijY5onKR" class="persona-card">
+      <h4 data-page-node-id="i3oxS86W4P5F3u1VPkLg7T"><!--pnid:s0e5oSxpmqkDTdDXCtvufA-->🏪 小微电商 / 私域</h4>
+      <div data-page-node-id="G1122oLqyJcVfqE3eYiTRv" class="role"><!--pnid:NYnrOv30bvPxxFamc1x0Vw-->占比最高 · 多为 35+ 岁</div>
+      <div data-page-node-id="nbIQ5DXbqch9Jgg5UCxkbn" class="pain"><!--pnid:YVaQaJ7epiqg4ykQVxVRQp-->痛点：每天挂十几个微信/拼多多/抖音后台、<b data-page-node-id="Rdipsse6oV0UpHWwqjDfw5"><!--pnid:sqBQsvJVLNk0dGECmRoDbL-->电脑常被卡死</b><!--pnid:JVNAxBt3yLuJQMdlYK1REU-->、不懂装系统但又不想续费 Mac。SuonaOS 价值：<b data-page-node-id="1Z9vzHLLKtyvdCBNBDP4yR"><!--pnid:gJGUFl39XjkJmegePNe3xc-->多账号浏览器隔离 + 微信多开 + 飞书集成</b><!--pnid:nKMyZSLaIy2kDLZvhXKg3K-->。</div>
+    </div>
+    <div data-page-node-id="ylMGXFzLNmfjYIxw4Hm4cd" class="persona-card">
+      <h4 data-page-node-id="Iy6JCbW2bwld0QfVM9G864"><!--pnid:D0uJxcbt7uYSAvW9BK8wRU-->📊 咨询顾问 / 财税法</h4>
+      <div data-page-node-id="QAdRGK7ZSUVdcvLuWFnVD0" class="role"><!--pnid:oipWczWf6sZIOOS0ahl6do-->高 ARPU · 月入 5K 以下占 80%</div>
+      <div data-page-node-id="IhGU3M5XVlOvAc5pfcBKdR" class="pain"><!--pnid:rQQ5huuUbHSDtUzqWinHYd-->痛点：要安全、要稳定、<b data-page-node-id="b8fDHdxSWdysTLUpRojfTj"><!--pnid:fPS9qFH2IcwTElq53TY2cf-->不想每年交 ¥1,000+ Office 365</b><!--pnid:pLRS7w0o0mwHiPEENgiMeL-->、客户文件涉及隐私不能上云。SuonaOS 价值：<b data-page-node-id="O1pllGAr2KYpmXeKisPRky"><!--pnid:i7RUuCIUklywOSLy4Saaeu-->WPS 全功能 + 本地加密 + 飞书/钉钉/腾讯会议三合一</b><!--pnid:rQiiju14LyingOHpigGWXQ-->。</div>
+    </div>
+    <div data-page-node-id="sfvw4AEdaITnWFJXY6NDzS" class="persona-card">
+      <h4 data-page-node-id="9CoH9ZUjDi4QgeLGZanFuU"><!--pnid:dCZNKtuuckfYzjRpQm9ZTU-->🧑‍🔬 AI 创业者 / Agent Builder</h4>
+      <div data-page-node-id="VzsnYtw62RNpO92ikHvzIm" class="role"><!--pnid:orhC5nMmpogfEiNjppUU60-->增长最快 · 2026 +47% 新增</div>
+      <div data-page-node-id="OtMYyPHVDRxIRt1LQfQ9LK" class="pain"><!--pnid:QEhjZvOBMVbww70pf3nyCW-->痛点：<b data-page-node-id="DujiZfhnl11fZvgSCFrZHa"><!--pnid:nZpLFQP1kprjzl2U2jUut2-->云端 API 月费 $100+</b><!--pnid:KQTqJs4tJja7IHbIwjY4jC-->、本地 LLM 是刚需但 ROCm 配置劝退、想要"开机就能用 Qwen3-14B"。SuonaOS 价值：<b data-page-node-id="jO5f8nB1J2PpJKJozRyUuW"><!--pnid:mqAfkR4Y1VK0jlJ9Og1Fhy-->ROCm 7.2+ + Ollama + 14B 预下载 + 显存管理脚本开箱</b><!--pnid:q5OiSno9UDAnD9qJnRAEzm-->。</div>
+    </div>
+  </div>
+
+  <h3 data-page-node-id="STeXZg4t4DluyrXvIZl3p9"><!--pnid:cTwccLxXtnQhihnbeeVeVY-->1.2 价值主张画布（Value Proposition Canvas）</h3>
+  <table data-page-node-id="UwQlp3oj9qgIgakQgQFXyq">
+    <tr data-page-node-id="scEF5YPj338Cl2GtfJi9Ze"><th data-page-node-id="wvnfIt842L4Qr1EnToxp30"><!--pnid:3urHVQE918gQxjm1UOijhM-->客户工作（Jobs）</th><th data-page-node-id="YTiQiVWZ3fPHyqPHFGmwcS"><!--pnid:52YoHDn5WCoRK9ZgKxE8dN-->痛点（Pains）</th><th data-page-node-id="u1tSQsHiXgOa3adYbVM5Aj"><!--pnid:Mc87fiypwJ9fAaPvp0ZbFX-->收益（Gains）</th><th data-page-node-id="gPstdpgTrM2yDXrCtWWwbj"><!--pnid:vd5AEyTc1ZRQf4bb9oO2o8-->我们的解决方案</th></tr>
+    <tr data-page-node-id="rnA7twZ2aeKj6igp6ySCtm">
+      <td data-page-node-id="L7MXagRtodGzleJQ0dAxvy"><!--pnid:pwYGt94foIuGn9Aug4sSzz-->开发、创作、运营、销售、行政、客服 —— <b data-page-node-id="P352FKzqBaJxVKLIbhQIxA"><!--pnid:zGXshYcbN4MxjdZG4mql3V-->一个人干五个人的活</b></td>
+      <td data-page-node-id="Z82mMAg0g9eewiecS7IadJ"><!--pnid:VYP2VPnW1pMA7UFcTB8yPk-->· Mac mini 起步 ¥4,499，32GB 要 $1,399<br data-page-node-id="hDdnHBSshXh5KRzFXN32V3"><!--pnid:CryUUPbxBmUHbXE8zxQS4l-->· Windows 10 EOL 后没安全感<br data-page-node-id="mTHQ2PB2RezVXp2rD5ykAl"><!--pnid:UeQGuybwDs0kZwtD0M3Umw-->· 装系统/换硬件每次打断 1–2 天<br data-page-node-id="FpRXScx4ed64Wmio8KMSzQ"><!--pnid:Q2hybGf2L73I6dQjCPLcFn-->· Adobe/Notion 年费 ¥5,000+<br data-page-node-id="75Z0whGS1MEH07EYfXQvwP"><!--pnid:3drVqe4PzgdGheXW2ZJ4oI-->· 国产软件在 Linux 上踩坑多<br data-page-node-id="Ma9avfvAWOQXCWW8ZRzu0x"><!--pnid:v2bQazpu1pBORzdWlbljrB-->· 想跑本地 LLM 但配置 ROCm 劝退</td>
+      <td data-page-node-id="YhUDWiZzBDFcSWMJAOR0C2"><!--pnid:xXL8gay3dHiVJqw6UjI0Bp-->· 一台顶全部工作场景<br data-page-node-id="Avd3nLMs90KMaKzRgmoOOv"><!--pnid:5if9AUKi14PtYLpqdKTucs-->· 比 Mac mini 便宜 40%<br data-page-node-id="JKInyuiMAkUZJtBDtjXHN7"><!--pnid:CQukjLdYGm8HWPriHQOdku-->· 国产软件开箱即用<br data-page-node-id="Wj55jEPVpptnlvpyjZL1yJ"><!--pnid:cbr9f8IutcWAZgAkbO3qBG-->· 14B 本地 LLM 一键启动<br data-page-node-id="sptxajPiGQkNsKdcKGkHC6"><!--pnid:qnS54FKpoZIiQChk9TSL1V-->· 一次配置十年不用折腾<br data-page-node-id="B4uHOMqlfhQR0kQ3b11wbO"><!--pnid:1Q7xSvsupzOSnef2F97uVU-->· 零订阅、源码可查</td>
+      <td data-page-node-id="xoJR0PZLCgr5YtXLG7AnCy"><b data-page-node-id="3pYb1RjhQ3EC3dl8YdSWhk"><!--pnid:lNhGgnHE3SqoD5SX8HXSAY-->SuonaOS 整机 + 服务订阅</b><!--pnid:VLRtfT4sCV7X1VFqfJxz01-->：<br data-page-node-id="AspUFUoiAGQnn1Xozkqn7v"><!--pnid:KhiHWegBD1WM86WLj3aIAA-->① 预装深度调优 Ubuntu 26.04<br data-page-node-id="V0tCsNBI8Favcg9Ldi2SZF"><!--pnid:ACeXQYQnLLEl85KzjHkqqt-->② 国产软件栈开箱即用（飞书/钉钉/微信/QQ/WPS/百度网盘）<br data-page-node-id="BykhRXHW5HKez1EfvQ1nTy"><!--pnid:PMMDenQ4HTfVQoWDklJ6h0-->③ Qwen3-14B + Ollama 一键启动<br data-page-node-id="d3unbVfk6HJk9ycbq0EQGe"><!--pnid:xILpp2XqydLztL6zcnr1W3-->④ UM870 64GB 锁定机型<br data-page-node-id="LnUwT3cl1ZSG4ZcQYZGrkr"><!--pnid:JyF1OluXaQc7l5FgqQqEGA-->⑤ 一年远程支持 + 系统更新订阅</td>
+    </tr>
+  </table>
+
+  <h3 data-page-node-id="stw49nXglfTDPl6bh3OH94"><!--pnid:8Cs0MxRIkyiz3stDOnpPYc-->1.3 SuonaOS 与"上一个 Linux 桌面项目"的根本区别</h3>
+  <p data-page-node-id="W75XSc6EM8qYB85e6SSCTL"><!--pnid:9scqGiYhBgyrWxU6dFS8Uy-->可行性调研阶段我们做的是<b data-page-node-id="L86UmHwG3whLdSXtQU4EJq"><!--pnid:sfbcvTVOxdCcgSBPfogt9a-->"基于 Ubuntu 打造 macOS 级桌面操作系统"</b><!--pnid:cyajEwixB3VYMOncchBO4p-->——这是一个技术/产品/生态的<b data-page-node-id="f97PlTcbsFihlruvmlJPPK"><!--pnid:TNE1qPrS42jsZA3GWzdPUM-->通用解</b><!--pnid:Tl9o9jRCfVq5xYHAFRcwSk-->。SuonaOS 是这个通用解的<b data-page-node-id="hcfBZJcd3vzLcEBDQly8XB"><!--pnid:znl1fK7uhn25S2yFJf3gxQ-->垂直应用</b><!--pnid:F0J1OgO0dnlvGB5bl87jFi-->：</p>
+  <table data-page-node-id="rvzqzpF5Jo7Nd1yLtCf0J5">
+    <tr data-page-node-id="xyuRwHv0x54NxDCpm4WDGC"><th data-page-node-id="aZOdPe3uM2VxFA4GoIh2Kr"><!--pnid:o7ky8ahFTvZ2sb2phaZt4I-->维度</th><th data-page-node-id="UhwNtaI506kyy4l3C3deaU"><!--pnid:akMvfoZ0siFsUMxhx7ENgz-->可行性调研（通用版）</th><th data-page-node-id="75KwqNryHfNXEoSVJ8Fsxk"><!--pnid:uaXvey76eL7opx9k0EmPBC-->SuonaOS（一人公司机器）</th></tr>
+    <tr data-page-node-id="EBV6FIM0V2ehR5nCpY0qiJ"><td data-page-node-id="NebYbstUei9lFZpB5BU8vy"><b data-page-node-id="mjErazs0oNT7GXNjCt1XCj"><!--pnid:ERyuWOrKAu2U7ls513qk7f-->用户定义</b></td><td data-page-node-id="wrhSgFAGgHxtCecZMB7SX9"><!--pnid:3VBFhioz8I4Xu1KPSsqCPS-->"所有追求 macOS 级体验的 Linux 用户"</td><td data-page-node-id="wz5ArdfT8Fji3DLZJY2oEK"><b data-page-node-id="vAiB8yfX4U8AdZ6wnyX6u4"><!--pnid:XSpfWYbuSkI5rTvQO3omb7-->中国大陆 1600 万一人公司</b><!--pnid:PNqiBcP476cg9BRohmX5cE-->——定义极其清晰</td></tr>
+    <tr data-page-node-id="ycFi8HOO8cIwJtppHwooAB"><td data-page-node-id="WUQzuWAASh5lIr1Azb9iOa"><b data-page-node-id="IgM9F8cUqQjHtnpzFhFS2U"><!--pnid:KMmiNOwfAepX0EJLsH31IZ-->价值主张</b></td><td data-page-node-id="6ZJR0WnpMz4VT7K2XMQ8ar"><!--pnid:gWcC4d7c7VR7peqv4LbRLP-->"比 Ubuntu 流畅/稳定/易用"</td><td data-page-node-id="Mc5r5fqolKwpXCH82fPyEi"><b data-page-node-id="lo62Slb09nw6G2Kl3sOZTx"><!--pnid:GW362nRZ3gm2oKX1VKJwlC-->"比 Mac mini 便宜 40% + 国产软件开箱 + 本地 LLM"</b></td></tr>
+    <tr data-page-node-id="yp25MmFEjXJGaryc2u2Zty"><td data-page-node-id="GaMdageg2UlK7lq3cTR4Up"><b data-page-node-id="f6awBFgZrguwrjDBSwErcw"><!--pnid:kgpPe8cRJlI3qiYbbhozOC-->软件栈</b></td><td data-page-node-id="0J1jmVMo3EqqcehHKPBswC"><!--pnid:MndfDLlZaZOVNP5zKN5p0K-->通用 Linux 桌面（VS Code/Blender/LibreOffice）</td><td data-page-node-id="8qpsqnV7HtiRdfOwgLBd2Z"><b data-page-node-id="6RbwjBY8ywWUTL4CbQnRpw"><!--pnid:FxOkUMnz9QPexvnJNvkoSr-->中文 AI 优先栈</b><!--pnid:3DZavIHT8CebgklyVAaOIA-->（飞书/钉钉/微信/WPS + Qwen3 + 通义灵码）</td></tr>
+    <tr data-page-node-id="MXTKatUUVChHJfARgqd9JG"><td data-page-node-id="bXAoiF910A16C7FGC4Rgo5"><b data-page-node-id="7UIKLhm5TifrTiwmZ8W42a"><!--pnid:bh9W5TQ1vmru1JFjI5DOEK-->硬件策略</b></td><td data-page-node-id="pcrWzHpXU5HEq5iN7ujwo3"><!--pnid:yeOsEKB4fEJmVRwaG6mES9-->"锁定 3–5 款通用机型"</td><td data-page-node-id="FYwZibvHNLfbjQRxh6IXpq"><b data-page-node-id="h6kL3GUyQb3U3Mgs8N0lEP"><!--pnid:kbrpWiOsXDMm8kKIOpHcL1-->"只卖 UM870 64GB + T14s Gen 6 AMD 两款"</b><!--pnid:nR9ugewWQq63APncMNgGfe-->——更激进</td></tr>
+    <tr data-page-node-id="tELeHcVXk3uYB5AZx96uoj"><td data-page-node-id="78uFAmDcXDywhvF8UwvM9b"><b data-page-node-id="m5jshw2fvoBuEa90N5FOLc"><!--pnid:ZzZ7y6mlKsQ2Zz5Rezz74S-->商业模式</b></td><td data-page-node-id="uqjMH9rtkrlfTrLFBHlEtO"><!--pnid:cWocVg0ypTlqW5v2ZvMani-->未明确（提到硬件销售/授权/服务）</td><td data-page-node-id="3525wF1uxiEqIcqKzyJI2D"><b data-page-node-id="rZQwIeAampiEKKWP8YU5RV"><!--pnid:DiVjYFQOWmTGpvpPvDcASP-->硬件 + 订阅 + 服务的三档闭环</b><!--pnid:3LyBiCqdnKY2LSwnPk15FG-->，3 个月可出第一笔收入</td></tr>
+    <tr data-page-node-id="bdRqL6mzNFWjo6SOaz6ZEx"><td data-page-node-id="PFEOuMIuk5AIbsitcaZEyx"><b data-page-node-id="U4CCrVmN1wxqyVtLQ2N2Om"><!--pnid:gPwjPPQeadFscOPlMuooj8-->风险</b></td><td data-page-node-id="pRXrysqoLQVwXY9B1QKlLb"><!--pnid:wJGmDtjJLBRecLGR9A8Po5-->未聚焦</td><td data-page-node-id="fYMU4gYHBzCU5QRd8OIN9d"><!--pnid:s2JGV6nwP58csvRSGV3Vjk-->集中在"国产软件适配稳定性 + 销售渠道 + 大模型合规"</td></tr>
+  </table>
+</section>
+
+<!--pnid:v2KetKFSd3E0stl79XN24A--><!-- ===== 02 市场 ===== -->
+<section data-page-node-id="RM1qTudAcerVtE02Iyxidl" id="s-2">
+  <h2 data-page-node-id="FbroeLRdPXnYPLWWeauh9r"><span data-page-node-id="thUF2YhaGAKaRk6gZ1v4tM" class="no"><!--pnid:yb9ktBCg53JVUFWm2W3OLW-->02</span><!--pnid:ZFE5Alrkqpz0IHWt7zj9dq-->市场与时机：1600 万 OPC 等待被服务</h2>
+
+  <h3 data-page-node-id="W2fcPCEbmFTKGWljSSetdT"><!--pnid:jEoSC13gu3QyEf61pY2s98-->2.1 一人公司人群规模与增长</h3>
+  <div data-page-node-id="kIg54Qv8qgHurNw0D2SM9k" class="kgrid">
+    <div data-page-node-id="V7aO8ketIUOG9GwZtFczJt" class="kpi"><div data-page-node-id="emsjbJ3c0R4kNLBMP9H5Qo" class="v"><!--pnid:XicAxoz9TY5SeJf0vNcJHO-->1,600万</div><div data-page-node-id="AfvKinu5GQiK80ioOOXnXM" class="l"><!--pnid:V6XnpksyCNVKM0Xe3NXPJH-->中国大陆 OPC 总量<br data-page-node-id="PDqaL3wQiwyuJnDBxOM44J"><!--pnid:2w1ecBacGQd7cNgvtanxlG-->占企业总数 27.4%</div></div>
+    <div data-page-node-id="krt16HhFcmQIQBtgbzUmhy" class="kpi"><div data-page-node-id="Uo9DFaxJE4dw18bJFhPLYx" class="v"><!--pnid:qO46eZ13sPKYjRclDkq6x9-->+47%</div><div data-page-node-id="4AvTVgb63xReVAAmB3chbr" class="l"><!--pnid:q6W16K9hcvS06tA2j6fYbm-->2025 全年新增 OPC 同比</div></div>
+    <div data-page-node-id="dK2dJjEmIaqTKz3yp540lP" class="kpi"><div data-page-node-id="MKLusnjAyGkyi7NBqdgnIj" class="v"><!--pnid:Uc314F1UoABzylplNrKKss-->5,800万</div><div data-page-node-id="HeVdeWHwBbW68FzAKLaxTu" class="l"><!--pnid:I4VXmFP3IC4XHHkZWcAFLD-->全球 OPC 总量<br data-page-node-id="MnuHMqlREsngZXLTGGOaY0"><!--pnid:RefVZzxxEJYpy8Fotc4ezs-->美/中/欧三足鼎立</div></div>
+    <div data-page-node-id="cUKXSBcFWU3BEH5JTS5i2Z" class="kpi"><div data-page-node-id="h5F0aMNkBMVEKUHRIv9da5" class="v"><!--pnid:a95xehrrH9m6vNWaMRTr0N-->30%</div><div data-page-node-id="qBiMBslqrckSnnBeEWphsN" class="l"><!--pnid:aEZygrazEVegJA7jkx8ZLv-->一人公司存活率<br data-page-node-id="SEtkwcPJjPBAS1fiibYUbu"><!--pnid:nPPiVyuseh71iqquA7CrhV-->远超传统创业 &lt;5%</div></div>
+    <div data-page-node-id="lPnek5sFS5xVyThXiWcrsu" class="kpi"><div data-page-node-id="XHa4gHgJIkU3DulqkvqD9d" class="v"><!--pnid:LJTgccoD2QwvazkSDOhU5F-->2.5×</div><div data-page-node-id="9nP6ODuHWz0OXO6f2vaVK9" class="l"><!--pnid:rt4NAkFBYJW8Ypoahf8Dqv-->AI 增强型超级个体<br data-page-node-id="x0lWc06Bo1rozRFqBSI1UB"><!--pnid:VSct1jXvo9AI1wbK14fiJT-->收入倍数</div></div>
+    <div data-page-node-id="VcIw7bUw2PJTd9GHD1vEqU" class="kpi"><div data-page-node-id="tYDXKcxgjzOFCTfmnIHOwO" class="v"><!--pnid:3t94STNDaCybNvXWvjNCpS-->¥4,000</div><div data-page-node-id="CPtD5wvhcPD54zL71FzfMu" class="l"><!--pnid:8FDHsX2iMKivkC2eTfFWo0-->AI 赋能 OPC 启动门槛</div></div>
+  </div>
+
+  <p data-page-node-id="BUoqMqpmgoC6p2RUkU05YJ" class="src"><!--pnid:eqlmDZilP1ezrcbZa1aApK-->数据来源：《中国 OPC 发展趋势报告（2025—2030 年）》、艾瑞咨询《2025 年中国灵活就业与数字游民发展报告》、Indie Hackers 16,045 个产品 Stripe 验证数据、Stack Overflow 2026 开发者调查、《全球 OPC 经济体发展白皮书 2026》、蚂蚁集团芝麻企业信用平台 570 万立信 OPC 数据。</p>
+
+  <h3 data-page-node-id="vxmmdwMxQ1IUgGaB9lnjei"><!--pnid:Hsmdg4A7alMeOYXLFLLLyR-->2.2 三大结构性顺风</h3>
+  <ul data-page-node-id="ndc3qBrplPcjLcQWBzg2Yh">
+    <li data-page-node-id="PRdgOHzDwdsYyfmPwru9RU"><b data-page-node-id="ZzQgOlIgnGuETmIeHzhOKl"><!--pnid:iQ9jI6DbmKZ2qLyPUU6LyT-->Windows 10 EOL（2025-10-14）</b><!--pnid:5FBZlMGjBLTu8Vsz10kaKv-->：数亿台不满足 Win11 硬件要求的 PC 面临"换机 or 换系统"抉择，<b data-page-node-id="fvPaC0O6FkYJklUhZoIhJA"><!--pnid:uLedC4RVedew8lm7dOmvW6-->中国是受影响最严重的国家之一</b><!--pnid:OOFpHWgjgSwofIB4lw4sjF-->（教育/政企/小微大量 Win10 设备仍在服役）。</li>
+    <li data-page-node-id="wDoyNMqROazfmiuL5MYNNt"><b data-page-node-id="9ECMW8zbE7VQ39azXtwLLx"><!--pnid:gjY2W1P2jB3OC5O1WDvPlh-->信创外溢消费市场</b><!--pnid:Z2hGBDdqUbQKgsYROqAohf-->：UOS/麒麟深耕政企后，<b data-page-node-id="LWplwB1LmaTnGdhLMh0iSo"><!--pnid:YDXzas4iQcnrRyeaESIhbt-->消费/创作者市场的"精致 Linux 桌面"空位</b><!--pnid:aBw8kqxpYQnelcFIyfsHfb-->明确——这是 SuonaOS 的窗口。</li>
+    <li data-page-node-id="80fxlMEGsAjlERZjpYmvEX"><b data-page-node-id="jqt6hpxufsMwpjiVrTIX0j"><!--pnid:UO32Vztou7XGgvffF5A6Ep-->AI 平民化临界点</b><!--pnid:Tghshyq39y803bo6IUwuNS-->：Qwen3-14B Q4 量化 ≈ 8–9GB 显存，UM870 64GB 双通道直接跑 30+ tok/s，<b data-page-node-id="tG7ZIov1tVoOUb4vfD6ErE"><!--pnid:SQ3xXE8BPIT99dwtJeVUYU-->本地 LLM 第一次成为"个人能拥有"的资产</b><!--pnid:7oSyOhDABvcvut9pmrJmRp-->，而 Mac mini 32GB 要 $1,399 才能跑同档模型。</li>
+  </ul>
+
+  <h3 data-page-node-id="iI3B4badiotBEZDWqkS9ep"><!--pnid:ocQM6qPJ7g6Z4rtCRzCxXU-->2.3 竞争格局：空位明确</h3>
+  <table data-page-node-id="7gneDnPlWCebG8WFry267T">
+    <tr data-page-node-id="OLobzrLV9pZcDUmlEVjgM5"><th data-page-node-id="ABBsMLLGPpcuS3eT3Sua51"><!--pnid:PFe0kyR7BvFkgEEPCefjXb-->玩家</th><th data-page-node-id="wtqvVifjFOlfnGqtjItoe9"><!--pnid:6IFd4giYEolgvn72H8zzDU-->模式</th><th data-page-node-id="Kl0cN70psolD2sEtsSvHyg"><!--pnid:TIsWuuClhB2CnGl2x8W24M-->为何不是 SuonaOS 竞品</th></tr>
+    <tr data-page-node-id="rKGehLzDG1GLzOQipa2uKD"><td data-page-node-id="HVxUXrsmbhn93rCcpwSTeS"><b data-page-node-id="7sUuhVqnCx3qwH4CbUs19f"><!--pnid:NvnRtjc81XLfMkomXqAVGi-->Mac mini M4</b><!--pnid:GMAKSUIld5ObOBQmBzjGtQ-->（$599 起步）</td><td data-page-node-id="oBG7oLi2fkQEMntNfgyPXC"><!--pnid:eiOI3llJjoCNIu0yKMn39z-->苹果全家桶生态</td><td data-page-node-id="JdtznYLbG1PQgFPePHDlWe"><!--pnid:XAW6m7Hi7FKRHULV9atcoc-->32GB 要 $1,399、不能跑 14B+ 流畅、无中文 AI 默认栈、国行溢价高</td></tr>
+    <tr data-page-node-id="nFR3FXPe8MjkDc9Ujw7sY1"><td data-page-node-id="zIILNtN385VlKAvRYu8Bw0"><b data-page-node-id="Us9WP5V9ORhzUk4dk6aEV1"><!--pnid:VX6BwMHSD8sdEYH0mplBY3-->华为 MateStation X / 小米迷你主机</b></td><td data-page-node-id="bGJRiCctJo3EE60HCqPZRc"><!--pnid:J1WnU8b0RKOR7zEQQ4Ammq-->Windows 11 + Intel NUC</td><td data-page-node-id="yO45oL7jed30DwFHu9oF2I"><!--pnid:OgJpDKDyyToWY0GAtsmIwy-->Windows 11 占用大、本地 LLM 完全不支持、订阅型生态</td></tr>
+    <tr data-page-node-id="5ZVsGVNrTg0HdQNrfFNAqb"><td data-page-node-id="6XnoFXZ3mg3aYbq1WmWEYI"><b data-page-node-id="aOcbUKek3lw96FNGZxxi5E"><!--pnid:qBXBXJxU9L53elN5mFl9Sn-->联想小新 / ThinkCentre</b></td><td data-page-node-id="CjjuwErxjSK2dcvayi3CWM"><!--pnid:Gt1lPYSqySIKt3xqYcWykY-->商用机 + Windows</td><td data-page-node-id="AItzviLipDGaqiDNKBwHnT"><!--pnid:3vTvcwdKQeJlZcveHKDazS-->同上，且商用机对个人开发者体验调校差</td></tr>
+    <tr data-page-node-id="rtQl2hhswiMPnefzngc9ft"><td data-page-node-id="BsbsiQWP3FxNzbMrTufEkx"><b data-page-node-id="vaKivKkrrITMctQ0oRlyeK"><!--pnid:BxpizW5JTFjuDyrlIQwAHC-->UOS / 麒麟</b></td><td data-page-node-id="HPWlpdOtrErRBJz8AjHc6G"><!--pnid:TKxhLDzuDPpBXPEjyIbHxC-->信创 / 政企</td><td data-page-node-id="GKAXODsA1BJWNa2RFQ6LCl"><!--pnid:EF0hkwATEUMsuHpUJoiKaS-->面向政企不面向个人、生态封闭、创意软件缺位</td></tr>
+    <tr data-page-node-id="3BxEEr2Y72zisFOD0QQJxl"><td data-page-node-id="3FbVpJjlcW2fCfh58YFLVd"><b data-page-node-id="yCjdr0kgi78hjTXZl9iBf4"><!--pnid:03Yx19Sj0ZaZkYwhWctxs3-->deepin 社区版</b></td><td data-page-node-id="S3FT77V86gs5E18vrwZTWb"><!--pnid:1DLOrlpg39D2XdhtsSUdew-->Linux 桌面</td><td data-page-node-id="PHJFbhO8iEPI6GvFUe9e1m"><!--pnid:Q3GbwitNl0seZ2cf8cpYlE-->最像 SuonaOS 路线，但<b data-page-node-id="40gKgFm2KqPip38WoMa1FA"><!--pnid:FK20zFY4pEz7zpAgE5FVjv-->无硬件锁定</b><!--pnid:3cFyVTZpu8DTEI4enKGjVV-->、<b data-page-node-id="WqSvwR9GgeD5VbzicRq6lI"><!--pnid:0YV22SrmcHHlDIWzWNt0L6-->无中文 AI 一等公民</b><!--pnid:Ze61vYmHIi4nKr13Grg8KK-->、<b data-page-node-id="MsKaka21EyFrFQS39KYK2M"><!--pnid:cW3adqiAjwq502EXskAQus-->无服务订阅闭环</b></td></tr>
+    <tr data-page-node-id="1mOuv6fYzrsaPgJD69zBD8"><td data-page-node-id="SCq6QjT9vQTW5HXwjChcGS"><b data-page-node-id="HAx4rahDb5rKFmMrSPf22r"><!--pnid:JRGZZG73QZGJwqhrP3stLl-->Pop!_OS / Zorin</b></td><td data-page-node-id="JauOyL8DFn5rkKWtXSs46M"><!--pnid:QmQgufzdJywFod73s4Odi8-->海外 Linux 衍生版</td><td data-page-node-id="DOVapOmwzrwJChLhM40MZf"><!--pnid:FdlORziLlQYELIThNcDp6o-->不解决国产软件问题、英文 AI 栈、不面向 OPC</td></tr>
+  </table>
+  <p data-page-node-id="ILgmqWVDNjd6aqzQT4grnf"><b data-page-node-id="u0uCYsPDVA1KxIXblPSpCv"><!--pnid:BPciMeiz207y0sBxw571Gm-->关键判断：</b><!--pnid:Gn52PtCaatN1VTAo0L456x-->目前没有任何玩家占据"一台预装整机 + 国产软件开箱 + 14B 本地 LLM + 卖给中国大陆一人公司"这个象限——<b data-page-node-id="ErrD13UTi2TPXXjqOhiWmR"><!--pnid:cn9VVycpstfo67fvHjTPf4-->这是一个空白象限，不是红海</b><!--pnid:AVFn5gMZe1toQcdvQKHFvU-->。</p>
+</section>
+
+<!--pnid:IyTzjy3k0tkoZ3I2ufUK2s--><!-- ===== 03 竞品矩阵 ===== -->
+<section data-page-node-id="PoEs0Sx15Vh4XWzsYX91Ry" id="s-3">
+  <h2 data-page-node-id="KyYswuflbkxLIZZWMvwtLV"><span data-page-node-id="bKQNXhyLDv8ekLeeMxWrpL" class="no"><!--pnid:TVvGNQh1zNsPoCmcn9fPdG-->03</span><!--pnid:GLDFwEMwYmVETR7V9jMcLh-->竞品矩阵：5 维度真实差距</h2>
+
+  <p data-page-node-id="L7dRbnhIIhjEPRaPQvnCQq"><!--pnid:SPyIy068r0HJx6QzE90GAe-->用一人公司的真实工作场景做评分，5 个维度：① 国产软件开箱 ② 本地 LLM 能力 ③ 总拥有成本 ④ 系统稳定性 ⑤ 售后/服务。</p>
+
+  <table data-page-node-id="Du4Ha3CiLUTgYGO2YqE1Pi">
+    <tr data-page-node-id="0DjIs4uuoEhh8DYEyahhRO"><th data-page-node-id="wGnkFbxG912EamuTnLglyP"><!--pnid:gYIDfxviLsiCrLYKNvyDN8-->产品</th><th data-page-node-id="nRKNiL2tociAbSH6WwK1Rc"><!--pnid:jiQHCJ5nilORpIChOOnXny-->国产软件开箱</th><th data-page-node-id="sIg7nKDWE9pvODftjy0W8o"><!--pnid:oP5YIjI7AjKWHVBiu2njDU-->本地 LLM 能力</th><th data-page-node-id="58JXsIBZq6l0vtxYpNA0lW"><!--pnid:1INBrXygQCTO85qmESHPLh-->总拥有成本（3 年）</th><th data-page-node-id="eqTIiwgGMZDBIR5pPdZvnz"><!--pnid:4BWlwKgzQpSK1YaoBVlkr0-->稳定性</th><th data-page-node-id="ZlDWnpIckUlrIscjG3UvpS"><!--pnid:EmIyMe8KBkox8rYX8a89fU-->售后/服务</th><th data-page-node-id="T72O9a5vNZ9whF4DKEvoCd"><!--pnid:hMONxg6wDS63ORVK1tk16V-->一人公司评分</th></tr>
+    <tr data-page-node-id="716Dmjv1gPY8WwFyiogiCV">
+      <td data-page-node-id="UYxPBECKHnv7rbki0UyBF7"><b data-page-node-id="R9k4pBa99EaVumcbV616bU"><!--pnid:7fQjeaOzqAq1SSOOGozt6t-->Mac mini M4（16GB）</b><br data-page-node-id="JtpHuzeO8ayVEj6nTP7npG"><!--pnid:R2qRjFGohxMOSNEaK5VV1N-->¥4,499</td>
+      <td data-page-node-id="1l9MRcDysNuDonHW7ELXZC" class="ok"><!--pnid:DcQMdyTvTKpncoidZw25eL-->★★★★★ 原生</td>
+      <td data-page-node-id="Lmf82DpBABsujvK88UBfpj" class="mid"><!--pnid:GHyOmyP5AxATIED0HEAO6f-->★★☆☆☆ 14B 勉强 / 8B 流畅</td>
+      <td data-page-node-id="jt8556FCCD5RfBtPIov1YN" class="ok"><!--pnid:xmkRPaD9kWafJqZPgBk8Yy-->¥4,499 + 订阅 ~¥3,000 ≈ ¥7,500</td>
+      <td data-page-node-id="UFse4x3my7smLbfEJEbroO" class="ok"><!--pnid:BC9jVmvskaGWrjxbLlShwR-->★★★★★ 苹果级</td>
+      <td data-page-node-id="HQqBie5Bk1Y9ccam0rKGUh" class="ok"><!--pnid:11D7fEWC4VaJni3IN6VoZz-->★★★★★ AppleCare</td>
+      <td data-page-node-id="VzLsRiLytExHfJYcg5N5oC" class="ok"><b data-page-node-id="t6LBzG9v9w6JmUFFjTwsHt"><!--pnid:TlUM417ZBr8yHhMwEYWGbC-->★★★★☆</b></td>
+    </tr>
+    <tr data-page-node-id="DkBjaNP5rbSEQKukcTPLda">
+      <td data-page-node-id="X0ixRn2TxDp96ZtIvlQmHN"><b data-page-node-id="1AtHzLyShUpmXoGUtsNDeK"><!--pnid:Hjv1CK3K7efaHLw8gOfaze-->Mac mini M4（32GB）</b><br data-page-node-id="ee5tfQCoSM5Ks6VVcOMG1g"><!--pnid:MtwLJuNfGp4G5C7rlaRjyi-->¥9,999+</td>
+      <td data-page-node-id="xsawAHJvrfb5o2t25TsWKX" class="ok"><!--pnid:wxa2vaCUUf5m2QhlKiO6te-->★★★★★ 原生</td>
+      <td data-page-node-id="qmkQdE1oE5L4OnCn1HXavY" class="ok"><!--pnid:ZYcqSdWwBXrEDQClgLsg9m-->★★★★☆ 14B 流畅 / 30B 边缘</td>
+      <td data-page-node-id="U3cD2ERnCGwgdni3tIUeJ1" class="bad"><!--pnid:YN4FZO4PPbe55OX4MeTZh1-->¥9,999 + 订阅 ≈ ¥13,000</td>
+      <td data-page-node-id="VWMwPiqvTfpUf0TcxChjJZ" class="ok"><!--pnid:kjoBKS0P6meH9t847COXwM-->★★★★★</td>
+      <td data-page-node-id="A7WYoU1RjBYmwsNEUFgQyh" class="ok"><!--pnid:4OCPu5ycxFb5feAsbP7bPV-->★★★★★</td>
+      <td data-page-node-id="WK9jSYV5Ma7a00FFkC3l2i" class="ok"><b data-page-node-id="s8jAPHQVn6n1H8Cm9QPsMf"><!--pnid:wxPZ1sY7GtgvDFdLNwRaoQ-->★★★★☆</b><!--pnid:mKfGfzqUSu7F1vIiv3fNAC-->（价格劝退 80% OPC）</td>
+    </tr>
+    <tr data-page-node-id="Q2CAQbUQHeUuzjng0dSZbZ">
+      <td data-page-node-id="18V35qbwFEuRcXFKxlIgal"><b data-page-node-id="k7kqk7fSBIqjnQOyGGmxtn"><!--pnid:aYK0wL5pnrMWQKEwTRYbUa-->华为 MateStation X</b><br data-page-node-id="PCGDRw2UZ6qRvGmdxBspt7"><!--pnid:fi7OCccyF6sKmlZOxfsRad-->¥7,999+</td>
+      <td data-page-node-id="Tr7ODiVQ207xpn2xORxnVW" class="ok"><!--pnid:RarxmOixI5BxfeAWjG9NBV-->★★★★☆</td>
+      <td data-page-node-id="0MkG89mERji44BAxPqNin3" class="bad"><!--pnid:2kEwytnklUYlIOzEFtoFzn-->★☆☆☆☆ 无本地 LLM</td>
+      <td data-page-node-id="2QAp5Gih7Z2RWIKeKBrtex" class="mid"><!--pnid:4HcvzuJcN4bpFidYEDR2Kl-->¥7,999 + Windows 授权 + 订阅</td>
+      <td data-page-node-id="b2eYttWXTyUK5pSeJXKxa5" class="ok"><!--pnid:B7ItQBGOrJh5iCS46qbFDK-->★★★★☆</td>
+      <td data-page-node-id="ztEx21YYTLotSAM3VkVpOp" class="ok"><!--pnid:w6B6vcZP4HmaRBPL8pOvXf-->★★★★☆</td>
+      <td data-page-node-id="LqOfdEOOuYf3Q1NcBA5ajy" class="mid"><b data-page-node-id="mykK7TL9nWR0XXBJ2DiE8E"><!--pnid:iCLk3kfjon78oq0bDuJtGh-->★★★☆☆</b><!--pnid:DjPvQceRHNpKTR0u30AA4t-->（AI 与开源缺位）</td>
+    </tr>
+    <tr data-page-node-id="v2JPLSOwzixPNARGTPCnvx">
+      <td data-page-node-id="lwaWSX3KLVhrSltcjOvXLG"><b data-page-node-id="s8myjiMq4fjz3FsHuXMRo7"><!--pnid:A3OcxmQ8X2p5xWLpCluuol-->小米迷你主机</b><br data-page-node-id="ZheBquFWZfEalhgn4J1WVy"><!--pnid:DGkrMxCBIkfNMBJd1fOcWp-->¥3,999+</td>
+      <td data-page-node-id="2UbxS2ctHHdXSxzqez4TQa" class="ok"><!--pnid:VZAkRdjy5EmEERxwYfjsLd-->★★★★☆</td>
+      <td data-page-node-id="CCk4a3UWWeYyFcDoMk7n4u" class="bad"><!--pnid:kppjfCkGAdUtUqgKaNQkF4-->★☆☆☆☆</td>
+      <td data-page-node-id="VTnIJNuoqWQ7xJjWSvFOAE" class="ok"><!--pnid:VDY5LkHXlBIOor8mQ6BUVi-->¥3,999 + 订阅</td>
+      <td data-page-node-id="TAz2pSlbFWt7fhCzfUME4S" class="ok"><!--pnid:Bp6sT85C9n2KeaZ4QELSIJ-->★★★★☆</td>
+      <td data-page-node-id="W64u9Shvv17YcmLTTAt61m" class="mid"><!--pnid:6UM8IwW4TwzybgoyixMabj-->★★★☆☆ 售后偏弱</td>
+      <td data-page-node-id="46cb9IpZMW3fWECpMyoYs2" class="mid"><b data-page-node-id="B0gHeEz04rF0fSu4u8xq2c"><!--pnid:wCwM34YvhNwU7ehlYIVtMg-->★★★☆☆</b></td>
+    </tr>
+    <tr data-page-node-id="0oFWFiNR8dIsrko6c1bvxp">
+      <td data-page-node-id="TzRguOGKGNvcvBibAOxKEL"><b data-page-node-id="4M6J9LeQPFjAFgswZdgFNt"><!--pnid:6cHSiaDXhWNNgbO3vOm30G-->ThinkCentre M 商用机</b><br data-page-node-id="YugmSz47BBLF2Z2n5GTYrl"><!--pnid:jT0rB6MeRRZjn8AwxVQSQP-->¥5,000–8,000</td>
+      <td data-page-node-id="5hBy4QATJZI3xrydGSDADW" class="ok"><!--pnid:eFxtDMLOB4KjwwS4RQpfRe-->★★★★☆</td>
+      <td data-page-node-id="s7kNSL7iunsbBsU6zB4VdK" class="bad"><!--pnid:wrwsqFESkvJ9haI2BDWeSK-->★☆☆☆☆</td>
+      <td data-page-node-id="aj4yfuvANSyU3yLYdlehKh" class="ok"><!--pnid:slJgbuKV1xRRfXnNlgomZk-->¥6,000 + 订阅</td>
+      <td data-page-node-id="JRUPPvZ6pHYUKfL9whNgA1" class="ok"><!--pnid:msjzu1XEFq3mJ7tRzy74m3-->★★★★★ 商用级</td>
+      <td data-page-node-id="5GHcd9JOvFyLsK3waXnfmu" class="mid"><!--pnid:XpXJaYjlgTfaosgN2eQ4JP-->★★★☆☆</td>
+      <td data-page-node-id="VMhnpzi7cyD5JDKUifJI3r" class="mid"><b data-page-node-id="flzapeNCmaCijxngA5taRL"><!--pnid:nqKQmxxMD0feKBlzVGe9m4-->★★★☆☆</b></td>
+    </tr>
+    <tr data-page-node-id="wXO8iwNDT7rENuJLB1mU7Q">
+      <td data-page-node-id="ORuSsKJwBvjmLJdMYUwar2"><b data-page-node-id="eE4TE1948nvEdP7ae1Hckk"><!--pnid:B5fc0oSl0kxOxrIvSMXfsh-->deepin 社区版（自装）</b><br data-page-node-id="Ya6idnfSru87E8JPBtT3gV"><!--pnid:kS3yZOoKq9ACVnczLVAFFX-->~¥0 + 兼容机</td>
+      <td data-page-node-id="mFpDioIE83MjVuosl5NOcq" class="ok"><!--pnid:JSfoX15TTEaIok2GUxNF7E-->★★★★☆ deepin 应用商店</td>
+      <td data-page-node-id="NkZX62LJ0GieN10KgDzMqG" class="bad"><!--pnid:MEJpA5NytqgzVxZM7RPXJU-->★☆☆☆☆ 需自配</td>
+      <td data-page-node-id="oEF8e5dvQWwuLMazTR3hkK" class="ok"><!--pnid:Sz1UGYHkQq5E4pu0acM5En-->兼容机 ¥3,000–5,000</td>
+      <td data-page-node-id="AcfRIIbLi0hxmGe2VZnlNZ" class="mid"><!--pnid:MrASatbGKMzH7CUfTPW6MC-->★★★☆☆ 社区支持</td>
+      <td data-page-node-id="H9ElmQSUmVxVeZVqdJGPxi" class="bad"><!--pnid:h6SEPSqy6jplNWaJ6Dhx9L-->★☆☆☆☆ 无服务</td>
+      <td data-page-node-id="0ahpDgMdLX8mGpLih4xScH" class="mid"><b data-page-node-id="jLSbHlqb3fcZwIJVLNbBwi"><!--pnid:nskxaD8ras6A6g23KTxR9I-->★★★☆☆</b><!--pnid:FBcdneUmFLFckMZMJLfniV-->（折腾劝退 80% OPC）</td>
+    </tr>
+    <tr data-page-node-id="dKkzajJsLDEhyxozWpgp86">
+      <td data-page-node-id="3EVIONTJUE54znTYNjkBUi" style="background:#fef3c7"><b data-page-node-id="JWHAbI88vr35SpdkNQBS3Z"><!--pnid:YhpEYQashI9E0EcU4i0vmo-->SuonaOS 整机（UM870 64GB）</b><br data-page-node-id="ycloUjPSR82LEY1JfVNCs9"><!--pnid:xkrIf3u3xgQ9lLgTfizNCe-->¥4,999–5,999</td>
+      <td data-page-node-id="rq3I2YIsXFMPyGzi2dQ55g" class="ok" style="background:#d1fae5"><b data-page-node-id="9pVmHs0McBHzQJwMQa6EAs"><!--pnid:CE8MjTIWF8yLNrx7tbqQQb-->★★★★★</b><!--pnid:oTnZHwXGQ2DuX7QLvyQbI3--> 全栈预装</td>
+      <td data-page-node-id="gdkwtJ4n04FWqk8wM0BbKW" class="ok" style="background:#d1fae5"><b data-page-node-id="0qlKYaMkPAvRHdMFVVBMWk"><!--pnid:xvDcCsqYiECp1e6onWSOnL-->★★★★★</b><!--pnid:5o5qtQ0LlICdWgDFuZMAeR--> 14B 开箱 30+ tok/s</td>
+      <td data-page-node-id="B0ElgumzmTmFMX7YIR9tcs" class="ok" style="background:#d1fae5"><b data-page-node-id="Kc7EBeOXcuMk3rOqSqLEbE"><!--pnid:OSudqE4DUZlC5MElFtMhMh-->★★★★★</b><!--pnid:rXacLX0vTxnee41IPcVOCt--> ¥4,999 + 服务 ¥499/年 = 3 年 ¥6,500</td>
+      <td data-page-node-id="vD5TyYQHWNj70MrXtJAv3h" class="ok" style="background:#d1fae5"><b data-page-node-id="Qdj8waSjFL1KVjcxfoJyu3"><!--pnid:JB52Q18oFDPFiWdfUWt7nc-->★★★★☆</b><!--pnid:mUZ1D8cSRQS1Ntju05Yhyi--> 锁定机型 + 自动回滚</td>
+      <td data-page-node-id="JUzHDmiuJCQyGdELjBNkPU" class="ok" style="background:#d1fae5"><b data-page-node-id="boPux3WNn2LCX2JAGPqwkH"><!--pnid:ByYtxWcnqhSvp6JrAM888h-->★★★★☆</b><!--pnid:1NWWcBLq42SNWUMjwWZbnk--> 一年订阅含远程支持</td>
+      <td data-page-node-id="Ru2Vd6fvUKdWWUeFHkrYoB" class="ok" style="background:#fef3c7"><b data-page-node-id="ZvYDtqBFBZqT2EbMDe6oPn"><!--pnid:y1yHCUsJ2XIoBvhpG3jJ0a-->★★★★★</b></td>
+    </tr>
+  </table>
+
+  <div data-page-node-id="Hl6DzvkFlDmT5T1kfa8CLM" class="success">
+    <h3 data-page-node-id="znWiNPjZRg8yDLlbU7QVjK"><!--pnid:8icNLjUZzlnQM7e7dvTNWv-->SuonaOS 在 5 个维度的差异化叙事</h3>
+    <ul data-page-node-id="VoNltaSsm8Va6ZwPuaWkny">
+      <li data-page-node-id="LecTkP1LBtm27fBlICUtJD"><b data-page-node-id="T4lVry5tCgAE1GgoHpbfOH"><!--pnid:gB2wHVNTeMSRbYdUVV0Ukz-->国产软件：</b><!--pnid:3KaO2JtEOUTCOMuNDdyrJx-->不是"用户自己装 .deb"，而是"开箱即用、零踩坑、可一键更新"——这是 deepin 都还没做到的水位（其应用商店缺微信 .deb 官方源、缺 Flatpak 镜像、缺 patchelf 自动修复）。</li>
+      <li data-page-node-id="CbW9neO8sHrWGCGmSi0ZKA"><b data-page-node-id="1kb37Qiv86c9PfmrFigVmt"><!--pnid:JwUf4HL3eVfX99XCC7BPQI-->本地 LLM：</b><!--pnid:Mp1A3wPv4PMrX5hhk14Bjb-->不是"自己编译 ROCm"，而是"开机就有 Qwen3-14B 对话窗口"——这是 Mac mini 32GB 才能给、但 16GB 给不了的体验。</li>
+      <li data-page-node-id="n1GNRPsuJh0IrwF6rNo106"><b data-page-node-id="dqTrwlOmUABdZnbhWyCOiu"><!--pnid:mjSsLXwOjB84f20hYRzrHe-->总成本：</b><!--pnid:XghrrQfDr7Z4RT4Tn62N4G-->3 年 ¥6,500 vs Mac mini 32GB 的 ¥13,000——<b data-page-node-id="Aq6PoI41gPU2IOFNSMwrBR"><!--pnid:2mG7KgpCAIR1NCjfrrKWh0-->便宜 50%</b><!--pnid:8QBwqas5pwJCbggrhO4o3J-->，是一人公司"年省 2 万"的核心商业故事。</li>
+      <li data-page-node-id="yxqX3Q24kJoCMMYGlfGrrm"><b data-page-node-id="nlVn08s6DtXqKpH0cwf4R5"><!--pnid:3wXnAAMIWCOkgtV8j6jia9-->稳定性：</b><!--pnid:YAPazvJJkz0e10M8rX4pKI-->锁定 2 款机型 + 原子更新回滚 + 7×24 远程监控——把"Linux 桌面易崩"的口碑翻盘。</li>
+      <li data-page-node-id="DgZHCIH5gyphOu0xr7kKxl"><b data-page-node-id="CoAGb4yHngS63I0qJe1X5n"><!--pnid:KS97o9SxXDNMxu8MI0IQv9-->服务：</b><!--pnid:nYyYh7xgXbO7FgrZzitHU6-->一年 ¥499 订阅含远程支持 + 系统更新——这是 Mac mini 都给不了的"国产软件开箱服务"。</li>
+    </ul>
+  </div>
+</section>
+
+<!--pnid:flYvy2Cakn4EdrUd4xAOg1--><!-- ===== 04 产品定义 ===== -->
+<section data-page-node-id="Bcpd4B3UcAF29I7R1OORF0" id="s-4">
+  <h2 data-page-node-id="hLl2UR4eeE3GIoXwnbJ6rR"><span data-page-node-id="W9EAnndwSpceq8cEyn7pjW" class="no"><!--pnid:imAxqvOfYSQepXX3SwhiwU-->04</span><!--pnid:B8iAHBmcpUU43zEP164pz4-->产品定义 v1.0（四层）</h2>
+
+  <h3 data-page-node-id="gF86hJXOvhBrTpcFmM6Ger"><!--pnid:ugPy06IZvudMHxq5lQVs3p-->4.1 硬件层（Hardware）· 单机型路线</h3>
+  <p data-page-node-id="ksc5HTUI1ybM0kRccsJtGa"><b data-page-node-id="U6Wpl37is8pYzkGDWQ7C50"><!--pnid:nkhNVM0MOpSQpp3ptPSwRp-->2026-09-10 战略更新：砍掉笔记本形态，SuonaOS 走"1L mini 单机型深耕"路线</b><!--pnid:QelbjjBUOteDdERStaqDv4-->——对标 Mac mini M4 的"单一产品单一形态"打法，更聚焦、更狠、更容易把单一机器的所有细节做到极致。</p>
+  <table data-page-node-id="1R18vK11QoIOZBHBOf2y03">
+    <tr data-page-node-id="4LMGKvQ1iAFAkuCYEUBFh4"><th data-page-node-id="7XSgfnaKpZGb3F6bQtnoMA"><!--pnid:deBUcE5MqYnemDR8Ks3CFp-->形态</th><th data-page-node-id="mLWBGGM1kh5zWNhyNhSawa"><!--pnid:cbZ9s1xsMjT56DoAudsJSh-->首发机型</th><th data-page-node-id="M9fcUNfmNrqDuddSBm9LG7"><!--pnid:1kH2ONQE0cCVBZK9SQ8lCZ-->配置</th><th data-page-node-id="SMVVsK1NbMUli50X1VVjNv"><!--pnid:uZumkyLD5WmIRVqjGqNI8U-->首发价（整机）</th><th data-page-node-id="nuKPnL1z7irvVH9vYvlnoE"><!--pnid:9yuQyxmAXXY2gl9eNPQGt5-->定位</th></tr>
+    <tr data-page-node-id="DIRtpofufm7tFyJrV18f7L">
+      <td data-page-node-id="YcBQNB1tiKR3WrSc1srHOR"><b data-page-node-id="y17IssQ011nfPSKVs6TuRu"><!--pnid:PPnNc1cTDi1NgTKJKCSVkL-->1L Mini 台式</b></td>
+      <td data-page-node-id="ZnsSwAhdPDx7VBdqI7S2co"><!--pnid:bGuHT7ZTkZJyOUPWkgANOg-->Minisforum UM870（8845HS + 780M）</td>
+      <td data-page-node-id="8KlMZQjDwBtQ4MLeGdBCxN"><!--pnid:UClxy6qlaoqnUc5MjzXLCr-->64GB DDR5（2×32GB 双通道）+ 1TB NVMe + Wi-Fi 6 + 2.5GbE</td>
+      <td data-page-node-id="1AkDQuJbVxwNN3RchvdCt0" class="ok"><!--pnid:RClVYvfD3k5nysBu3uyayi-->¥4,999</td>
+      <td data-page-node-id="M2jPFOxRlnoaO3befSgeqE"><b data-page-node-id="YEeTdoDjT7ELv9pCpNQZLe"><!--pnid:hGoZGlCmqjNmgga1RgYMjM-->唯一首发机型 · 一人公司主控台</b></td>
+    </tr>
+    <tr data-page-node-id="URL3QPqCAWfNlCZfh78cwB" style="background:#fef3c7">
+      <td data-page-node-id="bRNXVMngbd2xmHZR20kNsJ"><b data-page-node-id="kezQGdSrSmiparM0wDWj5z"><!--pnid:bTXTxJft0yGwTSUVZnSCJJ-->扩展机型（Phase 2 评估）</b></td>
+      <td data-page-node-id="pyFGbBNxw7RF7lS1MWBL4k"><!--pnid:1NHVEwZA2F1ca8qAsfN6OR-->Framework Desktop（Strix Halo） / 自研 ODM mini</td>
+      <td data-page-node-id="yhA5q3auJJSkdM6fYcevhh"><!--pnid:eSV1Hc92sM2aWeBZm18sW8-->128GB 统一内存</td>
+      <td data-page-node-id="JNzcf8r3Y3rxcrmmvNDOB9"><!--pnid:O1cuA11JqtpTyJDRxFfV5s-->¥8,999+</td>
+      <td data-page-node-id="bf19NZOwBZj3zVpVagTsVu"><!--pnid:yzQ6t1J1MJCsEjTTVogs0A-->30B+ 本地大模型档（Hold 触发条件：明确要流畅跑 30B+）</td>
+    </tr>
+  </table>
+  <p data-page-node-id="XY0BucpXl6U0FX34RCrw3n" style="font-size:12.5px; color:var(--muted)"><!--pnid:ESsfrMjxtpqmlQZd23a2Xr-->❌ 已淘汰：ThinkPad T14s Gen 6 AMD（¥11,999）、Framework Laptop 13（¥9,999+）、其他笔记本方案。理由：笔记本的合盖/suspend/触控板/续航是 Linux 桌面兼容性最大的复杂度来源，且与"对位 Mac mini"的产品定位冲突。砍掉后所有工程资源聚焦在 1L mini 这一个形态上。</p>
+
+  <h3 data-page-node-id="4T7ElHcx1cp6YFQp3iOfWk"><!--pnid:PPtLT9K1JDVLv8UcU7zgnH-->4.2 OS 层（SuonaOS = Ubuntu 26.04 深度调优）</h3>
+  <div data-page-node-id="X2obnTw9Y55qLTRlLrOn1G" class="stack">
+    <div data-page-node-id="Ec4zL5YG8z0yaBrZuYOcCj" class="s s-l1">
+      <div data-page-node-id="k6mZbhpcNKUemCK5I6yvbR" class="name"><!--pnid:K3O5KeGOQ4cerXSfzhGKMI-->L1 · 硬件抽象层</div>
+      <div data-page-node-id="01E7yu3HR2oOhS7bdiSKkR" class="desc"><!--pnid:gO7xXAi2jOvGlIWYkVbJBQ-->Linux 7.0 内核（Ubuntu Mainline）+ AMDGPU + RADV + fwupd LVFS（固件更新通道）—— 复用 UM870 锁定机型的 Canonical 认证基线</div>
+    </div>
+    <div data-page-node-id="XhqphIdRBO4JXmY2CfmTE1" class="s s-l2">
+      <div data-page-node-id="V1lNYtmO4JS8FcthkFymIx" class="name"><!--pnid:5toOJvoEGR3ZtmL3BQASjj-->L2 · 图形与合成</div>
+      <div data-page-node-id="FrM2uzpYJRGyXsEeX3ZCOZ" class="desc"><!--pnid:UlaWlleNmQXCJX2ISBsoNe-->GNOME 50 + Mutter 动态三重缓冲（自研 patch 上游化）+ 自定义动画曲线（elementary Pantheon 风格）+ VRR/分数缩放/HDR 默认开启</div>
+    </div>
+    <div data-page-node-id="jHtjAOcbrCtor9aSTMPxKN" class="s s-l3">
+      <div data-page-node-id="xhlTY0mwqwP1U2Oq8Zi91b" class="name"><!--pnid:rTL5y7xmjiKYC6of4cuLSp-->L3 · 桌面与 Shell</div>
+      <div data-page-node-id="K1cOypWXaQdS72AMOSgpsy" class="desc"><!--pnid:vUPfl8k3bCDM5TLaReDgtD-->自研 SuonaOS Control Center（系统设置）+ SuonaOS Software Center（应用商店，聚合 apt+Flatpak+Snap+自研国产镜像）+ SuonaOS Welcome（首次开机引导）</div>
+    </div>
+    <div data-page-node-id="HIBo2BFKFE4FxSqJWkdnFZ" class="s s-l4">
+      <div data-page-node-id="kBankmn0Ca5VVMcuVzdHUd" class="name"><!--pnid:bKZVbqvoNPkapoaQcf9sOX-->L4 · 国产软件适配层</div>
+      <div data-page-node-id="cpjVUz19AZMHs0fQxq7IkY" class="desc"><!--pnid:9EeEJHPnavs9MBj4rUdWSS-->飞书/钉钉/微信/QQ/腾讯会议/百度网盘/阿里云盘/WPS 的 deb+Flatpak 自动安装 + 镜像源（中科大源）+ Wayland 兼容补丁（钉钉/向日葵）+ 中文输入法开箱（fcitx5-rime）</div>
+    </div>
+    <div data-page-node-id="4amMJC3efcgW0VNvJgIZgh" class="s s-l5">
+      <div data-page-node-id="XiELicPTwLHeF0d7R1xXCq" class="name"><!--pnid:rELKbuXhuwM57HUK6F1M8r-->L5 · AI &amp; 服务层</div>
+      <div data-page-node-id="G7af3Z8Ruteo3sqLR65YdB" class="desc"><!--pnid:nmpn1ho151hTUPuG31oPlz-->SuonaAI 一键启动（Ollama + Qwen3-14B 预下载）+ ROCm 7.2+ 自适配（gfx1103/gfx1151）+ 中文 LLM 优先 + 本地 RAG 模板（个人知识库）</div>
+    </div>
+  </div>
+
+  <h3 data-page-node-id="CqiZV9U1StOUle6Rn9Nxjm"><!--pnid:0aFidIPmMmfg9TjR5zyBlP-->4.3 软件栈（默认预装）</h3>
+  <table data-page-node-id="RKfJ3amk69rjBTNTzzlWyS">
+    <tr data-page-node-id="tKcCO0TmG1J4AYqAOQnvsM"><th data-page-node-id="9MswMn1lCcspiGZUx3pMxx"><!--pnid:6HE1t6EVzq00XM9pwMhMxc-->类别</th><th data-page-node-id="vDmQtQaxOMJdBFVcu481rG"><!--pnid:KgujTS4ZtduAgvT8AvVSyH-->预装软件</th><th data-page-node-id="VcZ6qcRKwRLS0Nm9Up1mO5"><!--pnid:poh1bjDBk1OTNYiXipcHV1-->替代 Windows 上的什么</th></tr>
+    <tr data-page-node-id="AbhBz2KjigG4UTyBnpTTvh"><td data-page-node-id="6RliYxHBYbsXWXO1wMm6d1"><b data-page-node-id="UjM2qjk5UnfP2DHK67Yb4F"><!--pnid:Z4z3c3puEQEUhDT2QVvwBe-->通信协作</b></td><td data-page-node-id="l0TCGL1VXf659Zq6YCXLcb"><!--pnid:E8D19MOjjNfnbLn5bcKym2-->飞书 / 钉钉 / 微信 / QQ / 腾讯会议（Flatpak + Wayland 兼容补丁）</td><td data-page-node-id="H3hJdcVTRqDGD8fkutMhbT"><!--pnid:s2L6Jx0FIVVacSZ7y9IAwz-->对应 Windows 完整功能</td></tr>
+    <tr data-page-node-id="YTtnRDDhZvfk8NjT0asN0o"><td data-page-node-id="QUiBHQahgxhmtt8aVWNRXs"><b data-page-node-id="0wXTcwlbBpX115FQ1BCZOO"><!--pnid:6cWG0MWVTYwkf86l8CXp70-->办公文档</b></td><td data-page-node-id="GCKfJRzLmHe4efOHp1xMzO"><!--pnid:7wol6kJnOid4JGO3ZA0hNu-->WPS Office（.deb 官方）+ 腾讯文档 + 语雀</td><td data-page-node-id="KWmwpjgzknewpye2oaBbIs"><!--pnid:ErAO1R0UNBc54pOqoDbVLT-->替代 MS Office ¥1,000/年</td></tr>
+    <tr data-page-node-id="KhzzATycMLmgS02U3cJW72"><td data-page-node-id="4cRBesyPvy5rPq9A6adbLO"><b data-page-node-id="eBa1D1kUVm6Jc1yqFdmLnr"><!--pnid:7QgTz9lC7157XfQ8kie58F-->开发工具</b></td><td data-page-node-id="gJxY7iIdT5yQiF1N4oaxi7"><!--pnid:alJFe9nmwRUie6QTB5dnVD-->VS Code / Cursor / Warp Terminal / Docker / Git</td><td data-page-node-id="EBOr5wFxE5xsL2ZWeZOb9V"><!--pnid:ySpJl0emvJE8bUazn9Wxft-->macOS 上同类工具</td></tr>
+    <tr data-page-node-id="lkMi0IeGgLk6yRkXfbLEmT"><td data-page-node-id="lCSoY19sBW0T6pCsHFR2iD"><b data-page-node-id="79jg4TSR72vVL3Y4X5VUpw"><!--pnid:OKoaj1hWyXFVQ2EjX2X6fg-->创意媒体</b></td><td data-page-node-id="tCYzvXZ4SqaB35EJKIUqpA"><!--pnid:zbfKsHacbBPME3GYVqELXE-->Blender / Krita / OBS / DaVinci Resolve / GIMP</td><td data-page-node-id="vHzGlMQdGbTbDccPYrBVi9"><!--pnid:AID1ajkk3wEsiw9u0oqsZa-->替代 Adobe ¥5,000+/年</td></tr>
+    <tr data-page-node-id="7RRwgsoClAmbgt622BTi5Z"><td data-page-node-id="iJcq4uEITHmn2Wz7e4j9Nm"><b data-page-node-id="Q3GaSB8BD0mTAJKh8txmdg"><!--pnid:gke71yYbwFmjk8gloil0pB-->本地 LLM</b></td><td data-page-node-id="LqkbsUOMgMFmMVAgvck5Ud"><!--pnid:nnLzBZkN7UW69UTwwc18wW-->Ollama + Qwen3-14B（预下载）+ Open WebUI + AnythingLLM（个人 RAG）</td><td data-page-node-id="FFrls4Ly5wneOvrh4brwAa"><!--pnid:gDYx5DuVaza9iXwH5vnPCB-->macOS 上要 $1,399 才能跑同档</td></tr>
+    <tr data-page-node-id="4Sqm4C2p3Ud2BvSi9Om4bA"><td data-page-node-id="1vY2Dx8mwwlYfPd9Myw1ne"><b data-page-node-id="IX6qkTOU2Nt72vdJl8O0ST"><!--pnid:F7oC9LURCthY7b9Qyd8BU2-->系统增强</b></td><td data-page-node-id="8Zp9tHlnQnyWZTcOPItY0H"><!--pnid:6bHLCQKKpQg0owdqjP6SuV-->Fcitx5 + Rime（中文输入法）/ Clash 代理 / 1Password / 坚果云 / 百度网盘 / 阿里云盘</td><td data-page-node-id="wQ4OI7GYRtuBuAFMBeLbTf"><!--pnid:vxwtne3sRuu4mZtoVRW9yl-->macOS 上对应付费工具的开源替代</td></tr>
+  </table>
+
+  <h3 data-page-node-id="ezcGhIQbb1gKveOVjonN94"><!--pnid:JWkoGO3MS8WFThFkwYDSxZ-->4.4 服务层（订阅模式）</h3>
+  <table data-page-node-id="eiTXQ3GWtHR6pP0gDOzKK3">
+    <tr data-page-node-id="2UCP7k1AaGAWptXvOzMQ6y"><th data-page-node-id="Iaz64BcXxU1urOecI68jRf"><!--pnid:XdQop0IpMkUXHLSWhdp6sU-->层级</th><th data-page-node-id="633gJwdBltZ5cNXbdZkgbl"><!--pnid:KKw9xBH1LlNn5Xy1BhTxXw-->服务内容</th><th data-page-node-id="mWmBVg8WdHJeE3SpGYhLWP"><!--pnid:BTD9RdeRbylXCsjZmGeTi0-->定价</th></tr>
+    <tr data-page-node-id="rewFDCogzDB9wtR3UTsHb5"><td data-page-node-id="S42Msmw9fhVjhJ4y14z2KX"><b data-page-node-id="Nqr5fALVqsyuVf0xeZXdbI"><!--pnid:e0GnpMbTdSVPQwqXtbF49i-->基础版（买机即含）</b></td><td data-page-node-id="2DCnWZ79Oguw1cGCZk13Ja"><!--pnid:NsJSE0ylccWO1zixG98MBb-->一年系统更新 + 社区论坛 + 文档</td><td data-page-node-id="YqHQjpHkWV0uBGEUL8z4oV"><!--pnid:G902FDmEDtlwKOG44lcTq6-->¥0</td></tr>
+    <tr data-page-node-id="P71vKW75wxnTGMHsRf4o2K"><td data-page-node-id="nYjSDFOCZeb0UegNtwA7W5"><b data-page-node-id="6O52ElZkv1Ra3ypSIqcMUf"><!--pnid:4P2iyARv3T4o9WIkX4FZ3E-->个人订阅（推荐）</b></td><td data-page-node-id="PdNIymLceEezP57d4vY8Oh"><!--pnid:qCKD1bZ7HTSCLGxwvziTbu-->一年远程支持（工单/远程桌面）+ 大模型更新推送 + 国产软件适配跟进</td><td data-page-node-id="OZHSlwT7ev8DegXgrc3xi9"><!--pnid:QqfdnDTsvtDimCoSELI8Tu-->¥499/年</td></tr>
+    <tr data-page-node-id="iMdUlB1VLnJkpBmBhY59M7"><td data-page-node-id="I4mRtMKfGHISDY9FOAjHE8"><b data-page-node-id="1t4Rb3drViXK6M5GVMNOfP"><!--pnid:I7pmXmz1ydgnTlexuWHoY2-->企业版</b></td><td data-page-node-id="zOGeOr50NJjLcrNP3Y9r1a"><!--pnid:ref6gyXKDRHn9UiTs38FVD-->5 台以上部署、批量管理后台、定制化镜像、专属客户经理</td><td data-page-node-id="DzE5ENhWSr4EqWOkfrbsfs"><!--pnid:WlTnkXEdlN1WnGpas4hLRS-->¥2,999/年（10 台起）</td></tr>
+  </table>
+</section>
+
+<!--pnid:VxGmusBgKR5R1f4PXWDFsd--><!-- ===== 05 技术路线 ===== -->
+<section data-page-node-id="o5Txk9kTkWKHUfWWTY3c0i" id="s-5">
+  <h2 data-page-node-id="S7bXWgv42UhbwBhGe41UEv"><span data-page-node-id="9w1hENuxajoPIlYZmEQMoY" class="no"><!--pnid:WN9Xli9WvG7ttuw6vEk7bL-->05</span><!--pnid:zpMm1ZFl5p1l8zk3fIDBQO-->技术路线：Ubuntu 26.04 深度调优的具体技术栈</h2>
+
+  <p data-page-node-id="H3Lgija7rWq6q3vnRarJ91"><!--pnid:PEKtcMc8lERgA0ocy1UOD7-->本节是"Ubuntu 深度调优"四个字的具体展开。所有技术决策都对应到一行可执行的代码或一个可验证的指标。</p>
+
+  <h3 data-page-node-id="Kj9yeF62h9kEWla1hsZjoL"><!--pnid:vcu0xOQhah9Kg2XsNmRgy5-->5.1 调优 Checklist（12 项必做）</h3>
+  <table data-page-node-id="QYEruboZgW0xrkyAhrpf3C">
+    <tr data-page-node-id="v2Bowk7nKh0eaI0h8KwSjK"><th data-page-node-id="kM28Mal4L5XJcwgB86tKlU"><!--pnid:Lv25toGh6QCslRePXgAUrg-->层级</th><th data-page-node-id="JWQ91pmfcNgwAPhj9wKLX0"><!--pnid:2xAXgM0SL0OZyNLERzDFty-->调优项</th><th data-page-node-id="XxPbzVdAeXdjJ9JdO0RNJ4"><!--pnid:XqLQ9PYvMBgP2VDunHbnyX-->具体动作</th><th data-page-node-id="VF7SspSTmVxxbaHydD8eh0"><!--pnid:CWDOg9Gvk6TZpyu84vkSiQ-->可验证指标</th></tr>
+    <tr data-page-node-id="VF9ZzsKOsNjs9N2EQNRxoZ"><td data-page-node-id="tYpyeD29J5Hhu9Hz8zhVlz" rowspan="3"><b data-page-node-id="wouKK0eMBkQ67rzNRZ7k2n"><!--pnid:fPSU0ZqX6f2Vfxhlqy8do4-->系统层</b></td><td data-page-node-id="a8ci86vQNOeBUjY34RSa20"><!--pnid:u8YQcc8vORcwdf7YbxJQAi-->内核参数</td><td data-page-node-id="8vmcRFqHaY6XfJNIHrgA5P"><!--pnid:as8b83dhIv9i4nJ8eX7jgE-->sysctl vm.swappiness=10 / dirty_ratio=20 / 内核编译保留 zen4 与 amd-pstate</td><td data-page-node-id="1xgIDMPtYZWcaTYFNu4LgE"><!--pnid:Q9it3wPRj1So8MQT9wtPiV-->冷启动 &lt; 8s</td></tr>
+    <tr data-page-node-id="LPbnnbIlYlHzsdsaGpmmok"><td data-page-node-id="FbrPV0Qg8qLeVSb0MZOqzi"><!--pnid:IPznlEVEVbBRz6p5QPn5YW-->电源策略</td><td data-page-node-id="LqMqdQCDCaFkOcux0D7skX"><!--pnid:TOYvl6Eur32UYKnnW5cMGo-->TLP + power-profiles-daemon (performance) + amd-pstate-epp</td><td data-page-node-id="AD1DpJLh0tBAhKWysDU5se"><!--pnid:YJSETXL6UV71elGUNVfJoF-->续航 ≥ 标称 90%</td></tr>
+    <tr data-page-node-id="0gwoZD8BJ0IVfbCeTv3gdw"><td data-page-node-id="nAdxTxGBHmkpjPq9ombfCf"><!--pnid:ceWyKh8jdaYmXk3MsCtKEq-->固件更新</td><td data-page-node-id="WFjx5Bb792izBPcKZAYhD1"><!--pnid:TVtOvTUitvdH1ZWX9TvFIw-->fwupd + LVFS 自动通道 + 锁定机型固件基线</td><td data-page-node-id="mnmOUxA9ZZcV24e8l1QkG8"><!--pnid:HcnhJ4q4oHZk8xQfkeNbZ8-->BIOS/ME 版本可追溯</td></tr>
+    <tr data-page-node-id="EjEar8wujZJ476QMuiZgyD"><td data-page-node-id="zYEmxqKGGGGuIirs9CekbE" rowspan="3"><b data-page-node-id="MKkOkAh7jCAQQRvIEJllBc"><!--pnid:dS915kZhGgJ8K8aZ7Nutwk-->图形层</b></td><td data-page-node-id="GyvaRTImaSTdMoP50uRTOQ"><!--pnid:tkRWG4jFEAoeQAsUJIHQin-->三重缓冲</td><td data-page-node-id="DtBrksR3DbbIUR6iTXtk3v"><!--pnid:SU1eFgNjnJMIthPax1Ve4e-->Mutter dynamic triple buffering patch（已合入 GNOME 48，Ubuntu 26.04 默认开启）</td><td data-page-node-id="W7YK0LF3g3iJxSSd8MraPe"><!--pnid:zARFACmGuSBQ84UvqXvnjx-->Intel/AMD 核显 4K 概览动画 ≥ 60 FPS</td></tr>
+    <tr data-page-node-id="euZdPSDdGxBFco1YL7wZQK"><td data-page-node-id="CeyPCObnuJJJChOMEmxpw9"><!--pnid:5sPeQIsMB3IwCSDLsDbvr5-->动效曲线</td><td data-page-node-id="lAwQac71dkgaGurLIDsmhi"><!--pnid:6oUqoOjnZBhdM7P10Yi5q2-->elementary Pantheon 风格缓动函数（cubic-bezier 自定义）</td><td data-page-node-id="4OwyL2NLklV4whyTPESN62"><!--pnid:RRanykADNZYbRg1S0yWRhw-->窗口缩放无肉眼抖动</td></tr>
+    <tr data-page-node-id="zEt8N0e0h6CVRSKY7e98Ok"><td data-page-node-id="p2rmbu2ohwnMSXPWYfQFZR"><!--pnid:mSrYORjJxWv8nxRHyuhKZQ-->VRR &amp; HDR</td><td data-page-node-id="NUz62hGXej7pJMQs3Ifbn1"><!--pnid:JCQWSl2CGMlkR7uNHxWPCt-->GNOME 50 默认开启分数缩放 + 满帧率光标 + HDR 录屏</td><td data-page-node-id="E3AtEkL9GmNvilaueHkPBb"><!--pnid:qmKWFviHPNmboPcDDIz9zr-->Display P3 色彩管理可观测</td></tr>
+    <tr data-page-node-id="MiQVn1R4ippnYb6gDQciKR"><td data-page-node-id="6SjmERHqR17OdjAi8KCCnu" rowspan="3"><b data-page-node-id="dXjVGRpKpGM9EkSJd6nJC9"><!--pnid:UhugXwShjbtcB7UaXpYlAP-->网络层</b></td><td data-page-node-id="72rErt8QvEB9w6M2iXv6un"><!--pnid:05HNSeXISHX01Xxw7uXskX-->网络栈</td><td data-page-node-id="fqwgTXlOBtPMbCK8OCBbYN"><!--pnid:uXmdjaTbdopwVsdrdzFR90-->systemd-networkd + NetworkManager 双轨 / systemd-resolved</td><td data-page-node-id="QsePBSxToROV41KDbDMWTd"><!--pnid:4n60ZpoLK7Ky5DEMfIZjNG-->Wi-Fi 6E 实测 ≥ 1.2 Gbps</td></tr>
+    <tr data-page-node-id="CHlSd5hA7dTBiiaT4toRub"><td data-page-node-id="KN82rYUV9YHKYiFMQcdCjL"><!--pnid:QkNVfCyj8zXNHSExHhgm6A-->DNS</td><td data-page-node-id="CRsbNGgd4DjQOjiHRbDc66"><!--pnid:YtPIOikL0CDu5TxQvOjLzO-->DoH 默认开启（Cloudflare/阿里）</td><td data-page-node-id="rHDR4YOV82u8s8m8pdaw8a"><!--pnid:pWKlon3OcHbx0PDyf8q9Be-->DNS 解析 &lt; 30ms</td></tr>
+    <tr data-page-node-id="dobN02psPdPCjaggk1b4ul"><td data-page-node-id="O3BufdJrje7yvakeb7pw0a"><!--pnid:amfFmtrElrEvfHdw9hpwqw-->代理</td><td data-page-node-id="W3Lohz6Hf5TAEj9IiEZUTS"><!--pnid:eUn2SO8cyQLbX6NXkM0awq-->systemd-resolved 智能分流 + Clash Meta GUI</td><td data-page-node-id="bPmHwykwAR9Q4ttx5P8ZGM"><!--pnid:7vcVRqbYMwZnTWaRlIZEro-->开发者友好（npm/pip/git 直连）</td></tr>
+    <tr data-page-node-id="i7ZFxbotFnEN6d7YxFwtYJ"><td data-page-node-id="u05wB24NfcvuprREKrUWcg" rowspan="3"><b data-page-node-id="nb7LnNTgh2AYlrkOM933LQ"><!--pnid:Ly7LDFwnNEmb1YwV6IWDgW-->安全层</b></td><td data-page-node-id="dJm6gUo5fcZBoG1Qpc6XkZ"><!--pnid:q2s2Grb3P5MWrp7TdlSUa1-->磁盘加密</td><td data-page-node-id="PwHNDbNEuB5Cy73YSrH219"><!--pnid:nXAlkfOPuVJerYcR2hpV5l-->LUKS2 + TPM2 FDE（Ubuntu 26.04 原生）</td><td data-page-node-id="2qtHGRb1ZPSW9MtYdB87Au"><!--pnid:N1mc77stLyo7AFmr3p3Wpg-->开机解密无感</td></tr>
+    <tr data-page-node-id="7DuZNxjtPeKrnefYNQ3Bor"><td data-page-node-id="KH4w3tKiFiqQHpW7aVeq6I"><!--pnid:FyxNZvdyyiKuH0OjHRdEAz-->防火墙</td><td data-page-node-id="55VunECyAyLvF1C6zjSHMJ"><!--pnid:Qux3If1Zw9tC0hqp3UbErR-->ufw 默认拒绝入站 + nftables 高级规则</td><td data-page-node-id="QuoOE7nnPqDs9wD5wgqXzm"><!--pnid:fWZ5v4WJECtO5k4vjP8IMV-->无开放端口</td></tr>
+    <tr data-page-node-id="LeXpahgq8F5qu47mr0an6V"><td data-page-node-id="laSn108uiErjme5L9VNNWW"><!--pnid:ObZFVYhY3pL4Uvt9BWZrz7-->安全更新</td><td data-page-node-id="NBsivpPNTLd6F6Zw1pmP9m"><!--pnid:kCg6J1H5ig3XsqWXDwMttc-->unattended-upgrades 自动 + SuonaOS 公告</td><td data-page-node-id="RcaTXVMFaofhg05fDvWfee"><!--pnid:TfonyB72DgI0rWKGGFvXHA-->CVE 修复 &lt; 72h</td></tr>
+  </table>
+
+  <h3 data-page-node-id="bMquTXzF0k5ClMcWioMln8"><!--pnid:fsGUC88MNDB1NyUtAHY1Ty-->5.2 关键调优：Mutter 动态三重缓冲 + 动效系统</h3>
+  <p data-page-node-id="uVvvtOcjao7WrgKWrmBAE0"><!--pnid:sgTLaZHLDD7fWqjGKVGeo3-->这是 SuonaOS 流畅度的核心壁垒——<b data-page-node-id="gwl7l6RbTJNwWRRsAq1qJO"><!--pnid:5eYvqmibu5lBc5MGfc0g7S-->2025 年由 Daniel van Vugt（Canonical）合并入 GNOME 48</b><!--pnid:vCYwH9zoI8puK6eE5ewg8c-->，Ubuntu 26.04 默认启用。我们要做的是：</p>
+  <ol data-page-node-id="MUUbHpFnUV8dsZfS2r7X6j">
+    <li data-page-node-id="sn2ZjlLXp9Gdh7huJgYjeJ"><!--pnid:RljQbjhcohWi3Ct2tyVPUH-->确认 UM870 平台下三重缓冲实际工作（Intel 核显案例是 4K 概览 30→60 FPS，需 AMD 780M 复测）</li>
+    <li data-page-node-id="QgsjNvH9l93iE5EczV2dtZ"><!--pnid:nQ5tjRRcUL2uRk26Ipp7uE-->向上游提交 AMD 780M (gfx1103) 三重缓冲的回归 patch（System76 模式：先解决自家问题，再贡献社区）</li>
+    <li data-page-node-id="qjbOCKri7ODn91UTPKDlXq"><!--pnid:plz7tWcAdnfyP2CHN16aK9-->动效曲线调成"macOS-like"：开窗 200ms / 关闭 150ms / 调度 250ms（elementary Pantheon 已验证这套参数）</li>
+  </ol>
+
+  <h3 data-page-node-id="pniXzVXhKBABnsQmuQePGz"><!--pnid:fm5xWTzfyBZFUpRgUYuRFe-->5.3 atomic update / immutable 路线</h3>
+  <p data-page-node-id="QsebDf3KxdyARmhBHJzUKw"><!--pnid:pNzYo4vqyV5BbFyYdmaNmS-->Phase 1 用传统 apt + Btrfs 快照（保留用户习惯）；Phase 2 切换到 bootc/ostree（参考 SteamOS 经验）。</p>
+  <div data-page-node-id="O7vl2F3BMotbaREvLUkP87" class="info">
+    <h3 data-page-node-id="HIHum77HPzLco1soUsSGFx"><!--pnid:XSntr4dswUJ6xfqr2Ooh5b-->为什么 Phase 1 不上 ostree？</h3>
+    <p data-page-node-id="4df1cNPi5Zpu5UJM5uuZbU"><!--pnid:jSlewNDitAvVXatqGzaZ4W-->ostree 改造工作量 6–12 个月，会拖慢 MVP 节奏。Phase 1 用 <code data-page-node-id="iQVOlkIC00JzKofq5AjF1g" data-pnid-children="brqRE5xCCEbHcl8qmwVjfS">btrfs-assistant</code><!--pnid:qT5RyLEOhmiKszWXcFVFsZ--> + <code data-page-node-id="JHQQ1dkAEznfzHWpcr4e9r" data-pnid-children="iQkHfKst5AWZHtova2Q5Mw">snapper</code><!--pnid:NKTarQiU3CVm5RyvchEjfX--> 提供"开机时保留 5 个快照可回滚"的轻方案——openSUSE Aeon 验证了这条过渡路径。<b data-page-node-id="cNpNaKJ1Lxyw0Pi9NwZI1I"><!--pnid:AItQRw2EGghVFqB0RY1c80-->Phase 2 切到 ostree 是产品差异化壁垒的强化项，不是 Phase 1 阻塞项。</b></p>
+  </div>
+</section>
+
+<!--pnid:CBvQoRliKF6wYl0zOnJPxO--><!-- ===== 06 国产软件适配 ===== -->
+<section data-page-node-id="CajgezW3eabRFk9zMMltBa" id="s-6">
+  <h2 data-page-node-id="EFFtJ3hPkF0OJ3WgEHE5Rf"><span data-page-node-id="tEcYy89UykZ3isdoieGZA1" class="no"><!--pnid:bmy5pjaVrxrhP8CwzIhkwc-->06</span><!--pnid:1IzR6mSb0s74IFdESLofOm-->国产软件适配路线图（SuonaOS 区别于所有海外 Linux 衍生版的护城河）</h2>
+
+  <h3 data-page-node-id="nHTByx1Pf19vtSg7FAgd2C"><!--pnid:1do4PocjbBVi6FWOJyMkAE-->6.1 现状评估（2026-05 实测数据）</h3>
+  <table data-page-node-id="mCKZkaB15cUKRqRgjqgaRz">
+    <tr data-page-node-id="TT1k0DVRveQA4gO7u6PX2G"><th data-page-node-id="fisngHJKnya3m7btcF95qz"><!--pnid:OowSjaB1tCy6ErIeb8qIvU-->软件</th><th data-page-node-id="BtQqvaL2LrY7ZSP7PcGCHo"><!--pnid:v0sqmsUt91k90bY044TmBf-->安装方式</th><th data-page-node-id="HU4O6sufdzgCz1BUvg1y5W"><!--pnid:GCHP3OsNTqhMCLenTLZIWg-->实测状态</th><th data-page-node-id="NRQgFhrDQB2wfLHVdlIHnG"><!--pnid:God18ll1eARrPKZr9Kc9QQ-->主要踩坑点</th><th data-page-node-id="s5UzyfoIiBKMOVC1NFJgrT"><!--pnid:UBCWeFJrcXhyN8HYeTDa43-->我们的解决</th></tr>
+    <tr data-page-node-id="kuDQ2hFYI6r0EPdQuHfhDU"><td data-page-node-id="o6itrpRKgbtdpjNZGZCeF9"><b data-page-node-id="h1DFgmv22yfpv1eRbCAAhX"><!--pnid:g8RKuGDi4VpLWqUjjWdZsY-->微信</b></td><td data-page-node-id="xaAlFEEaXK7zKiBctAfJoB"><!--pnid:Kp8SMyzFwZuYeIh7PEaHVr-->官方 .deb / Flatpak</td><td data-page-node-id="IvYRbM33DoGqni1xOnYcSQ" class="ok"><!--pnid:uYU1qR1vJ42SQzmlHboELb-->✅ 正常</td><td data-page-node-id="maXx9CRviOWLfcFqWUWmjI"><!--pnid:nkuZnPLKyRQYdnZQbjvrjw-->Ubuntu 26.04 自带 Snap 应用中心装 .deb 出错；Flatpak 默认源在国外</td><td data-page-node-id="E3RcZXV5Iqx7xE0BzMrY5t"><!--pnid:g4i4Q8QNCl6KGNPu3LRBVg-->默认配置 Flathub 中科大源；自研 SuonaOS Software Center 聚合</td></tr>
+    <tr data-page-node-id="BaPtrDqXDsAMbKdHLup6Rl"><td data-page-node-id="rQqxVI8PQxVh7qOk1ecFxc"><b data-page-node-id="jffRtPcgrLKjCHVrkI565q"><!--pnid:MP4rLsUtaGxh5RmqRrXJkR-->QQ</b></td><td data-page-node-id="WNxKYp2oBPm8XywVb9uQ7a"><!--pnid:HThjSJJLfdITrbvdQKPlV1-->官方 .deb / Flatpak</td><td data-page-node-id="Z9keQT6sJNuPt7L12PYRQp" class="ok"><!--pnid:QVU4EdlPfPTbSR0qgqumkQ-->✅ 正常</td><td data-page-node-id="4sIPWPbWN9hfm7Rh8NOV4R"><!--pnid:DmMfEHT9CLDraOCX5NQpI5-->同微信</td><td data-page-node-id="nUi0aXSfT48aikxBl867AL"><!--pnid:mt3nACO3NjNAQsjW8v9UgZ-->同上</td></tr>
+    <tr data-page-node-id="gRfgYozrVRgVtrb4EH2gmi"><td data-page-node-id="KqB0gJxO2TFp6vsM2cI8qA"><b data-page-node-id="IlhTOoRPvwoC4T35wAHoM5"><!--pnid:R51Jipuw7RbJHiJtGoBy9k-->飞书</b></td><td data-page-node-id="be13ezQrECs97lZ6jITA9n"><!--pnid:xjKXohi64WShfNOS64A17S-->Flatpak</td><td data-page-node-id="9x2vG2X6pqVXPH4L0Teuau" class="ok"><!--pnid:aAiWX4KxiryT4m4HLrttBM-->✅ 正常</td><td data-page-node-id="qtDtCajOfsQPWYgswGB8bJ"><!--pnid:aIZSCDgRQVv9TAc17By6Fs-->无大问题</td><td data-page-node-id="pd6eWyRWXsOs8koSrkwqX3"><!--pnid:5XoOc5R8kO3U0mAK0dvNdc-->预装 + 启动器 Pin</td></tr>
+    <tr data-page-node-id="6mQ970riscaldFKCONoX2a"><td data-page-node-id="F7fipxtz5pzN4dnEKTyiA3"><b data-page-node-id="87e35bv5Ob2YLrUjwncNVE"><!--pnid:5vrDRpbYqRu2V4AN5n3eib-->钉钉</b></td><td data-page-node-id="Fs6nrnTM15KYUuwvDDDs5v"><!--pnid:qlZdYBEf1olk2sd5SwU0Un-->官方 .deb</td><td data-page-node-id="PJUHhi6GcksBJeIPpIePUC" class="mid"><!--pnid:n8VyTDgqlhG8hlXsonrzGx-->⚠️ 需 patchelf</td><td data-page-node-id="dDO3DcpvFqwJFAfUgtvvhx"><!--pnid:4kYwTcZA2nYJyrETDttigT-->必须 <code data-page-node-id="e1iOYIBZd5A3j7zsjVCOo9" data-pnid-children="rBj0JaxNpj7tHmpZcDP5U1">patchelf --clear-execstack</code><!--pnid:Ke83RVXrWvh41Z7fo3Ot2y--> + 手动创建 libgbm.so 软链接</td><td data-page-node-id="zqJzQKL3byW0L1sLDI0GL9"><b data-page-node-id="1NK8bN0ImgBJ4N191VgBPX"><!--pnid:p0XoM9dahliAL3hVuqsPCl-->首次启动自动修复脚本</b><!--pnid:vQNLWljGxGie492MT3A1ty-->（一键）</td></tr>
+    <tr data-page-node-id="038ceOGf6A31Ehyj7GvfVc"><td data-page-node-id="0lGGhEm0I6eFfFS7svM3Ye"><b data-page-node-id="8RKUQqiKjPXwX9z59RgeQp"><!--pnid:VC68srzCHO26PMYJNsXz3I-->腾讯会议</b></td><td data-page-node-id="RuNZsduqJI5htSENdt3PsK"><!--pnid:evrtXsuv6ZVGDgaozACgHQ-->官方 .deb</td><td data-page-node-id="yZx3zlFei0LB5ypujpcyBu" class="ok"><!--pnid:incOk2M7FNt1lWCp9COmw0-->✅ 正常</td><td data-page-node-id="I2DfkrFMLpDWyNxaXbboIz"><!--pnid:IcyFTPXe6zaRFHgTdTKVwc-->Wayland 屏幕共享部分场景需 X11</td><td data-page-node-id="SiFusunQYysNQpmcpPElQJ"><!--pnid:gajnFdeLWpkGvZ2rlqj5ke-->提供 X11 登录会话选项</td></tr>
+    <tr data-page-node-id="XgqczUYTMtIHrSBda5MS7l"><td data-page-node-id="RjUZRFYnXqibC7cEQhoMNV"><b data-page-node-id="EmjDoPL3N4liKoqORc9TUc"><!--pnid:ODoTSCmxCvPbBENTqeDsk7-->百度网盘</b></td><td data-page-node-id="weOV8jCsb7n8bwnvek57ei"><!--pnid:YIpeiwkBq2VE77I0dNpIKT-->官方 .deb</td><td data-page-node-id="Ikkd4a4LjxbKfkBRFEz3xU" class="ok"><!--pnid:YRIY3kTQI3v1OzssKiaagc-->✅ 正常</td><td data-page-node-id="LcnPr9CAfJWJQLKkK1oaoW"><!--pnid:Q0BIypAcirIR39s98NFLAx-->登录态偶发需重登</td><td data-page-node-id="jGB652KTWr9DTyfCvKDFad"><!--pnid:j8ifYPU4TTQAvp0pfuZLJ8-->预装 + 桌面快捷方式</td></tr>
+    <tr data-page-node-id="aUQsxj6P3FFCmCRrL1kL8c"><td data-page-node-id="8pQHARGl1mixBuRia7l7W2"><b data-page-node-id="BYa35Op6cl6uLoI5OSxsu4"><!--pnid:he3cedTFdvbiaPvPFsYkEN-->WPS</b></td><td data-page-node-id="eFk8F0Ry7mf3iAZFonxB7W"><!--pnid:bIHpxM6jJGELK62PQkbPaS-->官方 .deb</td><td data-page-node-id="FLXcjRrN1JgSQSGwKhUVUe" class="ok"><!--pnid:baalCVy4Z8uMrmnVqTSleg-->✅ 正常</td><td data-page-node-id="omyF4Hlw3ZuybEraLDysiW"><!--pnid:Kj1zkQjZUy4zNx7IiWLYgf-->需 libglu1-mesa 依赖</td><td data-page-node-id="1figNTLJIpzgjp4hDuLj8E"><!--pnid:l4n2jEO3j5ltKOcDgqmrAx-->预装时自动解决依赖</td></tr>
+    <tr data-page-node-id="qgxpZdPAjJruijNU8CdxC2"><td data-page-node-id="umui58kEeJPDRP9honNnZW"><b data-page-node-id="0Ofo9o0LuixYEG0kXnGAe9"><!--pnid:MpqksJOZpKZQEhgdtnuyvc-->向日葵</b></td><td data-page-node-id="zhkeFpPzE4YYUyJA8Saynj"><!--pnid:IP2ZmtU1FUx0eSyVAXm9Dr-->.deb</td><td data-page-node-id="MYK3Z41LMMSF4hInMZb1J2" class="bad"><!--pnid:L49E4karlxoBEEj70Wxw99-->❌ 不兼容 Wayland</td><td data-page-node-id="EzpO68jzZmrrUI66L0FmFG"><!--pnid:f1iMVMNfilNd3wc49UWDnQ-->完全不工作</td><td data-page-node-id="pjaaaXR15hKMr89yvkZnHt"><b data-page-node-id="ihNFHtcontNwRRTW73xtzO"><!--pnid:LFnEqFJ3nCdmvaioMhI1hZ-->默认替换为 RustDesk</b><!--pnid:513a877yxUJYOd19isvOHr-->（兼容 Wayland）</td></tr>
+    <tr data-page-node-id="ITPf1Kvug2pAkcd479W2Yn"><td data-page-node-id="ttsMYYYCdGCD8PWeIlJzJH"><b data-page-node-id="2eNYKs23M1Dmbp7jk3j8IX"><!--pnid:u0Qu2wPiAfBYqFJcUPKiKK-->QQ 音乐</b></td><td data-page-node-id="7zncVuIvqPZVcoje4CPmc4"><!--pnid:MRniPIqK6hFbc0DZbjUiiu-->AppImage</td><td data-page-node-id="I6vhrYVgyQJVTSWWtshk5Z" class="ok"><!--pnid:b8ueixr2m9J51yTj5Cfuhb-->✅ 正常</td><td data-page-node-id="PI6IFXqoQMuEMHrQgqy0ww"><!--pnid:nUG8RMsOfUW48tLreQyMqX-->需 libfuse2</td><td data-page-node-id="NU6xKwIcu7BL1KlQV5iues"><!--pnid:KN72Bbfj21OI76BgEGh5bt-->预装时自动装依赖</td></tr>
+    <tr data-page-node-id="xwyLAE9uHLg0IHmkq1hrs1"><td data-page-node-id="UYKdDFUrIUlV8T7cH4DtLi"><b data-page-node-id="DKRUDXkXKP2h7pzfaTNT0A"><!--pnid:aAhAMESBtmsqOwmr9aJwRG-->网易云音乐</b></td><td data-page-node-id="IwiLLce8SixqSo0t5PSSn5"><!--pnid:dNjrXcimdWF0dbMOsoj4EO-->Flatpak</td><td data-page-node-id="KO7eOaV5MCNMzvvXQnWnsP" class="ok"><!--pnid:UPCuacyGlXqv50RLnjvoQj-->✅ 正常</td><td data-page-node-id="HGxYOrz4d9iUqlf1EAF74H"><!--pnid:9wYyZ4XepexwABcmgjNbzQ-->无大问题</td><td data-page-node-id="Z2YPvFDMOa43LIdwXXZnxK"><!--pnid:i6GNlkNzaLynQyw5bdEmpU-->预装</td></tr>
+    <tr data-page-node-id="5Bm87JBo2ZK1Knx2oflRho"><td data-page-node-id="G1HTsEJYnmwOCMFv4Yr3rw"><b data-page-node-id="YVK4DF7WtnFISWl5BL4EsT"><!--pnid:LPyyz79P4MllrJVAVcTa3o-->QQ 视频 / 哔哩哔哩</b></td><td data-page-node-id="AhxHs3oasnTeUB0F8OZ1ff"><!--pnid:eiPUnPnzHn0y4nDoqwV7vN-->Web 版 / PWA</td><td data-page-node-id="Xo3kJjha9BSKLSj2NgWFVd" class="ok"><!--pnid:HYmPRjbYGjyLNDbDH3fLV1-->✅ 正常</td><td data-page-node-id="oCp6cC82NN5SAgshK39ZwJ"><!--pnid:sSq9AJUlrUep53zjXEapWp-->无</td><td data-page-node-id="GWxU3Am7drdpe36D6KgYi3"><!--pnid:GZgoqlwYICeV9CvqfD1KNz-->预装 PWA 桌面快捷方式</td></tr>
+  </table>
+
+  <h3 data-page-node-id="ZU5WV5JKP6p4f7HoUyLABb"><!--pnid:3nIngGyjMCoOpTvW1TR8PH-->6.2 SuonaOS 的护城河：开箱即用，不让用户踩任何一个坑</h3>
+  <p data-page-node-id="eONmrb2r2sXwYaHMNlyw1K"><!--pnid:9wGpASKZMR7ii4lwnJar68-->上面 11 个软件<b data-page-node-id="5wunx3QUgTmVvir0gg1G40"><!--pnid:j89OLrblPau0NPjSm2of8L-->每一个</b><!--pnid:rj94NKGgCp5Ibk9Drk3c9u-->在原始 Ubuntu 26.04 上都有踩坑点，<b data-page-node-id="awXXySV1OeCL1HkZFLKxng"><!--pnid:DhRemtt8rMMu0iC9CIEWxa-->合计用户首次开机要花 2–6 小时</b><!--pnid:Kew4YMYXjFn1zDGPiPqZCH-->配置——SuonaOS 的核心价值是<b data-page-node-id="0GerlPY1W76f047Tkgmd5B"><!--pnid:IB2bThGuCXzompG3e6D7wK-->"开箱即用，全部预装 + 全部修好"</b><!--pnid:7IeaKPEyILkZYmB2VyDrdO-->。具体动作：</p>
+  <ol data-page-node-id="9Jd7GVdcKzIswU3Y5Ay4lE">
+    <li data-page-node-id="0wHFJ99HPkfQBL4fJnIjIV"><!--pnid:aApcaCCZn3L3pNFnUAC7Mi-->构建 <code data-page-node-id="AhhYD72lTQ8TSLyGIiAcFl" data-pnid-children="TrZp9Abkmn4zRovL55SJPA">suona-firstboot</code><!--pnid:8CzEQ5WIl37EWgOGVJo0pG--> 服务：首次启动自动检测每个软件的依赖、镜像源、Wayland 兼容、字体环境</li>
+    <li data-page-node-id="smoiGFNDgikxLv1WYswq9v"><!--pnid:naoF4tSB0woAVHiIyfakGN-->对钉钉等"需 patchelf"的软件，<b data-page-node-id="vs3GEmwgo5grercwGvLBDe"><!--pnid:GKMlUXFOMgSNrhJYCtXSgG-->包装成 .deb 后置脚本（postinst）</b><!--pnid:D5GlP0lHKjVR0vMt1oTzR2-->自动运行 patchelf 修复，用户无感</li>
+    <li data-page-node-id="k1pQXhSv89ibQBhnboeD8R"><!--pnid:cSQr2k0IlA4wU7p0BjcBwG-->自研 SuonaOS Software Center 聚合 apt/Flatpak/Snap/官方 .deb，<b data-page-node-id="avVoAYzdnaOYunUAiJCqZ8"><!--pnid:UvSLQIOzBig7swg88w0JAZ-->明确标注来源与版本</b><!--pnid:7U7YrkCg2IrTRblUnGjfi7-->（避免出现"搜索微信出来 electronic-wechat"的悲剧）</li>
+    <li data-page-node-id="EOMEqbtCp1K9FvbhFromK8"><!--pnid:rj5LsXe655Wch6J0N3ilQU-->Flatpak 默认配置国内镜像（中科大/阿里），下载速度从 KB/s 提到 10+ MB/s</li>
+    <li data-page-node-id="gJwSAU0pFPVeCI13NRkC9O"><!--pnid:EztaFBXqmf9e9wiowApcfW-->针对 Wayland 屏幕共享问题，<b data-page-node-id="w2eht7qZ6w43pEbY8sZmsR"><!--pnid:QJYMjaHomDtlVnvoiCWM3D-->默认提供 X11 会话选项</b><!--pnid:pNmT231Ge2nV051i8N3K5F-->，并在登录界面说明</li>
+  </ol>
+
+  <div data-page-node-id="onNbDeZUEGuRzuudOB2WS4" class="warn">
+    <h3 data-page-node-id="cGW0E4zOYY3KS6fNAd7HH0"><!--pnid:hxk7Dhy4TZSagDITq8fFW7-->⚠️ 6.3 国产软件合规与法律风险</h3>
+    <p data-page-node-id="2H2DwmTmzWRdXSNANurVOt"><!--pnid:b9fPfciYOp5lV7Ijbaw5YA-->微信/QQ/飞书/钉钉等<b data-page-node-id="pMs1gv4JKte6RQJybnaEzQ"><!--pnid:57qnDCF6nZu9aFsmgSmoux-->非开源</b><!--pnid:HRAC17ByYfKcIJ0HOYJy8U-->，预装可能涉及《计算机软件保护条例》与各家用户协议。SuonaOS 采取"提供官方源 + 用户自行安装"模式，<b data-page-node-id="FDC6GnhFwoT73R8nG9khgO"><!--pnid:ncZAv8x0VLwv6CB9aHNX4b-->不内置 .deb 包</b><!--pnid:1zyKHKtB4S0BwmWQ7A1qE9-->，而是在 Software Center 提供一键下载跳转官方页面——这是最安全的合规姿态。微信等通过 Flatpak 沙箱安装也是合规解。</p>
+  </div>
+</section>
+
+<!--pnid:popERfqIUVIQ67RoDB4ZCo--><!-- ===== 07 本地 LLM ===== -->
+<section data-page-node-id="j0DQDaS9L8xzmQ794dirvt" id="s-7">
+  <h2 data-page-node-id="5HP0wtSuOvctU1b4LaW3xz"><span data-page-node-id="8Qaitu6QsqG1nrFz1HWZwc" class="no"><!--pnid:eQmY95eIztrHzLfHSD2e4K-->07</span><!--pnid:hdncFNuaSPnRW5ckR47eUf-->本地 LLM 差异化卖点：Qwen3-14B 开箱即跑</h2>
+
+  <h3 data-page-node-id="Frc1moedJMXDo7qu8bMUU2"><!--pnid:bxdfXLazar4ljXoy8ZQiqt-->7.1 技术路径</h3>
+  <div data-page-node-id="UxKRwu9EafWGSesQLRiqDT" class="quote"><!--pnid:fBC9tHx5ttdLjs60NArZ6t-->
+    "Mac mini M4 16GB 跑 14B 已是极限，UM870 64GB 双通道能跑 14B 30+ tok/s、30B 也能载入——<b data-page-node-id="l8JVu3nZ9JACmwZxqOroSv"><!--pnid:41hFw41Myq16Ip7ASqN5Fz-->这是 macOS 至今没解决的真实痛点</b><!--pnid:WYMLPwg87FJVwhrI2EEiyW-->。"
+  </div>
+
+  <table data-page-node-id="lPCQlgwzNSY2SxwkRozY6J">
+    <tr data-page-node-id="sK4JRiFZefx1hbBGmY7Cok"><th data-page-node-id="VugtSqZcxCoui6hmIQ15C6"><!--pnid:oUIqogAZbd86tTFKD417oG-->步骤</th><th data-page-node-id="th7zPGXYgaogmVb4iadtkP"><!--pnid:V5RXNW03zFXDnEHokrU6kI-->命令/工具</th><th data-page-node-id="ETZgvnqlANwA3jG13xUrE5"><!--pnid:ctbRKd6ZSB0ElDDYrGibjY-->SuonaOS 做了什么</th></tr>
+    <tr data-page-node-id="IQ7wbJUAYDRxskvbnfAO6L"><td data-page-node-id="AfV3WbRd6IuqAY2gaFkcu6"><!--pnid:FsPxnU1o95av8S534riuTQ-->1. ROCm 7.2+ 安装</td><td data-page-node-id="9xl6w2gj7hswqVAfrMGUQw"><code data-page-node-id="2Lxy6Gig3uzYHsosByW7OV" data-pnid-children="YOiiIf1JwnVziEn85F9ZDf">apt install rocm-libs</code></td><td data-page-node-id="2D59cNrRT29K0OLU7Cr3cu"><!--pnid:yepZfGOcWTsEqp6m7SkA2T-->SuonaOS 预装 + 自动检测 gfx1103 / gfx1151</td></tr>
+    <tr data-page-node-id="3cLBCR1cZZpyYrbX1ap1i0"><td data-page-node-id="eoNqmv5wEX98egO2htDQTY"><!--pnid:dr64RYlP4cGgyOGnWOme0D-->2. HSA override（780M 必须）</td><td data-page-node-id="BrYnfsErec2IvlJasC8C9e"><code data-page-node-id="myEcYe4bgtTY2wEmMmv21p" data-pnid-children="pdtgKjplJmKEUKuRyegFle">export HSA_OVERRIDE_GFX_VERSION=gfx1103</code></td><td data-page-node-id="dJ4W6HJuIU7LVONDQkZ9iR"><!--pnid:TebZde2xyi5pZPbP8xyhjJ-->写入 <code data-page-node-id="ENbwhdUsTeLtxKUs7q0FrW" data-pnid-children="IF8wCSyerooTgE4CTlnXsp">/etc/profile.d/rocm-override.sh</code><!--pnid:843eNmFckfvpgSK7SkqAsJ-->，用户无感</td></tr>
+    <tr data-page-node-id="dk5CGIX0oozbFpAs5lVZxw"><td data-page-node-id="kKGmzedKUEjRqJB0E8HcGF"><!--pnid:EZ7fk8mmAY8u84VrvzrtnZ-->3. Ollama 安装</td><td data-page-node-id="hYzpa1fQVIxaFa62JV7Qfm"><code data-page-node-id="UBVEvU9m1vKyXBqIic8ZIf" data-pnid-children="2gYCv2OhQrSLkxlF3aK4Hl">curl -fsSL https://ollama.ai/install.sh | sh</code></td><td data-page-node-id="59hfW7eEvtMI6mrqz7eaiQ"><!--pnid:1PMK5rtn3beUhA0TZfAw9q-->预装 + Systemd 开机自启</td></tr>
+    <tr data-page-node-id="Z4jiuBXdEcwb9eAUbhcVpS"><td data-page-node-id="PpvwZYuzHTZJD2khjNCrk1"><!--pnid:yqfSe373ahXL3QCk7Lx7Tz-->4. 模型下载</td><td data-page-node-id="iSMdTGV4SoU2SiSvR1bKkM"><code data-page-node-id="lcoIGpmsR8hExRMm0ncMj8" data-pnid-children="J2tvvdrumKv79TJv5AtEV0">ollama pull qwen3:14b</code></td><td data-page-node-id="4AVYGhZQ5PynlcfQBewsop"><b data-page-node-id="8JWwPxZs0rizyod0hK3F0u"><!--pnid:2Z1oNqQ9D4dbG2uD9a9ZQ2-->预下载到 /opt/suonaai/models/</b><!--pnid:W6ogxWoFlxLCSN1hmjg1X2-->（8.9GB），首次开机即可用</td></tr>
+    <tr data-page-node-id="29QWlHPrOZHHTQQSDZ7N5M"><td data-page-node-id="oZ5oDskj8Bk8SM0lwJ3Tc3"><!--pnid:PW8U5q5kOU4ls5LgG5exlx-->5. 启动 UI</td><td data-page-node-id="1qHCBV1JVkYrnV5oVamHoI"><!--pnid:Uwfaaj6Z9dzh5y7V5bs5fY-->Open WebUI / AnythingLLM</td><td data-page-node-id="QaVxXI2tuYJeSm4M31nV7w"><!--pnid:i5ykutWhCLwB9sxFelvNXa-->预装 Open WebUI，提供 <code data-page-node-id="R6eixSABfdsKJmjlqgbF7J" data-pnid-children="X4CP4decdYCOfsFxVs0Qzn">http://localhost:8080</code><!--pnid:yPaeOxk2vWpXuV5C2iDv7M--> 桌面快捷方式</td></tr>
+    <tr data-page-node-id="ZVBFjvTZ0fKstEEOtKlNrs"><td data-page-node-id="d8mNc9nPha9D6FrmhwaGtv"><!--pnid:vxfjPcj2yyi2mki3PEUMIV-->6. 量化选择</td><td data-page-node-id="nLHkEzQ2XIku7hVuGexjC4"><!--pnid:56W8ELhdNTAxkDSuTzqt1S-->Q4_K_M（8.9GB）/ Q5_K_M（10.5GB）</td><td data-page-node-id="vOeV0EWIikjpPxVXvvcMT1"><!--pnid:iAq5zkWoL7gNJQpIdhevxa-->默认 Q4_K_M，提供一键切换 Q5/Q8 脚本</td></tr>
+  </table>
+
+  <h3 data-page-node-id="5v5wPzHbjHHTTUtHY3roTd"><!--pnid:JDhPlimRXrTavnZFa754sP-->7.2 性能指标定义（可量化）</h3>
+  <table data-page-node-id="UwG5j3hatfteQruBc3TIuZ">
+    <tr data-page-node-id="LLrjkXEqXZZimfdHu91liY"><th data-page-node-id="2M5bhF1bzeSqMjE6FPr4N5"><!--pnid:F3TcBPxNgYOudpfT0tvaaO-->指标</th><th data-page-node-id="tcZu4VgaxhGAP7a8swHsCz"><!--pnid:Fs0I8jOz0aiICWJfZHw3Cr-->UM870 64GB 双通道（目标）</th><th data-page-node-id="gm9nbUG3xlaOezB66VUMXO"><!--pnid:9IBoXkKSp9TBQ4tTWDBEtG-->Mac mini M4 32GB（对标）</th><th data-page-node-id="G1pnjQJucBYnuUk3DSHL5f"><!--pnid:TvCFvt4kJca1pYN8hhzN7Q-->Mac mini M4 16GB（入门对标）</th></tr>
+    <tr data-page-node-id="avAjVVUIwkxzrOzBYeJKU2"><td data-page-node-id="ANRa2m9cZXAlM3FP5ogP3A"><b data-page-node-id="H6QUmWbsCftQSeFzduPchZ"><!--pnid:xYjsIZxeb6xVKeHZmWrA7A-->Qwen3-14B Q4 tok/s</b></td><td data-page-node-id="rXmXLAYcibM7sdIVMV51ls" class="ok"><!--pnid:h3sEcsPiTM5xuHPef8dJLj-->30+ tok/s</td><td data-page-node-id="Qem54afoTNtReb53uivvZR" class="ok"><!--pnid:e8aHS43pr9R3OltRAwUzdi-->~35 tok/s</td><td data-page-node-id="cAd4kfDszjoDccpTvyPGIu" class="bad"><!--pnid:ScrxVh5jUi0sLbmutWggZx-->~12 tok/s（频繁换出）</td></tr>
+    <tr data-page-node-id="DBV0c5MlsduWx4ztSLRJRO"><td data-page-node-id="IpTYK0QfxGQdNJnX9OwWhB"><b data-page-node-id="QnCyX9iSEjydeh2yAdrhl0"><!--pnid:Q1biMIfoxRNrw5xotNTm0k-->Qwen3-30B-A3B（MoE）Q4</b></td><td data-page-node-id="2Mkl6eshclYLkXVmjhoE4p" class="ok"><!--pnid:aVbOjKYv9pC0aVsszxDvHv-->~70 tok/s</td><td data-page-node-id="NtQzRrANySx346USKkoW9M" class="ok"><!--pnid:AFyEcojv9FIZPKYQy0T98O-->~80 tok/s</td><td data-page-node-id="lhvcnTkMyN6kpuXvUn3jVn" class="bad"><!--pnid:9lIMWI2FLFQndc5GAqNiHI-->装不下</td></tr>
+    <tr data-page-node-id="HK5Lp8m9Ewpx74js0b2sgA"><td data-page-node-id="689oj9PO8o1HqM1xGElL4v"><b data-page-node-id="MC072nmPW8UHQ41GDBaRyV"><!--pnid:MZzQlPOy1kTaNsu3oK2Xbk-->8B 模型多模型常驻</b></td><td data-page-node-id="cc2HIxPzaTzid90BDXcowo" class="ok"><!--pnid:YB7p9nyUk8OiLUBSdI2Zvb-->3–4 个并存</td><td data-page-node-id="7FFdnBTcAg1HTgYdWjMt1D" class="ok"><!--pnid:BY6pI7grr5MvTmI016ox9H-->2–3 个</td><td data-page-node-id="HT8ypPBHDR0fsruZxU5mb5" class="bad"><!--pnid:t8X1GsI51xge5W8qQTToCS-->1 个</td></tr>
+    <tr data-page-node-id="Nr8pFbDgWVkjvTzdNucAPD"><td data-page-node-id="zUX3wCiy6P4hxAmMaG6Jt2"><b data-page-node-id="Thvs7V6QHDLbgRELy8zcH1"><!--pnid:R4bVvy9nB3e7navCZAWJQK-->价格（32GB+）</b></td><td data-page-node-id="G7jxZ9FsBs8G9qjFE9a1dB" class="ok"><!--pnid:jJt1NWNaLHifQVV7mCp5dR-->¥4,999–5,999</td><td data-page-node-id="9KCgXP5iymyu7Txe1oeXYu" class="bad"><!--pnid:qJ2eYuQRcV0oAlmgF1cx2K-->¥9,999+</td><td data-page-node-id="Hr1Jg1NWVFcaYIlYwiSJMF"><!--pnid:lC9WmchZeRahX1uZzQ0BIr-->¥4,499（但 16GB 装不下 30B）</td></tr>
+  </table>
+
+  <h3 data-page-node-id="qQl7r3YOTNWrqGbjwkHUhZ"><!--pnid:ga8gbabNa3AZA6kQgz6ELV-->7.3 中文 LLM 优先策略</h3>
+  <p data-page-node-id="0mczPO4jj97mWaJuSd8vpK"><!--pnid:Jkso5Zorp6ThyCUQcWLl6v-->Mac mini 跑 Qwen3 需要用户自己装 Ollama、找中文模型配置——而 Qwen3 在 Apple Silicon 上是 Metal 加速，<b data-page-node-id="OmRFB4MrjXO6Ygk9ofEiom"><!--pnid:GFLMPn55DFyaQVGHRx3DTt-->不是"苹果官方"路径</b><!--pnid:L5HpuqctKlXDGbFB9cCJ2a-->。SuonaOS 的优势：</p>
+  <ul data-page-node-id="vWBJ8NRM3yDiDM5LluK8n2">
+    <li data-page-node-id="4WEjIgop8P4YD7Kn2lR2n2"><!--pnid:9nay6GhkD6vi2xfa4udU7F-->默认模型是<b data-page-node-id="DBMshkT3kSpP24DzOKx9qc"><!--pnid:GFGjmnrI4VYMQAak97sZq0-->通义千问 Qwen3 系列</b><!--pnid:rJy7d6wUmGgLGCqETqd56H-->，不是 Llama/Mistral（中文 OCR/古文/方言性能差距明显）</li>
+    <li data-page-node-id="618rAOApAn4yAyW0cTlIbR"><!--pnid:gtDpgSexVQD7Y9QysIu27w-->预装"中文 AI 助手"桌面应用（基于 Open WebUI 定制），一键对话、知识库、文档总结</li>
+    <li data-page-node-id="Zlk2jggGmuFoaHJL2Zbp7Y"><!--pnid:anplVhp1EMRhB2I2lxWm8E-->预置个人 RAG 模板：把工作文件夹挂载到 AnythingLLM，<b data-page-node-id="L6oGDYJ0Xuh8vx4vd1lJCn"><!--pnid:JKCj8FJAfus4WUNdyf408Q-->10 分钟搭出"我的本地 GPT"</b></li>
+    <li data-page-node-id="Ks3nc9jB4NdOjXI0aylihJ"><!--pnid:8tjxqhWJ253o9ploq5PyHF-->针对中文 UI/字体/输入法做了端到端优化，<b data-page-node-id="zi3VxjIligimxNP2gYr4eV"><!--pnid:YPl67webGrvIfGmMDT24UU-->不是英文系统套个中文界面</b></li>
+  </ul>
+</section>
+
+<!--pnid:e5j9VX7Ewaa721XnTlZohE--><!-- ===== 08 硬件路线图 ===== -->
+<section data-page-node-id="TW0rSj5BQVMzrfM9dFa55j" id="s-8">
+  <h2 data-page-node-id="PGaPs1ySis7hVHY3aoWUgU"><span data-page-node-id="nMBaWk3ML3kDN31KffaB5W" class="no"><!--pnid:YtKDFPhxil0emJx7IQjtJm-->08</span><!--pnid:nALtdBV6LSmmQBXie9IUH7-->硬件路线图：单机型深耕路线（2026-09-10 修订）</h2>
+
+  <p data-page-node-id="3oaUsJNhecYRb9OIRqbHB5" style="margin-bottom:14px"><b data-page-node-id="nTImxnIKjiCYxqLAMOBnie"><!--pnid:ctULNOvwNnbH4IFNYDKe5H-->修订说明</b><!--pnid:4j1tyXOHBIy0JGfpPP029c-->：砍掉所有笔记本档，SuonaOS 走"1L mini 单机型深耕"路线——对位 Mac mini M4 的"单一产品单一形态"打法，把所有工程资源聚焦在 UM870 这一个形态的所有细节上（散热/噪音/外设/睡眠/外接屏/键鼠）。这是 System76、Steam Deck 验证过的成功模式。</p>
+
+  <table data-page-node-id="mBmFtl47PvmGRtzqdO1McA">
+    <tr data-page-node-id="TgHjqnz0LjBMXDPht9Spzk"><th data-page-node-id="0WbZ8Rt0WIGJQHi9kCydbF"><!--pnid:s3KNVT6L0bAx6JlK6425Dk-->档位</th><th data-page-node-id="KO1CFPTqpHOgaFilPkPthr"><!--pnid:pJc4HEm35vzpjtYAAebyoS-->首发（0–6 个月）</th><th data-page-node-id="xko5MrQc0KwnPt1Ydo2PjC"><!--pnid:AvEcrXJ9EiNfRpoEvwCT5F-->优化（6–12 个月）</th><th data-page-node-id="EV9jUPVRVyOXbRAa6rtER1"><!--pnid:XRKChSx0NqfaHDkIBJWMnp-->Pro（12–24 个月）</th></tr>
+    <tr data-page-node-id="odE8VMv4TdLeTHC0iKtOqy"><td data-page-node-id="5qo15ErYx83myuvBh7HV5z"><b data-page-node-id="EatiTrxhzb7pTLQ1GeKHQQ"><!--pnid:97DMaQnyCgnWxUyQAwkSEG-->主力 mini</b></td><td data-page-node-id="nYzXtifL5k9dHWjXbfNKWx"><!--pnid:IQ4G8H5HAuLijiVlnyhbw1-->Minisforum UM870<br data-page-node-id="IMq2dvxckQDoOOFIpxQTz7"><!--pnid:BhOveQNYz4enDidjMFD9aN-->8845HS + 780M + 64GB<br data-page-node-id="i6uzZA7tWAwXEH5q2KWNte"><!--pnid:NLggAf2hoYZhXgKlXm7E3h-->¥4,999</td><td data-page-node-id="lOieicdf76obaFsfmb6S3c"><!--pnid:SY6hYKh4myA79w8y9frcxY-->同平台深度定制（双 2.5GbE、VC 散热强化、定制固件）<br data-page-node-id="LhtrCl0FGUj40X2sE7hxZg"><!--pnid:6LjUdHpAaabLgBgbHOuuVy-->¥5,499</td><td data-page-node-id="YyiJ5Q6gfgU0PxyDHXLEag"><!--pnid:OvZag4lG9bPXGt5Cgm7ABt-->自研 ODM mini<br data-page-node-id="FC7lb8sTUKdlxcFH1OvLhH"><!--pnid:aM2V7YbaBR33Aj8nSl0VP0-->ODM MOQ 200–500，¥15–25 万模具<br data-page-node-id="pHj6QgT684tryObOmExOke"><!--pnid:egNZxbTMTPokCD5AXEGApJ-->¥4,999（成本下降）</td></tr>
+    <tr data-page-node-id="CPe3wSyxUoPII1Mm9hetPG" style="background:#fef3c7"><td data-page-node-id="Sr7kUSBxOqEOuWSpS0bx1P"><b data-page-node-id="yCkydt32LgPD8ym0mhy7XF"><!--pnid:oTz6ixbdGB10wpknnFkvuW-->AI 工作站</b></td><td data-page-node-id="QZxFNSbomyOHII69FLRuKV"><!--pnid:lDSEIaNEbBQWjUkSRqYzmm-->—</td><td data-page-node-id="7cAt9Wivgm4iWZdFnOx00b"><!--pnid:r4qEqhMHHCjvTTKfPxFO3d-->Framework Desktop（Strix Halo）<br data-page-node-id="pWLXnjx5bVDB2Jvquu9nP2"><!--pnid:d3VjN9H7PoeWspv91ii9Z9-->128GB 统一内存<br data-page-node-id="FtJyJoRxPz9zoBOCAbma8N"><!--pnid:ip64YCoxTSWUzdFbJPlaHO-->¥8,999 起</td><td data-page-node-id="KFtEZsD8JwPakS3JXjemAN"><!--pnid:2wkVRai8mXq1c68wcePUZ7-->Beelink GTR9 Pro 替代品 / 自研 4.5L</td></tr>
+    <tr data-page-node-id="qr5GYf4hiGzlqsNUewXkWQ"><td data-page-node-id="rmlFYKWimxCj2pI2GXPRhk"><b data-page-node-id="iOQJ6fXq4FmyjbnQRo8qHv"><!--pnid:CNJMxUyPOTLNoDNEEHKLvF-->成本结构</b></td><td data-page-node-id="rBA0ZjMXpHq8ZhKGmn8eVa"><!--pnid:Qfq9eENRb4n0dWB0svU9cM-->贴牌 + 整机调校<br data-page-node-id="AAUMHN9NLrnADwfAcmA4HP"><!--pnid:7Z3Q6qlFjEu1j9MrMFIwVO-->毛利 ~25%</td><td data-page-node-id="ktTPCWCiHFUbaznCDr6ojk"><!--pnid:zaNm5K55mkxP9gui7yIiq6-->深度定制 + 双供应商<br data-page-node-id="VMAp7EY2O0gI4BvSAbpNX0"><!--pnid:8Enxgu4fZd0I8HqNFihFzX-->毛利 ~30%</td><td data-page-node-id="HFKkywAeznaypUpqfo0BB5"><!--pnid:Ygu50pAwr7LTY4NXl1vENl-->ODM 主导<br data-page-node-id="ONSg4ZrCv6yPHgqt2U1GSV"><!--pnid:jaxI6v9tnV4U9HLMfGIgL7-->毛利 ~35%</td></tr>
+  </table>
+
+  <div data-page-node-id="6f7ccq8gwZdDdERdgLWnSO" class="warn">
+    <h3 data-page-node-id="w9iM51o74HCfz0ueX2olDW"><!--pnid:c3VaGDNmC0yA1hGmv7IMMh-->❌ 已淘汰的硬件方案（不再评估）</h3>
+    <ul data-page-node-id="Nc2Rtdv1am5HvXuhXsQP3y">
+      <li data-page-node-id="rJtmsxxZKT3YxuM9whYboo"><b data-page-node-id="FdkkT39t7E9Dbs1SQH4h14"><!--pnid:qQY1W0rpp9PUz4RU08IWBO-->ThinkPad T14s Gen 6 AMD</b><!--pnid:IAlRCVRrL3lMxtoBZpE83f-->（¥11,999）—— 笔记本形态，砍</li>
+      <li data-page-node-id="liccsO9aekUcKXjOtlLA2j"><b data-page-node-id="ZntHmOsDQ4OubeSPM3UOLl"><!--pnid:LdJ58W4Vxto5yc76dWxmTQ-->Framework Laptop 13</b><!--pnid:EfFRGIMfMp1E7qJPmfV1Yc-->（¥9,999+）—— 笔记本形态，砍</li>
+      <li data-page-node-id="NEfDSXbw5gqEA9uCrZy0aQ"><b data-page-node-id="CqbOX9BZlQvqBEivv6Ty91"><!--pnid:7KwawxViePrvzUfuVBq2xZ-->任何 x86 笔记本方案</b><!--pnid:otzeD7GzAZuU5KtqLaovg0-->—— 与"对位 Mac mini"产品定位冲突</li>
+      <li data-page-node-id="3ri1EU9BJu3Ok8hUb7sz2N"><b data-page-node-id="iuckyprb82xPBaj1S0G2CL"><!--pnid:yaRXLlezyviannikvZPwbi-->任何 ARM 笔记本</b><!--pnid:Tj2Hqn0SkjiMxIe1eviozs-->（如 Snapdragon X）—— Ubuntu 适配成本高，不在窗口期</li>
+    </ul>
+  </div>
+
+  <div data-page-node-id="lE280Q7UzAkDorFaROnYUs" class="info">
+    <h3 data-page-node-id="nc6pxQYUrtM26B2DiMtfsc"><!--pnid:lmtMR7AH6PbQYdqwXor460-->为什么首发不上自研硬件？</h3>
+    <p data-page-node-id="m7JIIjxfyBJ2r6PL68DOqZ"><!--pnid:9Szo59Tqq7WIj1SyHrk0QH-->自研 ODM 模具需要 ¥15–25 万 + 200–500 台 MOQ，<b data-page-node-id="gEHYloZwuZrJG1uoxNAb1j"><!--pnid:emLCWLK9KioZPeOvI74zdh-->资金占用与库存风险都不适合 MVP 阶段</b><!--pnid:yVkED842ACTeGevbqV5xuX-->。Phase 1 用 Minisforum 贴牌 + 整机调校，<b data-page-node-id="7XkJTjPNPpqmMO5SJypXov"><!--pnid:chrIkXnKMrWDQUYwUJwVpO-->先验证"产品定义 + 客户体验"是否成立</b><!--pnid:9RAAHWUzKko1uJWir8aOPh-->，再决定 Phase 2 是否上 ODM。这是 Zorin 早期验证 6 年才自负盈亏的反面教材——不要重蹈覆辙。</p>
+  </div>
+</section>
+
+<!--pnid:DYpT2Fxe75wjmvG63GSXUN--><!-- ===== 09 商业化与财务 ===== -->
+<section data-page-node-id="astxf5xaiwbbZ2y0AuvqjB" id="s-9">
+  <h2 data-page-node-id="DJW3gtKwwSYY5VIUncCp54"><span data-page-node-id="OIujpsUzWIifdLyaGOsZTa" class="no"><!--pnid:Mpl6kqlG1TXJeNzCqAkNi2-->09</span><!--pnid:65hMiKnTzrBjv2VgEUYOVN-->商业化与财务模型（3 年）</h2>
+
+  <h3 data-page-node-id="CJ9luvpuzRQLmQUfu7qMI5"><!--pnid:ouwuxL5fWiNTTZ2hcEdTbN-->9.1 收入结构（3 档）</h3>
+  <div data-page-node-id="afcy1uy7vMJJ86kXx4NdOc" class="finance-grid">
+    <div data-page-node-id="tT55c02d3pdZBUpZWmkopP" class="finance-card">
+      <h4 data-page-node-id="sslSht8QY6NBXed4ftlK6A"><!--pnid:wbtKgxz49haCfAp9oB9TYP-->① 硬件销售（主收入）</h4>
+      <div data-page-node-id="B0X9s0VjnQxb8tjLHA0jO2" class="row"><span data-page-node-id="w2t2JwoSZDPXuRD5OnStfA" class="l"><!--pnid:swb5vTm8e29oAfxx2UkkQm-->UM870 64GB 整机</span><span data-page-node-id="k0lTDphciRt412kZSv0esI" class="v"><!--pnid:Y4dMWx9wnjZ4aRJUh0ZAnY-->¥4,999–5,999 / 台</span></div>
+      <div data-page-node-id="v6LM725UIWGsp0B5rtGmxV" class="row"><span data-page-node-id="f6gWrC9yJOZeDeaKZQzzCT" class="l"><!--pnid:oLlAiVuX3OO4suKNTcx6b6-->T14s Gen 6 AMD 整机</span><span data-page-node-id="s6T3N6ldQrKA4ZBWqALtYm" class="v"><!--pnid:UJ0XfcfG3lIYTC7A5VNlOc-->¥11,999 / 台</span></div>
+      <div data-page-node-id="hMeh9fMKTSdGdsX1CSL0Yj" class="row"><span data-page-node-id="AwVlCy2HEayxRGurqYV4X4" class="l"><!--pnid:eIyHDUkkRJ6qKab1bl0Ohz-->硬件毛利率</span><span data-page-node-id="W4OkyMrm2UgnC9WkSxzkhp" class="v"><!--pnid:BLkf29fQBg6p5OMTgkA2IL-->25–30%</span></div>
+      <div data-page-node-id="J5SGJed37AKm2R7Zo99nuM" class="row"><span data-page-node-id="tnLsl3W2MRV0wildyQsXXn" class="l"><!--pnid:Lm5KfR8DlA1Gxy7FigWfFk-->单台净利</span><span data-page-node-id="wCjmwUAeNvhGBLBl4LmN4W" class="v"><!--pnid:Z3uaIG6xUiqELvPVYIyruS-->¥1,000–1,500</span></div>
+    </div>
+    <div data-page-node-id="6IfYwd5YEwUfv4nWEtQm4d" class="finance-card">
+      <h4 data-page-node-id="HHOqRMPziQBaoE9La9WGXy"><!--pnid:aNCx6Psse1vyjLhwxymuhz-->② 软件订阅（粘性）</h4>
+      <div data-page-node-id="Y9BubeGeFnbl2iNOyT3kJa" class="row"><span data-page-node-id="K99IBSal5i568pHhY2tt8P" class="l"><!--pnid:bE79GWnqkaDnPSs2r3kY5e-->个人订阅</span><span data-page-node-id="rugulylfkm8MrCy8xhoFHZ" class="v"><!--pnid:Eq1e0MCgG2y74FG30xTrbt-->¥499 / 年</span></div>
+      <div data-page-node-id="2rOUR4JbpeteNdk6aITWOG" class="row"><span data-page-node-id="DiFqsQT5TVUy4ayW9fO7XV" class="l"><!--pnid:TgOu8tAF4ZDnnDJEwijLOr-->企业订阅</span><span data-page-node-id="Uwj0aw5GGYESrUcqzPh5z2" class="v"><!--pnid:7adBGCN7oT4MCMDWPz1vaq-->¥2,999 / 年（10 台）</span></div>
+      <div data-page-node-id="x9mvW49py7NGfnmCy1YXkj" class="row"><span data-page-node-id="sAosKwyHUccI29NivVzbKY" class="l"><!--pnid:adBaVtYnUlNQQeZMRS6mME-->续费率目标</span><span data-page-node-id="cJMeib0WuPwJ48MIpmlYiG" class="v"><!--pnid:QwQil2YsBJ7QKhxKKrW5NL-->70% / 年</span></div>
+      <div data-page-node-id="AaJi8aZ7jG0UJTwnDHNARY" class="row"><span data-page-node-id="tEMbZxHN59OLwYJPaNIaLb" class="l"><!--pnid:nc0Qe1fuBtqa9xbkuQubJd-->订阅 LTV（3 年）</span><span data-page-node-id="xmRYtK9r7dzD5o9DAe6EEb" class="v"><!--pnid:q1IZMPXyhAU4sh34FVq1wY-->¥1,200 / 用户</span></div>
+    </div>
+    <div data-page-node-id="4YG2E0SnAFb1Ggab1r62Hg" class="finance-card">
+      <h4 data-page-node-id="dpGCptWytqJAZrbsaAoVBS"><!--pnid:T1AEBnmUdzpefqygdZvUG9-->③ 增值服务（长尾）</h4>
+      <div data-page-node-id="hFkxRACGjDlOvm51Y8JfTA" class="row"><span data-page-node-id="zmDHrBcmJGNlahxrnbU6CO" class="l"><!--pnid:868QfddAWZMEkmGtkVBh9W-->企业定制镜像</span><span data-page-node-id="fgm9NpzgZYkB8LUlxClPUa" class="v"><!--pnid:sIW7wwbxjRxZCaqONxHgtF-->¥30,000+ / 单</span></div>
+      <div data-page-node-id="oHMoF6UKZ7V1Z0hztQEzHp" class="row"><span data-page-node-id="iq9BbsYLf7fCIF8brlGwZy" class="l"><!--pnid:x02u7HYSp5TqNp9GnVYeJd-->OEM 预装授权</span><span data-page-node-id="D1MHQk2OWgrNaUxYhz8d9A" class="v"><!--pnid:OFBht54dT7eeAv7yNhv5Wv-->¥100 / 台起</span></div>
+      <div data-page-node-id="viFNhcOBqQiskxpOV5CPOQ" class="row"><span data-page-node-id="ch4yxpHbEkaiy4vneZWFBC" class="l"><!--pnid:4SgBYoke2tTXuFHtYIQlsN-->培训/咨询</span><span data-page-node-id="aAaHMknsiOAYT7GSsbZ7tG" class="v"><!--pnid:wRF0EsGGOoAVUVsBGaTS8Y-->¥1,500 / 天</span></div>
+      <div data-page-node-id="HIIViuVMJwZyR2U7iVV4DA" class="row"><span data-page-node-id="3z9pfGk3lCjlVf96p9xJBq" class="l"><!--pnid:H9mxyLemAAXMs9nOFU5cSS-->占比（Year 3）</span><span data-page-node-id="NZ2LcS1heCyCQgaCzhvZuw" class="v"><!--pnid:rlzvIOF5w3BpeclvZptkUq-->~15%</span></div>
+    </div>
+  </div>
+
+  <h3 data-page-node-id="HQ2sgnQgp1aJmw1JEfj7kz"><!--pnid:Mq7DvAHeb8sMX8etNYz0Yt-->9.2 3 年财务预测（基准情景）</h3>
+  <table data-page-node-id="xJn8evV8JGmfGs7WP7PAel">
+    <tr data-page-node-id="feon4Crbk6WPspfKzNUYc8"><th data-page-node-id="TRsl8sFgibn1eKDrXe8KjE"><!--pnid:kckTFAYZOH3vIhgPxFhsas-->指标</th><th data-page-node-id="nR5IswVYzR4USKyVjrgaCS"><!--pnid:GCRZ00hmD5gcauYxGRb7HI-->Year 1（MVP 验证）</th><th data-page-node-id="Yw95zRBEwd2jI3hc26fKYk"><!--pnid:6Jrj3CP8SvqaIaNfw0ynCe-->Year 2（公开发行）</th><th data-page-node-id="syqDL7PiajWDZW1OXRxjhH"><!--pnid:Rk0KBJi8ORyhq0BIlOz0Ad-->Year 3（扩张）</th></tr>
+    <tr data-page-node-id="laI1O4UgBzKX8hQH3ZU2OA"><td data-page-node-id="oN9V0HDBe7sK3hPBZ0DJnT"><b data-page-node-id="DEivMio4n8nBr9NJJSOkZz"><!--pnid:Ws9Lz9AEky5KrQtkGNajDk-->整机销量</b></td><td data-page-node-id="BldNtlsDO5VXhC87QQLJI6"><!--pnid:XXt0gLZXKIQ5dTCItG0RQA-->500 台</td><td data-page-node-id="aPx5nafJ9l7J6FtTTKofeA"><!--pnid:TVbRGx9gHaAmJbhaMVqdhl-->3,000 台</td><td data-page-node-id="wjNaOurKtjlKNl46aPeI2L"><!--pnid:gi1x7ozk2Hlk2RDyxFY5X8-->10,000 台</td></tr>
+    <tr data-page-node-id="Q3ueMPRCzSX1lOyI7j8gzG"><td data-page-node-id="xWdWmBqd01EkP2ibNWEnIU"><b data-page-node-id="ZQztXyyzvpNFrgknfA2k5i"><!--pnid:cH1mUQLV92nu5KarAPUX43-->订阅用户</b></td><td data-page-node-id="HBBzEACrfnQ6I3fcGE0Al2"><!--pnid:FJreTdFRkRCqsUaXbNLrhA-->300 人</td><td data-page-node-id="lgfrmYMvHewaZHpE22sKV9"><!--pnid:L0OzQMrNGun8NuRnyyNkkQ-->1,800 人</td><td data-page-node-id="WmipN5C1dJSZvgz5Oh0A7Q"><!--pnid:N8MOcehNpY4r7NZxX1lyTA-->6,500 人</td></tr>
+    <tr data-page-node-id="4z41Zf6UYbKuOMxCbyMyVU"><td data-page-node-id="IA8f3oPp3UqsAtTAc6sEzM"><b data-page-node-id="oSj5AS8PRYfTJzjwrY2DUo"><!--pnid:gYeaCoEKST2gDSTwS75sWs-->硬件收入</b></td><td data-page-node-id="9GdF2TbKc2xGYB99gTTEMc"><!--pnid:jk0J1vcdCukuQGIjNkLenQ-->¥2,500 万</td><td data-page-node-id="lk7D07Qb5ZcIjNA34W1qNO"><!--pnid:GafE4laAgfzWLDyW92an7n-->¥1.5 亿</td><td data-page-node-id="48qj98uv8ufroS1e7BM34a"><!--pnid:8WUXDA7pOaLSIspCkeav0A-->¥5.0 亿</td></tr>
+    <tr data-page-node-id="SSUrpobPZSq1FRxbxHcwcV"><td data-page-node-id="gWgxKKadl5SPm0SSKQOFhp"><b data-page-node-id="YBFslDjuO3Hv5QZgnlCFIU"><!--pnid:x7f7wcUFOMeLKcxCs17M4s-->订阅收入</b></td><td data-page-node-id="4gKIuQkndS9eP65upSoeti"><!--pnid:eadG0eA1dSED7v93PXaTcq-->¥15 万</td><td data-page-node-id="REld18gbxLuKnksrmOuHbn"><!--pnid:cS1iYOixuZPXRZbaPsumoA-->¥90 万</td><td data-page-node-id="2mNpwNpwTkTUoWtY0esNjD"><!--pnid:d7CzBGMuyY1xAcMuqHS9MR-->¥325 万</td></tr>
+    <tr data-page-node-id="FKatzds7zJJa5KOc0kgdeR"><td data-page-node-id="TlLMR67IreToOcx2srfAra"><b data-page-node-id="tbF0QUUM3oqd7WZ0n59Fbj"><!--pnid:0MFgN3pxfju6mwHE8F4Nm4-->增值服务</b></td><td data-page-node-id="ovsrJaz7QqEENvOAQvqoeO"><!--pnid:JX6omSIQCRQMKvwSe9sjKK-->¥30 万</td><td data-page-node-id="cy0VlQxYJikkbVskNzr7Y2"><!--pnid:Wa2hHQUvEw8kIWTnui1DIn-->¥150 万</td><td data-page-node-id="pYXkZMibWpI8LqZW8CjdPI"><!--pnid:HJWxXGcitM4slxcUwXEtOL-->¥800 万</td></tr>
+    <tr data-page-node-id="T78TypOu8dFS2rF0dzoW2d"><td data-page-node-id="2uRSnAQoDY2eMyJvhS8l9K"><b data-page-node-id="85qgLyeEkLgHgbWvOIKWym"><!--pnid:sGlVjzjmMG1FHkRDJ3fIjZ-->总收入</b></td><td data-page-node-id="AZTvnmYmaMITvQ1vZItQUa"><b data-page-node-id="JWZW4OAw7MKnRa2HX0qnD9"><!--pnid:eJ8cN2Qx1ZlHc2BtE6yVwp-->¥2,545 万</b></td><td data-page-node-id="UMfh1ggiowQUzrYIYXpqip"><b data-page-node-id="ucYSEfkpKK5hS75nfWE1BP"><!--pnid:PtNxxNfDfHBwkRxPpuhBSe-->¥1.52 亿</b></td><td data-page-node-id="f5UWNmQkh9CQGbZAQ1Lexo"><b data-page-node-id="RHjPOZfa6D9OdMrGvROOgt"><!--pnid:tHBx4wyu0wxH5GNOqz88Qs-->¥5.11 亿</b></td></tr>
+    <tr data-page-node-id="zonlly6zg0IxvleyTtEazd"><td data-page-node-id="WrZcuLoJ57Ucpp7YJYzU7w"><b data-page-node-id="c1m2NWyziOaXj1v8QutSX4"><!--pnid:w3RJWYIoHiOtl7vktKg25t-->毛利率</b></td><td data-page-node-id="8NDJbxhROk8ioEyAcQ99UC"><!--pnid:dLXMpJTgRRgc8JKZJToa4g-->30%</td><td data-page-node-id="o9ksJlq83adyTsrbEtz6V5"><!--pnid:IJVZMGGUG871o80MDeJppq-->32%</td><td data-page-node-id="gxydOoBoo8QW1oZp8NkZfI"><!--pnid:CnYnDVivQr0eHpFbEKt4fz-->35%</td></tr>
+    <tr data-page-node-id="qvkdbVuox9iLKV6eyKPJw6"><td data-page-node-id="x8ssT59zIvKJCvoOgLExdQ"><b data-page-node-id="M0pQlEODzEkh3zCFpbOjJZ"><!--pnid:ydEpnyEeqhPzKBlu2dp6cf-->团队规模</b></td><td data-page-node-id="VKvrbroI0KI2l7Q6Y14AbQ"><!--pnid:FHSPG7ybBSFDsjJoffz0oO-->3–5 人</td><td data-page-node-id="2i2jsFHbG8qQsgsudaXmpb"><!--pnid:67QXBVFKYdHhsb23KQ1IOc-->8–10 人</td><td data-page-node-id="KET8F16C8WMz8nyKPeAR3g"><!--pnid:sTP4RVo6OKWwIJnbcZbXJn-->15–20 人</td></tr>
+    <tr data-page-node-id="xPXld1VPWnoZJeRSfq9UZB"><td data-page-node-id="x3jdmOSs4AaZJiHBMKKLiU"><b data-page-node-id="Ekubm2OKQz4sUtT3h8xGNV"><!--pnid:udaNk88DiSicU5NfM49FM3-->净利（含研发投入）</b></td><td data-page-node-id="MlA8Awl9pHtZLswlnE6iET"><!--pnid:Hfxpo7LX9vN9T9mgHoR5kw-->-¥200 万（亏损验证期）</td><td data-page-node-id="IduCl33O7tMI9OhY9Cw2Gr"><!--pnid:n6eHUrWRqBYTFQ0yOsTqYg-->¥800 万</td><td data-page-node-id="POm8UWuY5zLpkzi4W2KH46"><!--pnid:UzXO2oBFKHGG8qrGGY5Bp0-->¥3,500 万</td></tr>
+    <tr data-page-node-id="rotIfs0R6CESDGImxqi6zv"><td data-page-node-id="uTcBfCIvXsZTvtHKW3KAS5"><b data-page-node-id="6eFfZ3V5vaiurltHxfhVj2"><!--pnid:tJumkTKOEo55sKjEzySwi1-->盈亏平衡月</b></td><td data-page-node-id="QtPAglRNZDXLf1hWbwihE5" colspan="3"><!--pnid:njeDjWA0zBbcYzwT3RE3u4-->约第 14 个月（销售 ~600 台 + 订阅 ~400 人）</td></tr>
+  </table>
+
+  <div data-page-node-id="EDQlX4slGqqNnBabHOBUtb" class="warn">
+    <h3 data-page-node-id="pugNdur2Xn6Hs8h2r9NLHw"><!--pnid:e9A4Amj7t6oYtZVNmBA69V-->9.3 财务假设的风险点</h3>
+    <ul data-page-node-id="W339vVKO2i6bJPwcwU8ttY">
+      <li data-page-node-id="jfpqhuXYiAeir6PH2SDjQy"><b data-page-node-id="hyyvinuPbxTJZoMMFIc5fK"><!--pnid:ZlgtsUkhfhEO5mJ6gv1A8U-->销量假设 500 → 3000 → 10000 台</b><!--pnid:MnGzsOkvhW0rlrur9pxDjB-->：保守（参考小米迷你主机首发年 5 万台、深耕 OPC 渠道可达成）</li>
+      <li data-page-node-id="FI0wVymOlS0RuS9S2SH05v"><b data-page-node-id="2lZpKBDVne5S1xp2dg9858"><!--pnid:lbIPRmY9LfvWm32nDhHRST-->毛利率 30%</b><!--pnid:DLizLlXrOJdULvBY1Eik3s-->：保守（不含研发摊销，含后是 ~20%）</li>
+      <li data-page-node-id="O2yczI3pLEVCQItSTT3AFI"><b data-page-node-id="VvxXBpkIdXOpSPSiuM7CFX"><!--pnid:tdjCVYEUnTXMCxdZPGcIrc-->团队成本</b><!--pnid:KsW2NwcpgEVIiaTg49Byqj-->：按 ¥30–50 万/人/年估算（含五险一金 + 房租）</li>
+      <li data-page-node-id="cmY5HgqJrLqGy9VG3VQvCr"><b data-page-node-id="IE5yZnTQEiLY1TIkIvvrHa"><!--pnid:mDC1DFp5wA8JHYDhoqrvzk-->最坏情景</b><!--pnid:FqUhoibEFImISRs6twNe8J-->：Year 1 销量 200 台 + 团队压缩到 3 人，年亏损控制在 ¥300 万以内</li>
+    </ul>
+  </div>
+</section>
+
+<!--pnid:vIwHh0BgjIh9J1vAtmmPFP--><!-- ===== 10 团队 ===== -->
+<section data-page-node-id="Xf0BktQDGWkQ7ksPAYf4pr" id="s-10">
+  <h2 data-page-node-id="or1lXZDOso9jnmhpZxPuUp"><span data-page-node-id="reGA5rsiDAkshAKQsJS7SE" class="no"><!--pnid:syPHvzt9KFxcHRKlsC1vBe-->10</span><!--pnid:UrcrJE9aDoZ1DSTZzmfpcM-->团队与组织（3 阶段）</h2>
+
+  <table data-page-node-id="m4kDkvCpouHcpqYCqCCmZi">
+    <tr data-page-node-id="bXxektegKJ06BY5WDgQBcT"><th data-page-node-id="eTSDfKACZLi8vE3vkA9jIN"><!--pnid:uxaJw6O5e8uxR00QzbKJvP-->阶段</th><th data-page-node-id="UQi6xgs2TNpSazkKISHFfO"><!--pnid:pj46I2cWjnNJeEUfOGyf1I-->时间</th><th data-page-node-id="2PrYLyNUGZx9XE5CC0Vs6S"><!--pnid:hzxyFYkRHciP24xEGuHpAK-->团队规模</th><th data-page-node-id="8f7lOpeTeA0dQue998JMcc"><!--pnid:tRIAdLl5aZszryIDKABnq5-->关键岗位</th><th data-page-node-id="RSrJXYXYW59FE1qUfAov90"><!--pnid:V6PoFQ27BHcDjiqP7mzB92-->总人力成本（年）</th></tr>
+    <tr data-page-node-id="B6iF5rLukpYZ7b25dgCmYg">
+      <td data-page-node-id="iy2lpzpejUZFx0OVYS9IuU"><b data-page-node-id="v3iAH3O99gU7qoiPvZ8Amu"><!--pnid:EucQVMf2dZQdHujtbKeQ3s-->MVP 阶段</b></td>
+      <td data-page-node-id="j2Pu09M9H7q5DfEkhRdDP1"><!--pnid:309iywaq7qbBJkB7xBVNWN-->0–3 个月</td>
+      <td data-page-node-id="PIqz8dmcnEtRRjeMG1rzVJ"><b data-page-node-id="Ai1zAxrlLVodsrNUaxPqcX"><!--pnid:lTyex1dV1yMdaMCNEmdCJ2-->3–5 人</b></td>
+      <td data-page-node-id="4R4TRdjud6KlVAQb9Gmz5w"><!--pnid:nhU7FAgKyduJxsmHY1NIZw-->系统工程师 ×2（Ubuntu 调优、SuonaOS 构建）<br data-page-node-id="ve2s2X0bCR1r5BQZTMWwRq"><!--pnid:3t6WaZJbfAMCUU3TBpHrbp-->产品/设计 ×1（OS 体验、官网、文档）<br data-page-node-id="jnbTQM7dGWnXaow0mvhDut"><!--pnid:oZIiufLukzcQwQ8q04NGmp-->硬件/销售 ×1（采购、客服、首批 50 台交付）</td>
+      <td data-page-node-id="y5JI2PvP6rBHkS8SZNsrK6"><!--pnid:07XtrmBQwyFnS9sEE6Qncd-->¥100–200 万</td>
+    </tr>
+    <tr data-page-node-id="jmzqfCLZ1SojPHPo5M8YIG">
+      <td data-page-node-id="wCMU4gfsExFWaGh5KIFR2G"><b data-page-node-id="jfPzOZeOaVgtIrz725SAjt"><!--pnid:pSgDc2Di2ji3sr7DOBqSm1-->公开发行阶段</b></td>
+      <td data-page-node-id="j0anzA35AhfyYD2pNzKFgL"><!--pnid:PkuORHMXTtzUWafAJXwVKD-->3–12 个月</td>
+      <td data-page-node-id="xobqtJGbDMC2hr8rJGXjkI"><b data-page-node-id="bMpto7TUYkGWa2kQi6khVU"><!--pnid:j9N5uB971g8d8OFGzWzWLW-->8–10 人</b></td>
+      <td data-page-node-id="V8QjHC6qsE5dVoFHiOQKjg"><!--pnid:McmfLPMUjBK6hL8WXBEWrE-->新增：AI 工程师（本地 LLM 调优） ×1<br data-page-node-id="ye9DDnzqw15upyrfuvNTlo"><!--pnid:T11C38nazzdLj4m9zUoow8-->QA/测试 ×1（机型回归、远程支持）<br data-page-node-id="pZejsHsz06q8OknFpFSPxs"><!--pnid:Y3Kwm9yiQaIdjk8uzhytHK-->运营/营销 ×1（公众号、小红书、知乎）<br data-page-node-id="iOMspj46JVOMcSxv4ny4IK"><!--pnid:110XtHDcuAPEWQ9vKxE7Ri-->客户成功 ×1（订阅续费、用户社区）</td>
+      <td data-page-node-id="gAv5koNAiaVDzfTSg2z4WM"><!--pnid:nCKFx1yQexKfCU2MY3aGhv-->¥300–500 万</td>
+    </tr>
+    <tr data-page-node-id="qX5eBFjsTvVVKtqgbRdzTU">
+      <td data-page-node-id="A4iFbk2dnIWNpt6nJyulJx"><b data-page-node-id="ryzk08OudA8uXN0LavY4uU"><!--pnid:uEINZpsQc9RkIMscmc9Lkc-->扩张阶段</b></td>
+      <td data-page-node-id="8jyEN8l3hU5hOaRrmMpsOC"><!--pnid:kCrcSKoAcXS0w7hW13a4JR-->12–24 个月</td>
+      <td data-page-node-id="ZLAdHNJImW2UvrJcuBdLDX"><b data-page-node-id="auuMd6QbXZdgDQNWHGNLjq"><!--pnid:wVxKp8NEBWu8MF1WP5oRFW-->15–20 人</b></td>
+      <td data-page-node-id="wVZkEhuqBOz0qUPBWA7ZP1"><!--pnid:z0ZiIuB5em355S7FzrUrgw-->新增：内核/驱动 ×2、固件/硬件 ×1<br data-page-node-id="hFhuKoosQsGPDbVlKc9sVp"><!--pnid:H2PwJ7PTainUpKkRi16vGV-->海外市场 ×1、SDR/销售 ×1、客服 ×2</td>
+      <td data-page-node-id="8In5U5IWmREPeinUjE2y6c"><!--pnid:x7I9GOMYLaYW3hHuZSaiD8-->¥600–1,000 万</td>
+    </tr>
+  </table>
+
+  <h3 data-page-node-id="wQlD8uG0518lnWj2LWQJCz"><!--pnid:GIZs0trvDjjax4gEc6C78C-->10.1 招聘优先级（最关键的 3 个岗位）</h3>
+  <ol data-page-node-id="4udCYIWnsljhbMKfnu78Yn">
+    <li data-page-node-id="NSGZ8e2Jg8DTW4qnZ3X5K2"><b data-page-node-id="aXbZ3nOPBFhulgzWvk2PDA"><!--pnid:mh34htrMvQ9byyGH4t1u6F-->系统工程师（Ubuntu/Linux 调优）</b><!--pnid:T5TQhGZDuGGRJx1gXF21SV-->：能搞定 Mutter patch、live-build、apt 仓库、fwupd、secure boot——这是 SuonaOS 的核心能力。</li>
+    <li data-page-node-id="CXZvJCERoAp49dDB8bp6PR"><b data-page-node-id="jGqAplRHVoglxHwQKJN4TI"><!--pnid:TiwqUEuthO6eo1JwuIIcVZ-->AI 工程师（ROCm/Ollama）</b><!--pnid:L696ZHKLPbJK8WQP5Q5m7Z-->：能调通 Qwen3-14B 在 gfx1103 上的最佳实践、写一键启动脚本、跟 Qwen 团队沟通模型优化——这是 SuonaOS 的差异点。</li>
+    <li data-page-node-id="y6hfTRu8OL7KzwCnJl0llk"><b data-page-node-id="GyFf61aOb7hCUprvIQGGTR"><!--pnid:tKJYS5bKWU37vK2eqxRj0L-->产品/设计（OS 体验）</b><!--pnid:2uRyAmAQ48GZVilBGieuBJ-->：能写 Python+CSS 把 GNOME 主题改到 macOS 等级、能写软件中心、官网、文档——这是 SuonaOS 的"质感"。</li>
+  </ol>
+
+  <h3 data-page-node-id="S0aRkOSB83JhrTvbi5Vuqo"><!--pnid:ZpG29zeCihvz1giNSjscJv-->10.2 团队结构总原则</h3>
+  <p data-page-node-id="454oxKcx6M5ZaQSPG88p6W"><!--pnid:FXdRoJXX5pCw9ag4kS3W1b-->坚持"小团队 + 重流程 + 全文档化"——这是 Zorin 兄弟当年小团队活下来的关键，也是 System76 把 COSMIC 3 年做出来的关键。<b data-page-node-id="Kk9c7fqWgbu5kiBnxyKVuw"><!--pnid:rNEev4HpB4CUbD065b5Kkj-->每个决策都要写成 wiki，每条命令都要进 Git，每台机器的兼容性档案都要进数据库。</b></p>
+</section>
+
+<!--pnid:fJnENwswrysR9TjZUat7k6--><!-- ===== 11 路线图 ===== -->
+<section data-page-node-id="nkZusmq8PfxHzo7NYdrz5Q" id="s-11">
+  <h2 data-page-node-id="kmKWzyZVk8HRKhRmnuNtAH"><span data-page-node-id="eXc7s7RbY9MQuZk02wRdmp" class="no"><!--pnid:pSsREGoYIPBPswwzp7sTTA-->11</span><!--pnid:7AMivJNrsz4z6XquieeP2h-->路线图：3 个月 MVP / 6 个月公开发行 / 12 个月第二版 / 24 个月海外版</h2>
+
+  <div data-page-node-id="LZDlzzYUnApcwW3EW70AQv" class="phase">
+    <div data-page-node-id="AtW8Np9Z9IZK0QK0wyXlmO" class="p p1">
+      <div data-page-node-id="Gov3kABx94FoNrTMcQ4iG6" class="t"><!--pnid:GhpySDkl9vuQnC3HCavS8A-->PHASE 1 · 0–3 个月</div>
+      <div data-page-node-id="uTQXB1o7BwLUxQDb2haArz" class="n"><!--pnid:L0nSYUghmSb5MPbXLij0AX-->🎯 MVP 验证</div>
+      <ul data-page-node-id="O5hGwKqptdZ6Rx3uoVtgQW">
+        <li data-page-node-id="c00kjsPb2AgUuYvkIHMSkN"><!--pnid:TdsW7kS680WQsqpmKEwqZV-->采购 UM870 × 5 台 + T14s × 2 台</li>
+        <li data-page-node-id="8OjPg4Ts1Zqme3wNutWfXp"><!--pnid:BHShK82z9yr8BX5cpeToVW-->组建 3–5 人核心团队</li>
+        <li data-page-node-id="7vRbcVejLhJMryXkjej08l"><!--pnid:B6z9vDkQo5uWdKu9xLPDKx-->SuonaOS v0.1：Ubuntu 26.04 + 核心调优 + 国产软件预装</li>
+        <li data-page-node-id="e4bd2IFTphonCdqKYvazFQ"><!--pnid:k3o3AtN6mtmiuzN0nPDHq1-->首批 50 台交付（亲友/早期用户）</li>
+        <li data-page-node-id="QI9P57CUNucux5tJc2RsoR"><!--pnid:UsaiRwDIhg1E11DXyI6ftC-->suonaos.com / .cn 域名 + 官网上线</li>
+        <li data-page-node-id="LjbhSSqy8gL3T0uEMIQrDo"><!--pnid:N0hY4XnBuuKv4Td1D2idno-->公众号 + 小红书开始种草</li>
+        <li data-page-node-id="7zmqxlpD7woq6PN9eiIBgD"><b data-page-node-id="w0oTEPV3w8ReGrcQ1TDtAZ"><!--pnid:7gwLKVTfqtLVgEVBLi3AbH-->里程碑：3 个月能稳定跑通 8 步验证清单</b></li>
+      </ul>
+    </div>
+    <div data-page-node-id="3VXqxANW2Bo5MmsI9v4qNo" class="p p2">
+      <div data-page-node-id="eSpHzqP5LeuZ5N1YlP0Afv" class="t"><!--pnid:eQb0tTFMKDDmoRhCWVD6Ow-->PHASE 2 · 3–12 个月</div>
+      <div data-page-node-id="RcWwNd30730V6gBKmkRbP1" class="n"><!--pnid:2Kp9EyaG9dnqWI0W3uDwMn-->🚀 公开发行</div>
+      <ul data-page-node-id="9cMpLdtSCY5fLRNBn6HBjs">
+        <li data-page-node-id="3qAyaIURCrop7a0Q9DldVj"><!--pnid:RNVNWBxhlujJzUYxt1TTbK-->SuonaOS v1.0 公开版：全功能预装 + 软件中心 + Welcome</li>
+        <li data-page-node-id="siqrR5lMne9F0mHLSoxNvM"><!--pnid:5mTiqkrcZRMgbx1ecOq5zq-->首批 500 台公开销售（京东/淘宝/小程序）</li>
+        <li data-page-node-id="DlnywSCiBnfKhHUiDf96uc"><!--pnid:lVdU3dW42UL2r1ejEmW7RM-->订阅服务上线（¥499/年）</li>
+        <li data-page-node-id="WX5qrzVSJpDxWZSgRxX1MZ"><!--pnid:mCxJeeUhdgkaYKZkpXN0A7-->ThinkPad T14s 笔记本机型加入</li>
+        <li data-page-node-id="bWjjLFdxgUicMZ4X8Rc9Z8"><!--pnid:f54f4hhow8SdlE9DTQHPwj-->微信公众号运营（每周 1 篇软文）</li>
+        <li data-page-node-id="oxJa4Op3iecpjQho8VlXjd"><!--pnid:GLxNhZdj2J9h4e1iRu4ozG-->小红书 / 知乎 / B 站 / 抖音内容矩阵</li>
+        <li data-page-node-id="BYCKTyTrR3GzA90yPNmgQE"><b data-page-node-id="mVfn1OElKLHR5Pb3NIIwe7"><!--pnid:8rKiJiodbkWuKW7mZviDHU-->里程碑：6 个月月销 100 台 + 订阅 200 人</b></li>
+      </ul>
+    </div>
+    <div data-page-node-id="nU6mH0VYGShoCaSYPGlBmO" class="p p3">
+      <div data-page-node-id="L8Fg3W6JPp6Zs9OzcEQXer" class="t"><!--pnid:TNPY5KIvqg1BtA9p1lXes7-->PHASE 3 · 12–24 个月</div>
+      <div data-page-node-id="yMh8x5Igr1tMaojF1dwjQd" class="n"><!--pnid:0Xd0qR5JPr4GbMs5JkJcNf-->🌏 产品扩张</div>
+      <ul data-page-node-id="UKN7YyhjcWQ1GGPu3ALlzb">
+        <li data-page-node-id="hKIM2M9NpekFarHMHP1HOi"><!--pnid:2sv8OnMxAITZtsqegyYXPI-->Framework Desktop Strix Halo 128GB 加入产品线</li>
+        <li data-page-node-id="vcOUTcvEDBReDDxoJdtsl1"><!--pnid:BIq93uHaTNT4b0rBDmBGp4-->immutable 切换（ostree/bootc）</li>
+        <li data-page-node-id="CIg7kp1F3htd8RCzCyZV8z"><!--pnid:0nsHtuYOJJkAIMVhyydN8r-->企业版 SaaS 后台（批量管理）</li>
+        <li data-page-node-id="Br52vDmGy0bKuRXWGHfJ1e"><!--pnid:xIFFsnpmdKDn3kmeZTkvMb-->ODM 模具评估（自研 mini）</li>
+        <li data-page-node-id="cGXciI7QPDzDMTckybfCgg"><!--pnid:bEOXeaXm6JjMUS5JMjZl4p-->海外版本（英文 + 繁体 + 东南亚）</li>
+        <li data-page-node-id="aD03QMSV3KnN1ojBCgKtE4"><b data-page-node-id="h1r4Fdhg226ttE09sIyDYY"><!--pnid:G7qtQmPC5Wg43m9hGTKfZU-->里程碑：12 个月月销 1,000 台 + 订阅 800 人 + 净利转正</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 data-page-node-id="df3fppiOqSl2UTFUccCmES"><!--pnid:4u39HOScwg9s4cYMviCzm1-->11.1 关键里程碑（不可妥协的 5 个）</h3>
+  <ol data-page-node-id="dKFOCzjTKeA3BDuL8jwva2">
+    <li data-page-node-id="AgaRrJ6k88tUbVHfeqDpMT"><b data-page-node-id="I0phlnxHWWEETkwNcWEWuS"><!--pnid:IX7n1TKSK0nykODVEpFS7o-->M0（启动 +2 周）：</b><!--pnid:KkwNjkffBFka8OFmalAdXz-->UM870 × 5 台到货 + 全员到岗 + 域名注册</li>
+    <li data-page-node-id="lEHa4HRGwVABckVG8uvOWW"><b data-page-node-id="UHHbDTAPFZSw5YiW0e2jlC"><!--pnid:pIyfadBneKhldCzgnUIXIp-->M1（M+1 月）：</b><!--pnid:imT5oLSIAI5JPGxRLbGfry-->SuonaOS v0.1 内部版能完整跑 8 步验证清单</li>
+    <li data-page-node-id="sK3LZPfKAUWEoG5HUVtTCE"><b data-page-node-id="t9H6lktQ4tMmLsibuss8U4"><!--pnid:weZxRqTB9jVPdRxSrGMocX-->M2（M+2 月）：</b><!--pnid:9aonF2mHZiYBqXChoUAaAB-->SuonaOS v0.2 飞书/钉钉/微信/Qwen3-14B 全部开箱即用</li>
+    <li data-page-node-id="PN77TycW2CFanbR89c9EVW"><b data-page-node-id="DHYWOuNBD5nC8KEQGy4S7g"><!--pnid:hzXt93sTKLOapStkEwoKXu-->M3（M+3 月）：</b><!--pnid:nCUkrk9zbNLCKcspcqTn44-->首批 50 台交付 + 用户反馈闭环 + 1 篇爆款内容</li>
+    <li data-page-node-id="Wt1o25YKP035IHd1iJjwBG"><b data-page-node-id="eKoD70DXP9fC4AH8g3wbEx"><!--pnid:DFSAoD5d1cMYotJCSzzCgi-->M6（M+6 月）：</b><!--pnid:R2tZUPwsb2uIcVvTsVx0yx-->公开发行 v1.0 + 月销 100 台 + 订阅 200 人 + 公众号万粉</li>
+  </ol>
+</section>
+
+<!--pnid:reYVYtRZq38DzJAXIddj0c--><!-- ===== 12 风险 ===== -->
+<section data-page-node-id="kdCg4RrPcvccVj8o0cFcJZ" id="s-12">
+  <h2 data-page-node-id="mI3PydQzyz7gvgTtUGMgtF"><span data-page-node-id="4gTwPZAjipogXYLuS3zcDc" class="no"><!--pnid:SscBDRhofFi8LCOmDq6Boa-->12</span><!--pnid:UUoT6JT9kiYftwu64COcjZ-->风险与应对（11 类）</h2>
+
+  <table data-page-node-id="VPi6Ro11whQLtYbsm0H3V2">
+    <tr data-page-node-id="38sXg2LZHnsQp0r5iwBhQp"><th data-page-node-id="G5ipMy45LLVsnjNhqiWwdJ"><!--pnid:oxgdTaRJEadaROzqov72Uo-->风险</th><th data-page-node-id="YDNFoGncIJI5OEm1os8rWx"><!--pnid:W021daye35Ik1XnG05UQiT-->概率</th><th data-page-node-id="Pqemp7yco1lCM7Y5c4bFQE"><!--pnid:n0obp0EoEK6xeaubulrfnx-->影响</th><th data-page-node-id="AVx9TfSsyGt9Jc2IxBjtYo"><!--pnid:RjB2zE5T5KpAh2bo5pOMzU-->应对策略</th></tr>
+    <tr data-page-node-id="NeCwclsl8lnz0jA3Thot4z"><td data-page-node-id="Ehv22Uk9nHfrjifBfMD5vj"><b data-page-node-id="ZRsj1Z89l5T5YljTWV8G0n"><!--pnid:hKObiJzTCNfSKY9NgyJcCW-->国产软件官方突然不维护 Linux 端</b><!--pnid:8gvC3aO65JilRHTb5GU6yQ-->（最致命）</td><td data-page-node-id="8s9Cg7ewS9OC7nlsdBqqRv" class="mid"><!--pnid:vFe2SvBvSzGDtMaTDjqs7U-->中</td><td data-page-node-id="oXpQ038l5UBr6xH4aq7I00" class="bad"><!--pnid:txO7XtsPWpqybIJ8Dt4IWM-->致命</td><td data-page-node-id="YMXr76ny7UBkEgqDOp9Osg"><!--pnid:JpBXrhuvk2KMVkeYgUsLNq-->每季度追踪官方公告 + 维护"国产软件 Linux 状态表"公开；自有 patchelf 修复能力 + Fork Wine 应急方案</td></tr>
+    <tr data-page-node-id="XXNxJVQUd7joTtMl4Bqwpq"><td data-page-node-id="IwRKJHRl9tuufRonJNexU1"><b data-page-node-id="rvlxeb2vrMIY3Ba5TwdGB8"><!--pnid:JUVQ9L1etmbajhos6BpoHC-->UM870 供应链中断/涨价</b></td><td data-page-node-id="UJKZzit9w4q3CgmtT8FBhk" class="mid"><!--pnid:YoRdl69UQbvVrNHUVMg6Mv-->中高（2026 已涨价 40%）</td><td data-page-node-id="FURHA8MuFxpSb8VbbDVjst" class="bad"><!--pnid:NBGRA8gjLK3Ziht3EMHghm-->高</td><td data-page-node-id="38crbm7nu7KoAekTXTF8jZ"><!--pnid:QLThfFjgO7bcBOyypj5YJp-->Phase 1.5 立刻评估 SER8 / Beelink EQ 系列作为第二供应商；预留 Framework Desktop 切换路径</td></tr>
+    <tr data-page-node-id="K9Af7I66q5eBxUti7yhAIc"><td data-page-node-id="SHYKUUixa3skJhn0Exrdb2"><b data-page-node-id="MSYvbxt8zJPOo42VLaS72g"><!--pnid:bHrhoKUVWyj3LAvC4qwgOm-->本地 LLM 监管/合规风险</b></td><td data-page-node-id="04HerayU2oI3plAoeluMMu" class="mid"><!--pnid:5n7WDDBPdzORTs1O5n2jV5-->中</td><td data-page-node-id="XxwPTWtwn5dR2qxC9j6BXY" class="mid"><!--pnid:7QmNLJL7gC58muiXn2govA-->高</td><td data-page-node-id="U6zI7X09ckFufpEMN8JfdO"><!--pnid:v8nelB6Mf41ytwpLGptpm7-->默认不内置未授权模型，仅提供 Ollama + 用户自下载 Qwen3（阿里官方开源协议）；订阅服务条款明确"AI 输出仅供参考"</td></tr>
+    <tr data-page-node-id="lq5HSL9c5FCngZGOQN1LIt"><td data-page-node-id="acRA4iABaxizuvwZP31mBt"><b data-page-node-id="14hplLNkGP1dNYWnC7YqYZ"><!--pnid:erwpmgfdYF1He6Ui8IowF8-->Wayland 与国产软件屏幕共享长期冲突</b></td><td data-page-node-id="BWcHlyB1VnR2HoygxsYCug" class="mid"><!--pnid:eNpmXA3DlTSm2EAZHKeRHW-->高</td><td data-page-node-id="mofLuWoXlfebdfOIcvggCM" class="mid"><!--pnid:zBOf9OwmkBKBhCjAHR8W6i-->中</td><td data-page-node-id="dBe9rvFZQ2rmhT8kcrR1M7"><!--pnid:Hy7KS3TgSdj601agm2XdBN-->保留 X11 会话为后备方案；上游跟踪 Mutter xdg-desktop-portal 进展</td></tr>
+    <tr data-page-node-id="Hs07hoAHGNtZzR7qtmkNKb"><td data-page-node-id="6Ufq5u8CpJjTN161OHvZn6"><b data-page-node-id="oWwN18rMZXNWrQZZ0M73HF"><!--pnid:VlE3pYQy3hijDVFePeRHtl-->SUonaOS 与 Ubuntu 商标冲突</b></td><td data-page-node-id="71JSFlND7PAwzdC94gsP4L" class="mid"><!--pnid:8ZkIVYS2Nvi53hahINmyfS-->低</td><td data-page-node-id="lhuxhgUXhC0brzGWgwprjo" class="bad"><!--pnid:tmwSfJ4JwfEQwwLjl0m8OF-->致命</td><td data-page-node-id="tdpLc2DDo7un2xNkQIV6np"><!--pnid:a7HIusqPRyAHxyUMb40xu3-->不叫"Ubuntu XX"、不复用 Ubuntu logo；正式名"SuonaOS"独立发行版；遵守 Canonical 商标政策</td></tr>
+    <tr data-page-node-id="nNQTtZPe9ct4AZV8wJOZQ2"><td data-page-node-id="S3evE4CbOi4BKAIQVI6BDX"><b data-page-node-id="AqfrTidPBst11XDEevW3nw"><!--pnid:DsJHgw9ffKk2cc83aRPEQt-->渠道铺设失败（京东/淘宝不开放）</b></td><td data-page-node-id="wu3MV45dOLBjChOmIXFJR7" class="mid"><!--pnid:kUS96UXmE0280KVWptLGHQ-->中</td><td data-page-node-id="3pnmSgrqz0tEsXih6jlEu4" class="mid"><!--pnid:TgStxVZwgZvgvyXensOVM1-->高</td><td data-page-node-id="JW3GaP9jYHwuns5ERaIeWN"><!--pnid:bM0LNq504Rh889dYwQRFrg-->主推自营小程序 + 微信视频号直播 + 抖音小店三条线，绕开传统电商</td></tr>
+    <tr data-page-node-id="9zSWcEH44Wb0HhXMritksB"><td data-page-node-id="eKxokC56euWW7QMHcPNdgT"><b data-page-node-id="P0b7vxznUxHQszVyWdS2GD"><!--pnid:l5xtezoRLALP6XviWznBcu-->首批 50 台质量问题（兼容性踩坑）</b></td><td data-page-node-id="ve2rRi8kRjsUKt3f1q4ZLB" class="mid"><!--pnid:got7CmJ5RI0NAZqu2yQnfn-->中</td><td data-page-node-id="Bkz3lM2SlRZizBlwPvCihN" class="bad"><!--pnid:VmPlfQhAchAiUUEPIl7Im1-->高</td><td data-page-node-id="YZq8w15LNcISutKRzJMFtw"><!--pnid:yPmyfKPDxGthd7qyy8YIVn-->每台交付前 8 步验证清单 + 远程调试 + 7 天无理由退换</td></tr>
+    <tr data-page-node-id="TopeCKg9bLOU5lHtqrNP34"><td data-page-node-id="Mh6WNRQGRIhDbxr9zTtcOz"><b data-page-node-id="PkjMwNJTNEGynSSnLROgUx"><!--pnid:fIpX0ZF9lICRbhPqq245wj-->核心工程师离职/被挖</b></td><td data-page-node-id="37VSgrYuBhlycrPmLGghf2" class="mid"><!--pnid:Arz8RAqK5dCgO2o5NFts97-->中</td><td data-page-node-id="A8kelztUYWztm08X67wU21" class="bad"><!--pnid:zDZdciUt85W76YrLsCMxXv-->高</td><td data-page-node-id="7QpbLPi2mnnJbqiqGcdxLG"><!--pnid:pcNd5EIfIvSp0dDmo20gMe-->关键模块至少 2 人会改 + 全流程文档化 + Git 私有仓库知识沉淀</td></tr>
+    <tr data-page-node-id="uykR3FkeaqnHSLYzn92a4l"><td data-page-node-id="00SJfofWtckGQmpT3YMFqY"><b data-page-node-id="D6MQjVtR5iiFMcLxBpbTGQ"><!--pnid:wj83Ky4BmWke2lzwy6NLgQ-->deepin 推出对标产品</b></td><td data-page-node-id="jGOsvVpehmdxgyTeUeSpF2" class="mid"><!--pnid:rbzUKhrj7kFpQvPSEsef53-->中</td><td data-page-node-id="u5QeMKQnTH6qVkWKCxeAEw" class="mid"><!--pnid:vbrbb8g0mAZiP9tfUeKthV-->中</td><td data-page-node-id="Ch6p8XO6FNWnHow8qMPOtW"><!--pnid:8O7pEULepUc4Pq3JkTPves-->用"硬件锁定 + 订阅服务 + 14B 一键启动"建立壁垒；deepin 路线偏政企不偏个人</td></tr>
+    <tr data-page-node-id="x2uz2pBoxCWq7Ibn66S2ow"><td data-page-node-id="TZXUMArf79rZIAKjVz4rH9"><b data-page-node-id="0inteMNWipEwPNWJ89vCDg"><!--pnid:esBNlkiQiSchvmllIryvF4-->内存/SSD 持续涨价压缩毛利</b></td><td data-page-node-id="ht730OUZkYp2eNZ4MtBzrK" class="mid"><!--pnid:iTDhQXRgob5BdHBwQXvnvu-->高（2026 已发生）</td><td data-page-node-id="WEDqbTVW6rthGC6jAAyl2C" class="mid"><!--pnid:SmLUqFlrbQqANvUHbQyit2-->中</td><td data-page-node-id="h84ufG6kZWWsDt7jVbTFCl"><!--pnid:z7THMTvDZsVSZG13bwEAzL-->提前 3 个月锁价采购；订阅收入对冲硬件毛利压力</td></tr>
+    <tr data-page-node-id="0zukPeemXrBUxwPqihqW1C"><td data-page-node-id="6Ty4dplWr4xoNw8qXUg6BR"><b data-page-node-id="3DEzAvZLj8UbE5apgSC68G"><!--pnid:M0N9WafsERTk7TIBx0LKdS-->Ubuntu 27.04 大版本变更导致定制层重写</b></td><td data-page-node-id="Qjk4ilOCqIdc1WLqhtdtEv" class="mid"><!--pnid:6Vi0LsIaBCqBfxRliNe4jX-->低</td><td data-page-node-id="YFVeP1Vhw95I4pxpjhisUG" class="mid"><!--pnid:QNG9d0oQ5YNenvanuod4C2-->中</td><td data-page-node-id="SYuHcNLopfSAEfwpHMoNww"><!--pnid:hZhV18p72ThUDH0ze4t93C-->定制尽量"上游化"（向 GNOME/Ubuntu 提交 patch）；LTS 大版本间保持 API 稳定</td></tr>
+  </table>
+
+  <h3 data-page-node-id="0HgPAHWvf6SM98IaaETIsT"><!--pnid:gY9QPyDUVAr3fuKNmt8TIA-->12.1 风险矩阵（按概率×影响）</h3>
+  <div data-page-node-id="pt7ntje4nd4pYrUiYUYjUH" class="risk-grid">
+    <div data-page-node-id="dcXhuYreMx97SrjgjUTDNP" class="risk-cell r-h"><!--pnid:Cif0TQv0Xv3lNkBSCeI8IQ-->致命风险<br data-page-node-id="uPIE1J69RebhfTFcXPnbCM"><span data-page-node-id="SxNMIlsTurL1W5DajXrIio" class="lvl"><!--pnid:TLJksSIm62aMHt3SP6lGEw-->2 项</span></div>
+    <div data-page-node-id="JLbBWUS2oc7wUIdNcePHIW" class="risk-cell r-h"><!--pnid:KAP5XE3FOyO2IPeiGwYQs5-->高影响<br data-page-node-id="EKy6pTApGWUM5AhKssEvOw"><span data-page-node-id="mkm9pyoiyWchGVDZy6w8Nx" class="lvl"><!--pnid:HCBVk3dXNO4B87a4p49YLm-->3 项</span></div>
+    <div data-page-node-id="Y8SCdb5Jtokj0iLwX56slp" class="risk-cell r-m"><!--pnid:1Ps2ygZl2no6DPsWyUD6Cn-->中影响<br data-page-node-id="YcNyaphcV57rvCmi8tEOzq"><span data-page-node-id="0iiJHmhgLm19ERXvqGxzCs" class="lvl"><!--pnid:4890jmKXPdDZfbBHu2XvtS-->4 项</span></div>
+    <div data-page-node-id="evqWm9vWnD8AmxuuCTONIp" class="risk-cell r-l"><!--pnid:dRdplFxtRQ67qdwDbSJJ0K-->低影响<br data-page-node-id="WsyMCXiP6qiVbKnP6UGrV7"><span data-page-node-id="X3blB8fSiGlHGXqWHgbr30" class="lvl"><!--pnid:bosRUisUf7F8iV51jdLnCY-->2 项</span></div>
+    <div data-page-node-id="xPkHggpvU6EWig67ZOOaMy" class="risk-cell r-l"><!--pnid:fPyreW8NqZTxFTgUdSu8Z0-->已缓释<br data-page-node-id="7VACpE0RLI1SU45enmGRmL"><span data-page-node-id="hNVWAOcwYWSpStdeXUFgND" class="lvl"><!--pnid:2Hofx3WT4VqlQ2slpz2yTf-->持续监控</span></div>
+  </div>
+</section>
+
+<!--pnid:9H6oqlEMBkf4dxhQXF4Ec0--><!-- ===== 13 本周执行 ===== -->
+<section data-page-node-id="oUp9OtmaO7AlPa1hPA0a65" id="s-13">
+  <h2 data-page-node-id="po59uPFlSB6DuvpW4QQRRp"><span data-page-node-id="vNKkpsraqF6wq81DXjygWt" class="no"><!--pnid:UObhMdyTwuIZXCYnDGQRl3-->13</span><!--pnid:S1QnNBl8Rthhx2uiELE7xL-->本周可执行清单（5 件事）</h2>
+
+  <ol data-page-node-id="BL0FTLMu38TliBrz4dn9Wf">
+    <li data-page-node-id="U6CpauJlHcsjgh8mUBtYqH"><b data-page-node-id="exwZubdbf1mXVPOgZceDS4"><!--pnid:GILCcA1MB4KVA9LlV8CkCb-->域名注册</b><!--pnid:Ir5zNzmHUQUo2mH0WZbnHQ-->：浏览器打开阿里云/腾讯云/Namecheap，<b data-page-node-id="GPXQmslrlkLJxDMXcsfp45"><!--pnid:TbgCJuN8n78qcXB7rDzyq6-->抢注 suonaos.com / suonaos.org / suonaos.cn</b><!--pnid:FJzog09O4om7D5bBEpYxTM-->（CNNIC 验证 cn 可注册后立刻下手）。预计 ¥80–200 总成本。</li>
+    <li data-page-node-id="k5GHSoJIsEeZ2YFy9P8EEq"><b data-page-node-id="fLNfsAWS5Iji0NavMkGPNA"><!--pnid:60L5ASFCeXCRYHDxXjrQSF-->硬件采购</b><!--pnid:3LVcmuW5FMJQNqjzxeBFJ6-->：按采购基准 v2 GO 项，<b data-page-node-id="PomcNmaqXAaQGrb7tH7guS"><!--pnid:lLOWXqrRufv6DKQhNUPy3r-->本周下单 UM870 barebones × 3 台</b><!--pnid:8CDFQQ2fbZCyx8CmdO78Kz-->（¥6,000 × 3 = ¥18,000）+ <b data-page-node-id="zqqMk0Sw2Z8Kn60LBQbB0M"><!--pnid:6TqzzePKm5hIouHDhWQUDE-->二手 M920q × 2 台</b><!--pnid:rUnXoaClKJGd20lShVgWkk-->做 CI（¥1,000 × 2 = ¥2,000）。二手 Mac mini M4 16+256 × 1 台（¥3,000）做体验对照。</li>
+    <li data-page-node-id="F2jhcHozs9mBy4nFTl6hh4"><b data-page-node-id="OfW2Nf8jFu4qVwjFIUOTBw"><!--pnid:XTDcDyr95mX8HxGtQshAHb-->团队组建</b><!--pnid:ULWIHqeBTn6o1xjTvHhrM2-->：本周确定 1 名系统工程师 + 1 名 AI 工程师（自己 + 1 名外协即可启动），<b data-page-node-id="RDzVvG1i2WRKcm6Kwu86hW"><!--pnid:qSACssvRwYKQtbbSR9Qezr-->3–5 人 MVP 配置</b><!--pnid:UreZEq7a8YEjMF7uOejBBa-->。</li>
+    <li data-page-node-id="E1prcj9WqdiZN6kXaXUo9B"><b data-page-node-id="ux7rB9eGIZYGeRENk8gRJA"><!--pnid:4fiMS0jGVipOSlo3ohEAGo-->商标检索</b><!--pnid:UiaxCkK1CsVxSOKqxrfbOO-->：去中国商标网（sbj.cnipa.gov.cn）查"唢呐" + "SuonaOS" 商标可注册性（信噪比风险：唢呐是常见词但未注册为 OS 类）</li>
+    <li data-page-node-id="SFq8HekUbtQQhiiudszSuK"><b data-page-node-id="9nyWRB0uTUoafASaVIvkAm"><!--pnid:ZZcN5bAG7uhWtW05LjWKxM-->第一篇公众号文章</b><!--pnid:Cam7GXyPltCjjYL6Gppfyh-->：写《我为什么做 SuonaOS》——一人公司 + Mac mini 太贵 + Linux 也能很流畅。1,000 字 + 1 张唢呐主题封面图，目标 1,000 阅读</li>
+  </ol>
+
+  <div data-page-node-id="vt9KaXwFKZHPHaMmQcyLGW" class="success">
+    <h3 data-page-node-id="w1qX5Y5VEDleYKK3ITvnfa"><!--pnid:A0on7DdPULDwpkzMx7jsTV-->本周结束后 SuonaOS 项目的状态</h3>
+    <p data-page-node-id="wDCQFMm25guTe8UEiw0oWC"><!--pnid:HyO9yFx2XF4rEDqUGOg27z-->· 域名锁定（3 个后缀，¥200 总成本）<br data-page-node-id="WmW6PXT9hvPw3hDhkvgmOs"><!--pnid:R4T4PymSyeDTM1TvutI5el-->
+    · 硬件到位（UM870 × 3 + M920q × 2 + Mac mini M4 × 1，¥23,000 总成本）<br data-page-node-id="ymLO1K6JNzMrcepW1vulPx"><!--pnid:vLXdIXkceX7M52Uf7OOAng-->
+    · 团队 3–5 人到位（核心 2 + 外协 1–3）<br data-page-node-id="NDMc2DK96o9AuNbK3zqdEM"><!--pnid:6AYXtlda9SY0tIxCrbYLMp-->
+    · 第一篇内容发布（公众号/知乎同步）<br data-page-node-id="xpOaTPdlQDTHgfCqil1eJ4"><!--pnid:JRcZxO33BiPTOXbbXsTXAA-->
+    · <b data-page-node-id="BQmh8kplqDHK7yDth6YxJX"><!--pnid:xJzOFjvLsn8EwD6EmVAl9s-->总启动成本 ≈ ¥25 万</b><!--pnid:eCKSRDJfahZly7Ht6nY1ia-->（含 3 个月人员工资）<br data-page-node-id="x1bqzsNQ8W7lP0cfVOadiF"><!--pnid:Mh5qqR1zU8VxmTB4IomKoe-->
+    · <b data-page-node-id="L1MUjqlNjbifntpWzWMO2a"><!--pnid:fO1KJcFHjPlmbm9qenKNrI-->3 个月后能交付 50 台 MVP 整机 + SuonaOS v0.3 内部版</b></p>
+  </div>
+</section>
+
+<!--pnid:0LlLJu8mK28iFuRZmeaV8R--><!-- ===== 来源 ===== -->
+<section data-page-node-id="xayMjcJjM8vpMLjptJyd5U" id="ref">
+  <h2 data-page-node-id="hHhWd0hNSgTeUTCdjpFidH"><span data-page-node-id="JL8hswDzbb3P18fByDZQFy" class="no"><!--pnid:OYLy0mm8Pi5YSW3b92ZOUs-->REF</span><!--pnid:R915vgkwde5DLxqKFxrNsa-->主要信息来源</h2>
+  <ol data-page-node-id="L0mTxN2Eocka0m7RUV2Y9k" style="font-size:13px; color:var(--muted); line-height:2">
+    <li data-page-node-id="aJpjkwWXxecZBB8uZVAqug"><!--pnid:t0dGWtTZBr0LVYZiOZe7hK-->《中国 OPC 发展趋势报告（2025—2030 年）》：1,600 万家 OPC、占企业 27.4%、2025 新增 +47% — 国务院发展研究中心</li>
+    <li data-page-node-id="eHM05jhzj1B1kF3YVHepfE"><!--pnid:9wbBwQPTFrOxInUbfvuLjO-->《全球 OPC 经济体发展白皮书 2026》：5,800 万家全球 OPC、2050 年预测 10 亿家贡献 GDP 65%</li>
+    <li data-page-node-id="4kIgKPIcgT6OdVduKR02f0"><!--pnid:vHGK9jsqopEMpR9qtJ4ASu-->蚂蚁集团芝麻企业信用：570 万家立信 OPC 画像（90 后 34% / 00 后 7% / 17.9% 科技推广与软件信息）</li>
+    <li data-page-node-id="UUfgO3g188EO0bCApPErCK"><!--pnid:wupUciP7jYt9G1A8NWMYmX-->艾瑞咨询《2025 年中国灵活就业与数字游民发展报告》：3.2 亿灵活就业、占就业人口 44%</li>
+    <li data-page-node-id="P4r8raG8CPttxZ5UKauH3J"><!--pnid:jFT9LQ07zaIijnvhUNHL6A-->Stack Overflow 2026 开发者调查：73% 独立开发者转型 18 个月后收入超全职</li>
+    <li data-page-node-id="XsYnDuBtjKlfZrDel03V0p"><!--pnid:blsnzKzcN1GgqYqiZZUpKQ-->Indie Hackers 16,045 个产品 Stripe 数据：34% 盈利 / 盈利产品月均 $997</li>
+    <li data-page-node-id="1ugwq4O9fnZvzEjvywqzwS"><!--pnid:ycsaAoJ9CtNZGAaJ7FQqZR-->CSDN / e-whisper.com：Ubuntu 26.04 国产软件实测（微信/QQ/飞书/钉钉/腾讯会议/百度网盘）</li>
+    <li data-page-node-id="vxMXfbupoWGIkLJN1oVFxH"><!--pnid:8ipsQUrobru7RLExm5etLS-->Ubuntu 26.04 LTS "Resolute Raccoon" 发行公告（GNOME 50 / Wayland / Linux 7.0 / VRR / NVIDIA 改进）</li>
+    <li data-page-node-id="gX5PfV2tzO2ejTepzSGGQs"><!--pnid:zWY5kLfWEfhAwxWjUIv0od-->Daniel van Vugt (Canonical) "Triple Buffering, a debrief" — Ubuntu Discourse</li>
+    <li data-page-node-id="zZ362Y8PQ7JCspol7NjFwW"><!--pnid:eu6aJzCNo5OYgysfLGjTbg-->System76 官方博客（Pop!_OS 24.04 LTS / COSMIC Epoch 1 stable、Flatpak 替代 Snap、自研内核约 40 commit）</li>
+    <li data-page-node-id="owiWz6nFLKBjQYMXFjpDfj"><!--pnid:RnVCM8qMm55xAmCDCOwL8G-->deepin 23 官方公告（8000+ 包重构、DDE Treeland 演进）</li>
+    <li data-page-node-id="A5sBjyuL9ZB2ieSpmEaymh"><!--pnid:SS0WP36fAu4Uu64Oo6BfgI-->ROCm 7.2/7.13 release notes（gfx1103/1151 支持、Ubuntu 26.04 兼容）</li>
+    <li data-page-node-id="qKgIsWX5NHK0gxBbxd4FMA"><!--pnid:KaVRmIwrFcJmifro09kQQT-->uhower.tw 实战记录（Strix Halo / gpt-oss-120b 30 tok/s / qwen3-30b-a3b 70 tok/s）</li>
+    <li data-page-node-id="xe3lGpDn4hflllyaQdSm4E"><!--pnid:gzJvSmcVWvtgUg6Wrjv3C9-->《当前硬件采购基准 v2》、《Phase 1 硬件清单 v1》、《类 Mac mini 桌面主机产品调研 v1》、《二手设备补充清单 v2 增补》</li>
+  </ol>
+</section>
+
+<footer data-page-node-id="UC4FUJrbGMMStoCLaR3stS"><!--pnid:AzTNWxGgfm7iyyVOi7f6qW-->
+  本报告为正式立项材料，定量数据以标注来源为准；财务模型为基准情景假设（保守），不含战略融资估值；风险评级为定性判断。<br data-page-node-id="DSn1x9Ixem091DHG2L4FtD"><!--pnid:q1oDEt5juMR292zuxLxj0s-->
+  SuonaOS 立项报告 v1.0 · 2026-09-10 · 承接前期 5 份调研文档 · 下一步：本周执行 5 件事，3 个月后交付 MVP 整机
+</footer>
+
+</div>
+</body>
+</html>

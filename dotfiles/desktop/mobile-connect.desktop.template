@@ -1,0 +1,36 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=手机投屏
+Name[en]=Phone Mirroring
+GenericName=Phone Mirroring
+Comment=一键连接红米并投屏（ADB-only，手机端零安装）
+Comment[en]=Connect Redmi and mirror screen
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh
+Icon=phone
+Terminal=true
+Categories=Utility;
+Keywords=手机;投屏;scrcpy;adb;redmi;mirror;
+StartupNotify=true
+StartupWMClass=scrcpy
+Actions=status;stop;large;port;
+
+[Desktop Action status]
+Name=查看连接状态
+Name[en]=Connection Status
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --status
+
+[Desktop Action stop]
+Name=断开投屏
+Name[en]=Disconnect
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --stop
+
+[Desktop Action large]
+Name=大窗口投屏 (900)
+Name[en]=Large Window (900)
+Exec=env MC_HEIGHT=900 __PROJECT_ROOT__/scripts/mobile-connect.sh
+
+[Desktop Action port]
+Name=端口已变化…（终端内输入新端口）
+Name[en]=Port changed
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --port-prompt
