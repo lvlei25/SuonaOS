@@ -13,10 +13,10 @@ Categories=Utility;
 Keywords=手机;投屏;scrcpy;adb;redmi;mirror;
 StartupNotify=true
 StartupWMClass=scrcpy
-Actions=status;stop;large;port;
+Actions=status;stop;large;x11;port;
 
 [Desktop Action status]
-Name=查看连接状态
+Name=查看连接状态（含自诊断）
 Name[en]=Connection Status
 Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --status
 
@@ -29,6 +29,11 @@ Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --stop
 Name=大窗口投屏 (900)
 Name[en]=Large Window (900)
 Exec=env MC_HEIGHT=900 __PROJECT_ROOT__/scripts/mobile-connect.sh
+
+[Desktop Action x11]
+Name=X11 模式投屏（可拖放文件）
+Name[en]=X11 Mode (drag & drop)
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --x11
 
 [Desktop Action port]
 Name=端口已变化…（终端内输入新端口）

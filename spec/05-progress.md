@@ -124,6 +124,16 @@
 | 11-08 | 99-verify 新增「挂起恢复 hook」项，60→61 零失败 | ADR-21 |
 | 11-09 | WorkBuddy 无法启动：`/opt/WorkBuddy/chrome-sandbox` 缺 setuid（0755），Electron 因无可用沙箱 FATAL 退出；`chmod 4755` 后正常（11 进程） | ISSUE-32 |
 | 11-09 | 同批排查发现 `/opt/baidunetdisk/chrome-sandbox` 同为 0755，已修复；99-verify 新增 Electron 沙箱段，61→62 | ISSUE-32 |
+| 11-11 | 手机互联不可用：ARP 显示手机在线但 5555/39959 端口全关，判定为无线调试关闭（非故障）；`mobile-connect.sh --status` 新增三段自诊断（ARP 可达 / 端口开放 / adb 握手），两条分支实测通过 | REQ-22 |
+| 11-11 | 新增 `18-mobile-file.sh`（`--push/--pull/--ls/--status/--to`），补 scrcpy 只能「拖入」不能「拖出」的缺口；实测推送 hostname、拉回内容一致后清理 | REQ-22 |
+| 11-11 | 拖放无反应根因：SDL2 Wayland 后端未实现 `SDL_DROPFILE`；新增 `--x11` 切 XWayland，并按 `Xft.dpi` 换算窗口尺寸（378×840 → 756×1680），修复切后端后窗口变小 | REQ-22 / TASK-37 |
+| 11-11 | 新增 `19-mobile-share.sh`：push + `content://` + SEND intent 把文件交给手机 App；能读 `mCurrentFocus` 时直发前台包名，否则退回分享面板；实测 PNG 弹出成功 | REQ-22 |
+| 11-11 | 投屏中途黑屏：根因为 `screen_off_timeout=15000` 且未插电时 `stay_on_while_plugged_in=7` 无效；改为投屏期间拉满超时 + trap/`--stop` 双路径恢复，实测 15000→2147483647→15000 | REQ-22 |
+| 11-11 | 启动器同步：`mobile-connect` 增加 x11 Action；新增 `mobile-share.desktop`（`--share %F`，支持拖文件到图标），桌面放置并标记 trusted；两份模板与文档同步 | REQ-22 / ADR-18 |
+| 11-11 | 启动器启动窗口偏小：`WINDOW_HEIGHT` 默认由 840 改为 `auto`（xrandr 物理高 ÷ Xft.dpi 缩放 − 80），本机 378×840 → 396×880 | REQ-22 / TASK-37 |
+| 11-11 | 仍偏小 → 留白 80 收窄到 40，396×880 → **414×920**；新增 `MC_FULLSCREEN=1` 全屏启动 | REQ-22 / TASK-37 |
+| 11-11 | 熄屏真因是**主机** idle-delay=300s（5 分钟黑屏锁屏），非手机；改用 `systemd-inhibit --what=idle:sleep` 投屏期间阻止，退出自动释放 | REQ-22 / ADR-18 |
+| 11-11 | 顺带查明手机 `screen_off_timeout` 原值仅 **15 秒**，脚本投屏中设 `2147483647`、退出恢复；`stay_on_while_plugged_in` 已置 7 | REQ-22 |
 
 ## 待补
 TASK-36（需手机在线）、S-10 外部凭证、S-13~S-16 产品裁决与上游 v1.1 修订，

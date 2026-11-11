@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=发送文件到手机
+Name[en]=Send File to Phone
+GenericName=Send File to Phone
+Comment=把文件推到手机 /sdcard/Download 并交给当前 App（ADB，无需手机装 App）
+Comment[en]=Push files to phone and hand them to the active app
+Exec=__PROJECT_ROOT__/scripts/19-mobile-share.sh --share %F
+Icon=document-send
+Terminal=true
+Categories=Utility;
+Keywords=手机;传输;分享;adb;share;
+StartupNotify=true
+Actions=status;
+
+[Desktop Action status]
+Name=查看连接状态
+Name[en]=Connection Status
+Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --status
