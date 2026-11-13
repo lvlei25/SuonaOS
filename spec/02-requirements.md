@@ -26,7 +26,7 @@
 | REQ-22 | 一键连接投屏（免去每次手输命令） | P1 | done | 启动器 4 个 Action + `mc` 别名 + 端口记忆全部落盘验收 | `scripts/mobile-connect.sh` |
 | REQ-23 | GRUB 引导菜单美化 | P2 | done | Vimix 2K + 白色图标；`grub.cfg` 语法通过；`preboot-check` 24/0/0；双系统条目保留 | `docs/13` / ADR-24 |
 | REQ-24 | Dock 与顶栏透明度美化 | P2 | done | Dock `FIXED/0.5` 即时生效；顶栏 Blur my Shell 参数已写（待注销重登确认） | `docs/13` / ADR-24 |
-| REQ-25 | 水系主题桌面壁纸 | P2 | done | 4 张 3072×1920（Wikimedia CC）；每 30 分钟轮换；深/浅色均生效；署名 `CREDITS.txt` | `docs/14` / ADR-25 |
+| REQ-25 | 水系主题桌面壁纸 | P2 | done | 14 张 3072×1920（Wikimedia CC，湖/瀑布/海滩/港湾）；每 30 分钟轮换；深/浅色均生效；署名 `CREDITS.txt` | `docs/14` / ADR-25 |
 | REQ-26 | 系统提示音主题（Suona 木腔） | P2 | done | 29 个事件音（含电池 3 个）、ffmpeg 本地合成零素材；峰值归一 -3.5 dB；`strace` 证实 libcanberra 读取本主题；99-verify 57/0 | `docs/15` / ADR-27 |
 | REQ-27 | 电池关键节点提示（20% / 10% / 充满） | P2 | done | `battery-low`/`battery-caution` 由 gsd-power 自动触发；充满由 user timer 按 `charge_control_end_threshold` 判定；99-verify 57/0 | `docs/16` / ADR-29 |
 | REQ-28 | 深色模式随日落自动切换 | P2 | done | NOAA 本地算日出日落；10 分钟 timer；同时切 color-scheme 与 gtk-theme；状态去重 | `docs/17` / ADR-30 |

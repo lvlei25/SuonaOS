@@ -36,6 +36,6 @@ Name[en]=X11 Mode (drag & drop)
 Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --x11
 
 [Desktop Action port]
-Name=端口已变化…（终端内输入新端口）
-Name[en]=Port changed
+Name=填写 IP 和端口…（地址变了时用）
+Name[en]=Enter IP and Port
 Exec=__PROJECT_ROOT__/scripts/mobile-connect.sh --port-prompt

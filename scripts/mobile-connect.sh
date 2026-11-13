@@ -5,13 +5,19 @@
 # 用法:
 #   ./scripts/mobile-connect.sh              # 自动连接 + 投屏（用上次成功地址）
 #   ./scripts/mobile-connect.sh 39959        # 端口变了：指定一次，之后自动记住
+#   ./scripts/mobile-connect.sh 192.168.31.196:39959   # IP 也变了：写完整地址
 #   ./scripts/mobile-connect.sh --tcpip      # 把设备切到固定 5555，此后长期免输端口
 #   ./scripts/mobile-connect.sh --status     # 只看状态，不启动投屏
 #   ./scripts/mobile-connect.sh --stop       # 断开连接
 #   ./scripts/mobile-connect.sh --x11        # 用 XWayland 启动（scrcpy 拖放可用）
+#   ./scripts/mobile-connect.sh --recover    # 手机重启后：插 USB 一键恢复固定 5555
+#   ./scripts/mobile-connect.sh --scan       # 扫描本网段 5555（IP 变了也能找到）
+#   ./scripts/mobile-connect.sh --port-prompt  # 交互填写 IP 与端口（启动器右键同名）
 #
 # 端口来源：HyperOS「无线调试」主页面显示的 IP:端口（会变，故支持记忆 + 单次覆盖）
 # 注意：本机实测 adb mdns services 为空，HyperOS 不广播 ADB 服务，无法全自动发现端口。
+# 根治思路：--recover 把端口固定为 5555（手机重启后重跑一次），IP 侧在路由器做
+# DHCP 静态绑定；两者都固定后地址就再也不变。
 # ============================================================================
 set -uo pipefail
 
@@ -91,6 +97,24 @@ try_connect() {
 }
 
 scrcpy_running() { pgrep -f 'scrcpy -s ' >/dev/null 2>&1; }
+
+# 扫描本网段的 5555 端口（仅在设备已用 --recover 固定端口后有效）。
+# HyperOS 不广播 mDNS，无法自动发现随机端口；把端口固定成 5555 后，
+# 即使 IP 被 DHCP 换掉，也能靠扫描重新找到。
+scan_5555() {
+  local gw subnet found
+  gw="$(ip route 2>/dev/null | awk '/^default/{print $3; exit}')"
+  [ -n "$gw" ] || return 1
+  subnet="${gw%.*}"
+  log "扫描 $subnet.0/24 的 5555 端口（最多约 8 秒）..."
+  found="$(seq 1 254 | xargs -P 64 -I{} sh -c \
+    "timeout 2 nc -z '$subnet'.{} 5555 2>/dev/null && echo '$subnet'.{}" 2>/dev/null | head -1)"
+  [ -n "$found" ] || return 1
+  log "发现设备: $found:5555"
+  LAST_ADDR="$found:5555"
+  DEVICE_IP="$found"
+  try_connect "$LAST_ADDR"
+}
 
 # ---- 参数处理 --------------------------------------------------------------
 # scrcpy 基于 SDL2，而 SDL2 的 Wayland 后端没有实现拖放（SDL_DROPFILE），
@@ -178,18 +202,73 @@ case "$ARG" in
     fi
     exit 0 ;;
 
+  --recover)
+    # 手机重启 / 重开无线调试后端口回到随机值，插一次 USB 即可恢复固定 5555。
+    # 与 --tcpip 的区别：--tcpip 依赖「当前已有无线连接」，本命令走 USB 取 IP。
+    USB_DEV="$(adb devices 2>/dev/null | awk '$2=="device" && $1 !~ /:/ {print $1; exit}')"
+    [ -n "$USB_DEV" ] || die '未检测到 USB 设备：请插线，并在手机弹窗中允许 USB 调试'
+    log "检测到 USB 设备: $USB_DEV"
+    IP="$(adb -s "$USB_DEV" shell ip -4 addr show wlan0 2>/dev/null \
+      | awk '/inet /{sub(/\/.*/,"",$2); print $2; exit}' | tr -d '\r')"
+    [ -n "$IP" ] || die '无法从设备读取 WLAN IP（确认手机已连 Wi-Fi）'
+    log "手机 WLAN IP = $IP，切换到固定 5555..."
+    adb -s "$USB_DEV" tcpip 5555 2>&1 | tee -a "$LOG"
+    sleep 3
+    DEVICE_IP="$IP"
+    LAST_ADDR="$IP:5555"
+    save_conf
+    if try_connect "$LAST_ADDR"; then
+      log "已固定为 $LAST_ADDR（手机重启后重跑 --recover 即可）"
+    else
+      warn "5555 连接失败：HyperOS 可能不响应 tcpip，请改用 <端口> 手动模式"
+    fi
+    exit 0 ;;
+
+  --scan)
+    if scan_5555; then
+      log "扫描命中并已连接"
+    else
+      die '未发现 5555 设备：确认手机已 --recover 固定端口，且与本机同网段'
+    fi
+    exit 0 ;;
+
   --port-prompt)
-    # 供桌面启动器「端口已变化」调用：交互输入端口，之后自动记住
+    # 供桌面启动器调用：交互填写 IP 与端口，之后自动记住。
+    # 端口每次重开无线调试都会变，IP 也可能被 DHCP 换掉，所以两项都给输入口；
+    # 直接回车 = 沿用已记录的值。输入 q 取消。
+    CUR_IP="${DEVICE_IP:-}"
+    [ -z "$CUR_IP" ] && [ -n "${LAST_ADDR:-}" ] && CUR_IP="${LAST_ADDR%%:*}"
+    CUR_PORT=""
+    [ -n "${LAST_ADDR:-}" ] && CUR_PORT="${LAST_ADDR##*:}"
+
     cat <<'HINT'
-  请打开手机：设置 → 更多设置 → 开发者选项 → 无线调试
-  查看主页面的「IP 地址和端口」，输入端口号（IP 会沿用已记录的）。
-  输入 q 取消。
+  手机：设置 → 更多设置 → 开发者选项 → 无线调试
+  打开「无线调试」，主页面上显示「IP 地址和端口」，按实际值填写。
+  · 直接回车 = 沿用方括号里的值
+  · 只输数字 = 视为「新端口」，IP 沿用（日常最常见）
+  · 输入 q 取消
 HINT
-    printf '  新端口号 (如 39959): '
-    read -r PORT || true
-    [ "$PORT" = "q" ] && { log '已取消'; exit 0; }
-    [[ "$PORT" =~ ^[0-9]{2,5}$ ]] || die "端口应为 2~5 位数字，收到: $PORT"
-    exec "$0" "$PORT"      # 交给端口分支处理并记住
+    printf '  IP 地址或新端口 [%s]: ' "${CUR_IP:-必填}"
+    read -r IN1 || true
+    [ "$IN1" = "q" ] && { log '已取消'; exit 0; }
+
+    # 容错：只输纯数字时按端口处理。端口每次重开无线调试都会变，
+    # 而 IP 很少动，用户往往只想填端口，不能把数字塞进 IP 校验。
+    if [[ "$IN1" =~ ^[0-9]{2,5}$ ]]; then
+      CUR_PORT="$IN1"
+      log "识别为新端口 $CUR_PORT（IP 沿用 $CUR_IP）"
+    else
+      [ -n "$IN1" ] && CUR_IP="$IN1"
+      [[ "${CUR_IP:-}" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || die "IP 格式不正确: ${CUR_IP:-空}"
+
+      printf '  端口 [%s]: ' "${CUR_PORT:-必填}"
+      read -r IN2 || true
+      [ "$IN2" = "q" ] && { log '已取消'; exit 0; }
+      [ -n "$IN2" ] && CUR_PORT="$IN2"
+      [[ "${CUR_PORT:-}" =~ ^[0-9]{2,5}$ ]] || die "端口应为 2~5 位数字: ${CUR_PORT:-空}"
+    fi
+
+    exec "$0" "$CUR_IP:$CUR_PORT"      # 交给地址分支连接并记住
     ;;
 
   '')
@@ -199,20 +278,28 @@ HINT
       try_connect "$LAST_ADDR" || true
       ADDR="$(get_device)"
     fi
+    # 上次用的是固定 5555 ⇒ IP 可能被 DHCP 换掉，扫一遍网段兜底
+    if [ -z "$ADDR" ] && [ "${LAST_ADDR##*:}" = "5555" ]; then
+      scan_5555 && ADDR="$(get_device)"
+    fi
     ;;
 
   *)
-    # 端口变更：只允许纯数字端口
-    [[ "$ARG" =~ ^[0-9]{2,5}$ ]] || die "参数应为 2~5 位端口号，例如: mobile-connect.sh 39959"
-    PORT="$ARG"
-    IP="${DEVICE_IP:-}"
-    if [ -z "$IP" ] && [ -n "$LAST_ADDR" ]; then IP="${LAST_ADDR%%:*}"; fi
-    if [ -z "$IP" ]; then
-      # 从当前 ARP / 同网段里找红米（仅作兜底提示）
-      warn '尚未记录手机 IP，请在下方输入手机无线调试页面显示的 IP'
-      printf '  手机 IP (如 192.168.31.196): '
-      read -r IP
-      [ -n "$IP" ] || die '未输入 IP'
+    # 支持两种写法：纯端口（沿用已记录 IP）或完整地址 IP:端口
+    if [[ "$ARG" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{2,5}$ ]]; then
+      IP="${ARG%%:*}"
+      PORT="${ARG##*:}"
+    else
+      [[ "$ARG" =~ ^[0-9]{2,5}$ ]] || die "参数应为端口号(39959)或完整地址(192.168.31.196:39959)"
+      PORT="$ARG"
+      IP="${DEVICE_IP:-}"
+      if [ -z "$IP" ] && [ -n "$LAST_ADDR" ]; then IP="${LAST_ADDR%%:*}"; fi
+      if [ -z "$IP" ]; then
+        warn '尚未记录手机 IP，请在下方输入手机无线调试页面显示的 IP'
+        printf '  手机 IP (如 192.168.31.196): '
+        read -r IP
+        [ -n "$IP" ] || die '未输入 IP'
+      fi
     fi
     LAST_ADDR="$IP:$PORT"
     DEVICE_IP="$IP"

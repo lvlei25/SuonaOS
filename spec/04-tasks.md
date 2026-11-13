@@ -45,7 +45,7 @@
 | TASK-39 | 安装升级后的启动器到用户目录 | done | — | 4 个 Action、`Terminal=true`、`WM_CLASS=scrcpy` | TASK-38 |
 | TASK-40 | GRUB 主题（Vimix 2K） | done | — | `GRUB_THEME` 指向 theme.txt；`grub-script-check` 通过；Windows/recovery 条目保留 | REQ-23 / ADR-24 |
 | TASK-41 | Dock 透明 + 顶栏毛玻璃 | done | — | Dock `FIXED/0.5` 生效；扩展已启用（待重登）；99-verify 美化段 3/3 | REQ-24 / ADR-24 |
-| TASK-42 | 水系壁纸轮换 | done | — | 4 张 3072×1920；XML 4 static/4 transition；深/浅色均生效；`--list` 可用 | REQ-25 / ADR-25 |
+| TASK-42 | 水系壁纸轮换 | done | — | 14 张 3072×1920；XML 14 static/14 transition；深/浅色均生效；`--list` 可用 | REQ-25 / ADR-25 |
 | TASK-43 | 制作 Suona 声音主题 | done | — | 29 个事件音（木腔/瓷击/哨片/低木，含电池 3 个）；`--dry-run/--list/--preview/--restore` 可用；`strace` 证实加载本主题；99-verify 57/0 | REQ-26 / ADR-27 |
 | TASK-44 | 电池关键节点提示（20% / 10% / 充满） | done | — | 3 个事件音；UPower `Critical` 5→10；timer 每分钟去重；伪造 sysfs 单测 `full → 幂等 → idle` | REQ-27 / ADR-29 |
 | TASK-45 | 深色随日落自动切换 | done | — | 上海 06:15/17:01 计算正确；timer 10min；19:25 实测切到 prefer-dark | REQ-28 / ADR-30 |

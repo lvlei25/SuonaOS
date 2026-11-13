@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=手机文件拉取
+Name[en]=Pull Files from Phone
+GenericName=Pull from Phone
+Comment=输入文件名关键词，搜索手机并拉取到 ~/Downloads
+Comment[en]=Search phone files by name and pull them
+Exec=__PROJECT_ROOT__/scripts/18-mobile-file.sh --find
+Icon=folder-download
+Terminal=true
+Categories=Utility;
+Keywords=手机;文件;拉取;下载;adb;pull;
+StartupNotify=true

@@ -134,6 +134,12 @@
 | 11-11 | 仍偏小 → 留白 80 收窄到 40，396×880 → **414×920**；新增 `MC_FULLSCREEN=1` 全屏启动 | REQ-22 / TASK-37 |
 | 11-11 | 熄屏真因是**主机** idle-delay=300s（5 分钟黑屏锁屏），非手机；改用 `systemd-inhibit --what=idle:sleep` 投屏期间阻止，退出自动释放 | REQ-22 / ADR-18 |
 | 11-11 | 顺带查明手机 `screen_off_timeout` 原值仅 **15 秒**，脚本投屏中设 `2147483647`、退出恢复；`stay_on_while_plugged_in` 已置 7 | REQ-22 |
+| 11-12 | 地址漂移治理：新增 `--recover`（USB 一键 `tcpip 5555` 并记住 WLAN IP）、`--scan`（并发扫网段 5555，实测 8.1s）；自动模式在 5555 直连失败时兜底扫描 | REQ-22 / TASK-36 |
+| 11-12 | 启动器改为手动填地址：`--port-prompt` 同时询问 IP 与端口（回车沿用、`q` 取消），Action 更名「填写 IP 和端口…」；命令行支持 `IP:端口` 完整写法 | REQ-22 / ADR-18 |
+| 11-12 | 新增 `18-mobile-file.sh --find`：按关键词搜五个常用目录并编号拉取；修复 `adb shell` 吞 stdin 导致「选编号却全部拉取」；新增启动器 `mobile-pull.desktop` | REQ-22 / ADR-18 |
+| 11-12 | 拉取后自动 `xdg-open` 打开目标目录，`--no-open` 可关；顺带修掉 `--help` 因 `usage()` 定义晚于调用而报「未找到命令」的老 bug | REQ-22 |
+| 11-12 | 拉取目录改用 `xdg-user-dir DOWNLOAD`（中文环境 `~/下载`），不再写死 `~/Downloads`，避免文件落到没人看的目录 | REQ-22 |
+| 11-13 | 壁纸扩到 14 张：从 Wikimedia Featured pictures 四类（湖/瀑布/海滩/水体）取 10 张，统一裁切 3072×1920，CREDITS 追加授权，XML 更新为 14 static/14 transition | REQ-25 / TASK-42 |
 
 ## 待补
 TASK-36（需手机在线）、S-10 外部凭证、S-13~S-16 产品裁决与上游 v1.1 修订，
