@@ -1,0 +1,18 @@
+# SuonaOS 键位表（声明式清单，由 scripts/24-keys-gestures.sh 读取）
+#
+# 格式: id | 名称 | 命令 | 快捷键
+#   - id 只用小写字母/数字/连字符，会变成 dconf 路径的一部分
+#   - 命令的第一个词必须存在，否则该条会被跳过（不写死绑定）
+#   - @terminal@ 会在安装时替换为本机实际终端（ptyxis / gnome-terminal / kgx …）
+#   - 快捷键用 GNOME 的写法：<Super>Return、<Super><Shift>s
+#
+# 设计约束（ADR-36）：
+#   不套用苹果符号与术语；不用 <Super>space（已被「切换输入源」占用）。
+#   只新增不冲突的组合，不改系统既有快捷键。
+#   截图不单独绑定：GNOME 50 已把 PrintScreen 交给 Shell 的截图 UI，
+#   再绑一个 gnome-screenshot 会与之抢键（本机也没装 gnome-screenshot）。
+
+terminal   | 终端       | @terminal@                          | <Super>Return
+files      | 文件       | nautilus --new-window               | <Super>e
+calculator | 计算器     | gnome-calculator                    | <Super>c
+clipboard  | 剪贴板历史 | gtk-launch suona-clip               | <Super><Shift>v

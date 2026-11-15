@@ -30,6 +30,11 @@ LAT="31.2304"; LON="121.4737"; CITY="上海"
 DARK_SCHEME="prefer-dark";  LIGHT_SCHEME="default"
 DARK_THEME="Yaru-prussiangreen-dark"
 LIGHT_THEME="Yaru-prussiangreen"
+# 输入法候选框必须跟明暗一起走，否则会出现「浅色桌面 + 深色候选框」的割裂感。
+# 只改 fcitx5 classicui 的 Theme 字段，其余（字体/布局）不动。
+FCITX_CONF="$HOME/.config/fcitx5/conf/classicui.conf"
+FCITX_LIGHT="Catppuccin-latte-rosewater"
+FCITX_DARK="Catppuccin-mocha-rosewater"
 
 ACTION=""
 FORCE=""
@@ -105,13 +110,27 @@ current_mode() {
   if [ "$now" -ge "$r" ] && [ "$now" -lt "$s" ]; then echo light; else echo dark; fi
 }
 
+apply_fcitx_theme() { # apply_fcitx_theme <主题名>
+  local want="$1" cur
+  [ -f "$FCITX_CONF" ] || return 0
+  cur="$(sed -n 's/^Theme=//p' "$FCITX_CONF" | head -1)"
+  [ "$cur" = "$want" ] && return 0
+  backup_file "$FCITX_CONF"
+  sed -i "s|^Theme=.*|Theme=$want|" "$FCITX_CONF"
+  # classicui 只在进程启动时读主题，必须重启；只重启托管实例（ISSUE-30 的教训）
+  systemctl --user restart fcitx5.service 2>/dev/null \
+    && ok "候选框主题 → $want（fcitx5 已重启）" \
+    || warn "候选框主题已写入 $want，但 fcitx5 重启失败"
+}
+
 apply_mode() {
-  local mode="$1" scheme theme
-  if [ "$mode" = dark ]; then scheme=$DARK_SCHEME; theme=$DARK_THEME
-  else scheme=$LIGHT_SCHEME; theme=$LIGHT_THEME; fi
+  local mode="$1" scheme theme ft
+  if [ "$mode" = dark ]; then scheme=$DARK_SCHEME; theme=$DARK_THEME; ft=$FCITX_DARK
+  else scheme=$LIGHT_SCHEME; theme=$LIGHT_THEME; ft=$FCITX_LIGHT; fi
   gsettings set org.gnome.desktop.interface color-scheme "$scheme" \
     && gsettings set org.gnome.desktop.interface gtk-theme "$theme" \
     && ok "已切换 $mode（$scheme / $theme）"
+  apply_fcitx_theme "$ft"
 }
 
 # ---- status ----------------------------------------------------------------
