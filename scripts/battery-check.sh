@@ -94,4 +94,22 @@ elif [ -z "$T22" ]; then
 else
   echo '  [!] 固件无 Type 22 电池记录 -> 物理无电池，或 BIOS 中电池被禁用'
 fi
+echo; echo "---- 10. 电池枚举连续性（ISSUE-33，10 秒采样）----"
+# 只观测 BAT* 是否存在：_STA 由 EC 提供，用户态读不到，存在性翻转才是可观测事实。
+miss=0; trans=0; prev="?"
+for i in 1 2 3 4 5; do
+  if compgen -G "/sys/class/power_supply/BAT*" >/dev/null; then cur=present; else cur=absent; fi
+  [ "$prev" != "?" ] && [ "$cur" != "$prev" ] && trans=$((trans+1))
+  [ "$cur" = absent ] && miss=$((miss+1))
+  prev="$cur"
+  [ "$i" -lt 5 ] && sleep 2
+done
+echo "  采样 5 次 / 约 10 秒：缺失 ${miss} 次，状态翻转 ${trans} 次"
+if [ "$miss" -eq 0 ]; then
+  echo '  [OK] 观测期内电池持续存在'
+else
+  echo '  [!] 观测期内电池消失过 -> 按 docs/28 §3 处置（EC 静电复位 -> BIOS 复位电池 -> 报修）'
+  echo '      量化抖动率: ./scripts/28-peripherals-power.sh --battery 60'
+fi
+
 echo "===================================================="

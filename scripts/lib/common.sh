@@ -90,3 +90,36 @@ apt_install() {
 pkg_installed() {
   dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q 'install ok installed'
 }
+
+# ---- dconf 备份 -------------------------------------------------------------
+# gsettings 的数组键（如 custom-keybindings、enabled-extensions）无法用 backup_file
+# 备份，必须整段 dump；恢复时按路径用 dconf load 回灌。
+# 用法: dump_dconf /org/gnome/settings-daemon/plugins/media-keys/
+dump_dconf() {
+  local path="$1" label="${2:-$(printf '%s' "$1" | tr '/' '_')}"
+  local dst="$BACKUP_DIR/$RUN_ID/dconf/$label.dump"
+  have dconf || { warn "缺少 dconf，跳过备份 $path"; return 0; }
+  mkdir -p "$(dirname "$dst")"
+  if dconf dump "$path" >"$dst" 2>/dev/null; then
+    printf '%s\t%s\t%s\n' "$(date '+%F %T')" "dconf:$path" "$RUN_ID/dconf/$label.dump" >>"$MANIFEST"
+    ok "已备份 dconf $path -> ${dst#$PROJECT_ROOT/}"
+  else
+    warn "dconf dump 失败: $path"
+  fi
+}
+
+# ---- 隐私掩码 ---------------------------------------------------------------
+# 报告类输出统一过一层，避免 IP / MAC / 主机名外泄（沿用 docs/11 的做法）
+mask_pii() {
+  sed -E 's/([0-9]{1,3}\.){3}[0-9]{1,3}/<ip>/g; s/([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}/<mac>/g'
+}
+
+# ---- 采样工具 ---------------------------------------------------------------
+# 单次采样 CPU 时间片（/proc/<pid>/stat 的 utime+stime）
+proc_cpu_ticks() {
+  local pid="$1"
+  [ -r "/proc/$pid/stat" ] || { echo 0; return; }
+  awk '{print $14 + $15}' "/proc/$pid/stat" 2>/dev/null || echo 0
+}
+
+clock_ticks() { getconf CLK_TCK 2>/dev/null || echo 100; }
