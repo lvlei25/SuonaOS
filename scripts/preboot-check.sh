@@ -183,6 +183,33 @@ gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | grep -q WhiteS
   && warn_ "GTK 主题已设为 WhiteSur（若主题文件损坏，桌面仍可进，只是外观异常）"
 
 echo
+echo "════════ 5. 交付相关（电池枚举 / 防火墙）════════"
+
+# ISSUE-33：BAT0 会在 40 秒量级消失一次。8 秒窗口只能抽检，
+# 但足够拦住「重启前正好抖着」这种最坏情况；完整判定用 28 --gate。
+BAT_MISS=0
+for i in 1 2 3 4; do
+  compgen -G "/sys/class/power_supply/BAT*" >/dev/null || BAT_MISS=$((BAT_MISS + 1))
+  [ "$i" -lt 4 ] && sleep 2
+done
+if [ "$BAT_MISS" -eq 0 ]; then
+  ok_ "电池枚举连续（8 秒 4 次采样均存在）"
+else
+  warn_ "8 秒内电池消失 ${BAT_MISS} 次（ISSUE-33）" \
+        "按 docs/28 §3 处置；交付前必须跑 ./scripts/28-peripherals-power.sh --gate --minutes 5"
+fi
+
+if command -v ufw >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+  UFW_H="$(sudo -n ufw status 2>/dev/null | head -1)"
+  case "$UFW_H" in
+    *active*|*激活*) ok_ "ufw 已启用（${UFW_H}）" ;;
+    *) warn_ "ufw 未启用" "交付前需决策是否开启（docs/27-安全基线.md）" ;;
+  esac
+else
+  warn_ "ufw 状态不可读" "未安装或免密 sudo 不可用（不猜测）"
+fi
+
+echo
 echo "════════ 汇总 ════════"
 printf '  通过 %s%d%s   警告 %s%d%s   失败 %s%d%s\n' \
   "$C_OK" "$PASS" "$C_RESET" "$C_WARN" "$WARN" "$C_RESET" "$C_ERR" "$FAIL" "$C_RESET"

@@ -33,6 +33,13 @@
 | 11 | 日落自动深色 | `scripts/14-auto-dark.sh` | ✅ |
 | 12 | GTK 圆角覆盖层 | `scripts/15-rounding.sh` | ✅ |
 | 13 | 输入法顶栏图标单色化 | `scripts/16-ime-icon.sh` | ✅ |
+| 14 | 流畅度基准与调优（先测后改） | `scripts/21-shell-bench.sh` | ✅ |
+| 15 | SuonaOS 视觉令牌（独立风格，非 macOS） | `scripts/22-suona-identity.sh` | ✅ |
+| 16 | 字体渲染参数（不换字体族） | `scripts/23-font-render.sh` | ✅ |
+| 17 | 键位与手势 | `scripts/24-keys-gestures.sh` | ✅ |
+| 18 | 即时预览 + 剪贴板历史 | `scripts/25-quicklook-clipboard.sh` | ✅ |
+| 19 | 系统快照 + 安全基线 | `scripts/26-snapshot.sh`、`scripts/27-security-baseline.sh` | ✅ 快照 1 份（42G） |
+| 20 | 外设电源 + 产品骨架 | `scripts/28`/`29`/`30`、`autoinstall/` | ✅ |
 
 改动尺度：**标准**（允许 sysctl / 服务调整，每步备份 + 一键回滚）。
 
@@ -57,7 +64,15 @@ linux-tune_SuonaOS/
 │   ├── 14-桌面壁纸.md      水系壁纸轮换与素材授权
 │   ├── 15-声音主题.md      Suona 提示音主题（ffmpeg 合成，29 事件）
 │   ├── 16-电池提示.md      20%/10%/充满三节点提示与 upower 阈值
-│   ├── 17-界面细节优化.md  日落深色 / 圆角 / 输入法图标
+│   ├── 17-界面细节优化.md  圆角、输入法图标等界面细节
+│   ├── 20-流畅度基准.md    采样项、阈值、基线（唯一「顺不顺」证据源）
+│   ├── 21-SuonaOS视觉语言.md 木腔/黄铜/瓷三材质与禁止清单
+│   ├── 25-流畅度调优.md    逐项实验与负结果
+│   ├── 26-快照回滚.md      Timeshift 与 rollback.sh 的分工
+│   ├── 28-外设与电源.md    外设矩阵、电池抖动处置、交付门禁
+│   ├── 29-镜像与首次开机.md autoinstall 骨架与未实测声明
+│   ├── 18-蓝牙耳机.md      多点连接切换失败与音频占用排查
+│   ├── 19-电池枚举抖动.md  电池 BAT0 间歇消失的诊断与复位流程
 │   ├── 98-启动恢复.md      四级启动失败恢复流程
 │   └── 99-故障排查.md
 ├── scripts/               所有可执行脚本
@@ -90,8 +105,8 @@ linux-tune_SuonaOS/
 | 主题 | Yaru-prussiangreen | WhiteSur-Dark（含 Shell/图标/光标） |
 | 输入法 | ibus（fcitx5 装了未用） | fcitx5（重登后生效） |
 | GRUB 超时 | 5s | 5s（Windows 双系统，保留菜单可选） |
-| GUI 校验 | — | 62 项通过 / 0 项失败（状态感知，随当前配置分支） |
-| 重启前体检 | — | 22 项通过 / 0 项失败 |
+| GUI 校验 | — | 以 `./scripts/spec-status.sh --facts` 输出为准（状态感知） |
+| 重启前体检 | — | 26 项通过 / 0 项失败 |
 
 > 上表为**首轮部署后的历史快照**：字体、主题、Dock 已按 ADR-07 回退，
 > GRUB 按 ADR-03 保留 5s，当前实际值以 `./scripts/99-verify.sh` 输出为准。
@@ -122,6 +137,21 @@ cd ~/CodeBuddy/work/linux-tune_SuonaOS
 
 # 5. 重启后复核
 ./scripts/99-verify.sh
+
+# 6. 体验层（用户级，可单独回滚）
+./scripts/21-shell-bench.sh                 # 流畅度基线（60s × 2 次更可信）
+./scripts/22-suona-identity.sh --install    # 视觉令牌（非 macOS 风格）
+./scripts/23-font-render.sh --install       # 字体渲染参数
+./scripts/24-keys-gestures.sh --install     # 键位与热角
+./scripts/25-quicklook-clipboard.sh --install  # 空格预览 + 剪贴板历史
+
+# 7. 底座与交付
+./scripts/26-snapshot.sh --install --auto-config   # 快照（首个基线手动建）
+./scripts/27-security-baseline.sh --install        # ufw + 安全更新
+./scripts/28-peripherals-power.sh --status         # 外设矩阵
+./scripts/29-suona-firstboot.sh --report           # 国产软件可达性
+./scripts/30-llm-verify.sh                         # 本地 LLM 判定
+./scripts/spec-status.sh --facts                   # 数字唯一来源
 ```
 
 ## 出问题了怎么办

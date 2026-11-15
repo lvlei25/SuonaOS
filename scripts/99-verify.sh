@@ -76,8 +76,15 @@ if echo "$CUR_FONT" | grep -q Inter; then
 else
   chk "界面字体为系统默认" "[ -n '$CUR_FONT' ] && echo '$CUR_FONT' | grep -qv Inter"
   chk "等宽字体为系统默认" "gsettings get org.gnome.desktop.interface monospace-font-name | grep -qv JetBrains"
-  chk "fontconfig 已按回退清理" "[ ! -f $HOME/.config/fontconfig/fonts.conf ]"
-  val "字体状态：回退态（REQ-06 = reverted / ADR-07）$CUR_FONT"
+  RENDER="$HOME/.config/fontconfig/conf.d/99-suona-render.conf"
+  if [ -f "$RENDER" ]; then
+    chk "字体渲染覆盖层已安装（REQ-35）" "grep -q 'hintstyle' '$RENDER'"
+    chk "未改动字体族（只调渲染）" "[ ! -f $HOME/.config/fontconfig/fonts.conf ]"
+    val "字体状态：系统默认字体 + Suona 渲染覆盖 $CUR_FONT"
+  else
+    chk "fontconfig 已按回退清理" "[ ! -f $HOME/.config/fontconfig/fonts.conf ]"
+    val "字体状态：回退态（REQ-06 = reverted / ADR-07）$CUR_FONT"
+  fi
 fi
 chk "中文字体可用" "[ $(fc-list :lang=zh 2>/dev/null | wc -l) -gt 20 ]"
 
@@ -88,6 +95,25 @@ chk "fcitx5 用户服务已启用" "systemctl --user is-enabled --quiet fcitx5.s
 chk "fcitx5 服务运行中" "systemctl --user is-active --quiet fcitx5.service"
 chk "fcitx5 进程运行中" "pgrep -x fcitx5"
 chk "旧 autostart 已清理" "[ ! -f $HOME/.config/autostart/fcitx5.desktop ]"
+# 候选框风格必须跟明暗一致（REQ-41）：浅色桌面配深色候选框会显得割裂。
+FCONF="$HOME/.config/fcitx5/conf/classicui.conf"
+if [ -f "$FCONF" ]; then
+  FTHEME=$(sed -n 's/^Theme=//p' "$FCONF" | head -1)
+  CS=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'")
+  case "$FTHEME" in
+    Catppuccin-latte-*|Catppuccin-mocha-*)
+      case "$CS" in
+        *dark*) EXPECT="Catppuccin-mocha" ;;
+        *)      EXPECT="Catppuccin-latte" ;;
+      esac
+      chk "候选框主题跟随明暗（期望 $EXPECT）" "echo '$FTHEME' | grep -q '$EXPECT'"
+      val "候选框: $FTHEME（color-scheme=$CS）"
+      ;;
+    *)
+      val "候选框: $FTHEME（非 Catppuccin 系列，跳过明暗一致性断言）"
+      ;;
+  esac
+fi
 val "当前 XMODIFIERS: ${XMODIFIERS:-未设置}（重新登录后变为 @im=fcitx）"
 
 echo
@@ -188,7 +214,7 @@ chk "电池事件音齐全（low/caution/full）" "[ '$BAT_EV_N' -eq 3 ]"
 UP_LOW=$(grep -E '^PercentageLow=' /etc/UPower/UPower.conf 2>/dev/null | cut -d= -f2)
 UP_CRIT=$(grep -E '^PercentageCritical=' /etc/UPower/UPower.conf 2>/dev/null | cut -d= -f2)
 chk "upower 低电阈值 20% / 10%" "[ '${UP_LOW%.*}' = 20 ] && [ '${UP_CRIT%.*}' = 10 ]"
-chk "充满提示 timer 已启用" "systemctl --user is-enabled --quiet suona-battery-alert.timer"
+# 「充满提示」timer 由用户决定是否启用（2026-11-15 起默认关闭），此处不断言
 if [ -x /etc/systemd/system-sleep/50-suona-upower ]; then
   chk "挂起恢复自愈 hook 已安装" "[ -x /etc/systemd/system-sleep/50-suona-upower ]"
   val "电池: low=${UP_LOW%.*}% critical=${UP_CRIT%.*}% timer=$(systemctl --user is-active suona-battery-alert.timer 2>/dev/null) hook=on"
@@ -233,6 +259,151 @@ if [ "$SB_N" -gt 0 ]; then
 else
   val "Electron 沙箱: 未发现 /opt 下的 chrome-sandbox"
 fi
+
+echo
+echo "════════ 视觉令牌（ADR-36）════════"
+# 只断言「没有苹果化残留」与「令牌一致」，不断言审美
+BTN_LAYOUT=$(gsettings get org.gnome.desktop.wm.preferences button-layout 2>/dev/null | tr -d "'")
+case "$BTN_LAYOUT" in
+  close,*)
+    chk "窗口按钮不在左侧（无 macOS 红绿灯布局）" "false"
+    val "按钮布局: $BTN_LAYOUT（WhiteSur 遗留，跑 22-suona-identity.sh --install）"
+    ;;
+  *)
+    chk "窗口按钮在右侧" "[ -n '$BTN_LAYOUT' ]"
+    val "按钮布局: $BTN_LAYOUT"
+    ;;
+esac
+
+CUR_CURSOR=$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d "'")
+chk "光标未使用 WhiteSur" "[ '${CUR_CURSOR}' != 'WhiteSur-cursors' ]"
+chk "无 WhiteSur 光标目录残留" "[ ! -d $HOME/.local/share/icons/WhiteSur-cursors ]"
+val "光标: $CUR_CURSOR"
+
+if gsettings list-keys org.gnome.desktop.interface 2>/dev/null | grep -qx accent-color; then
+  ACC=$(gsettings get org.gnome.desktop.interface accent-color 2>/dev/null | tr -d "'")
+  if [ -f "$HOME/.config/linux-tune/identity.conf" ]; then
+    WANT=$(bash -c '. "$1"; echo "${ACCENT:-}"' _ "$HOME/.config/linux-tune/identity.conf" 2>/dev/null)
+    if [ -n "$WANT" ]; then
+      chk "强调色与 token 记录一致（$WANT）" "[ '$ACC' = '$WANT' ]"
+    else
+      val "强调色: $ACC（token 文件无 ACCENT 字段）"
+    fi
+  else
+    val "强调色: $ACC（未建立 token 文件）"
+  fi
+else
+  val "强调色: 本机 GNOME 不支持 accent-color（跳过）"
+fi
+
+echo
+echo "════════ 键位与手势 ════════"
+KB=$(gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings 2>/dev/null)
+KB_N=$(printf '%s' "$KB" | grep -oE 'custom-keybindings/[a-z]+/' | wc -l)
+if [ "$KB_N" -gt 0 ]; then
+  chk "Suona 键位已注册（$KB_N 条）" "[ '$KB_N' -ge 1 ]"
+  for id in terminal files calculator clipboard; do
+    P="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/$id/"
+    if printf '%s' "$KB" | grep -q "$P"; then
+      B=$(gsettings get "org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$P" binding 2>/dev/null | tr -d "'")
+      chk "键位 $id 有绑定" "[ -n '$B' ]"
+    fi
+  done
+else
+  val "键位: 未安装 Suona 键位表（24-keys-gestures.sh）"
+fi
+if gsettings list-keys org.gnome.desktop.interface 2>/dev/null | grep -qx enable-hot-corners; then
+  chk "热角已开启" "gsettings get org.gnome.desktop.interface enable-hot-corners | grep -q true"
+fi
+val "触摸板: 点按 $(gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click 2>/dev/null) / 自然滚动 $(gsettings get org.gnome.desktop.peripherals.touchpad natural-scroll 2>/dev/null)"
+
+echo
+echo "════════ 即时预览与剪贴板 ════════"
+if pgrep -x sushi >/dev/null 2>&1 || pkg_installed gnome-sushi 2>/dev/null || command -v sushi >/dev/null 2>&1; then
+  chk "glib 即时预览已安装（gnome-sushi）" "command -v sushi"
+else
+  val "即时预览: 未安装 gnome-sushi（空格预览不可用）"
+fi
+if [ -x "$HOME/.local/bin/suona-clip" ]; then
+  chk "suona-clip 已安装" "[ -x $HOME/.local/bin/suona-clip ]"
+  chk "剪贴板采集服务已启用" "systemctl --user is-enabled --quiet suona-clipboard.service"
+  chk "剪贴板采集服务运行中" "systemctl --user is-active --quiet suona-clipboard.service"
+  val "剪贴板历史: $([ -f $HOME/.local/state/suona/clipboard.tsv ] && wc -l <$HOME/.local/state/suona/clipboard.tsv || echo 0) 条"
+else
+  val "剪贴板历史: 未安装（25-quicklook-clipboard.sh）"
+fi
+
+echo
+echo "════════ 系统快照 ════════"
+if command -v timeshift >/dev/null 2>&1; then
+  if sudo -n true 2>/dev/null; then
+    TS_OUT=$(sudo -n timeshift --list 2>&1 || true)
+    if printf '%s' "$TS_OUT" | grep -qE '^(Mode|Device)[[:space:]]*:'; then
+      chk "Timeshift 配置可读" "true"
+      TS_N=$(printf '%s' "$TS_OUT" | awk '/^[[:space:]]*[0-9]+[[:space:]]+>/{n++} END{print n+0}')
+      if [ "${TS_N:-0}" -ge 1 ]; then
+        chk "至少存在 1 个快照（可回退点）" "[ '$TS_N' -ge 1 ]"
+      else
+        val "快照: 0 个（跑 26-snapshot.sh --snapshot \"基线\"）"
+      fi
+      val "快照: $TS_N 个（rsync / ext4；同盘快照不防盘损）"
+    else
+      chk "Timeshift 配置可读" "false"
+      val "Timeshift 已装但未初始化（sudo timeshift --setup）"
+    fi
+  else
+    val "快照: 已安装 timeshift，免密 sudo 不可用无法读取（不猜测）"
+  fi
+else
+  val "快照: 未安装 timeshift"
+fi
+
+echo
+echo "════════ 安全基线 ════════"
+if command -v ufw >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+  UFWH=$(sudo -n ufw status 2>/dev/null | head -1)
+  if printf '%s' "$UFWH" | grep -qE 'active|激活'; then
+    chk "ufw 已启用" "true"
+  else
+    chk "ufw 已启用" "false"
+  fi
+  val "ufw: ${UFWH:-不可读}"
+else
+  val "ufw: 未安装或免密 sudo 不可用（不猜测状态）"
+fi
+if pkg_installed unattended-upgrades 2>/dev/null; then
+  chk "安全自动更新已启用" "[ '$(systemctl is-enabled unattended-upgrades.service 2>/dev/null)' = enabled ]"
+  chk "自动更新策略文件存在" "[ -f /etc/apt/apt.conf.d/20auto-upgrades ]"
+else
+  val "自动更新: 未安装 unattended-upgrades"
+fi
+
+echo
+echo "════════ 外设与电源 ════════"
+if compgen -G "/sys/class/power_supply/BAT*" >/dev/null; then
+  chk "电池节点存在" "true"
+  for b in /sys/class/power_supply/BAT*; do
+    [ -d "$b" ] || continue
+    if [ -e "$b/charge_control_end_threshold" ]; then
+      CS=$(cat "$b/charge_control_start_threshold" 2>/dev/null)
+      CE=$(cat "$b/charge_control_end_threshold" 2>/dev/null)
+      chk "充电阈值 75/80 生效" "[ '$CS' = 75 ] && [ '$CE' = 80 ]"
+      val "$(basename "$b"): $(cat "$b/capacity" 2>/dev/null)% / 阈值 ${CS}/${CE}"
+    fi
+  done
+else
+  val "电池: 当前无 BAT* 节点（可能为 ISSUE-33 抖动，跑 28 --battery 60）"
+fi
+TC_N=$(ls -d /sys/class/typec/port[0-9]* 2>/dev/null | wc -l)
+val "USB-C 端口: $TC_N 个；显示输出: $(grep -l '^connected' /sys/class/drm/card*-*/status 2>/dev/null | wc -l) 个已连接"
+
+echo
+echo "════════ 产品骨架（S-31 / S-44）════════"
+chk "首次开机自检脚本存在" "[ -x $PROJECT_ROOT/scripts/29-suona-firstboot.sh ]"
+chk "大模型验证脚本存在" "[ -x $PROJECT_ROOT/scripts/30-llm-verify.sh ]"
+chk "国产软件清单存在" "[ -s $PROJECT_ROOT/autoinstall/software-list.tsv ]"
+chk "autoinstall 骨架存在" "[ -s $PROJECT_ROOT/autoinstall/user-data.yaml ]"
+val "提示: 工具存在不等于通过；第 6/7 步按 step-verify 的四状态判定"
 
 echo
 echo "════════ 汇总 ════════"

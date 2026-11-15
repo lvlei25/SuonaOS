@@ -75,7 +75,7 @@
 | 原始输出 | `logs/step-verify-<RUN_ID>/04-verify.log` |
 | 量化判据 | 该脚本 `失败 0`；且 zram 已激活、`swappiness ≤ 20`、BBR 生效、冗余单元为 `disabled` |
 | 失败处置 | 按 ✗ 项对应文档修；脚本本身过时按 ADR-21 改断言，**不许跳过** |
-| 本机状态 | `PASS`（62 项全过） |
+| 本机状态 | `PASS`（61 项全过） |
 
 ### 第 5 步 · 输入法
 
@@ -93,20 +93,20 @@
 
 | 项 | 内容 |
 |---|---|
-| 工具 | `suona-firstboot` 自检（**未交付**，S-31） |
-| 命令 | 无 |
+| 工具 | `scripts/29-suona-firstboot.sh`（已交付，S-31 检测部分） |
+| 命令 | `./scripts/29-suona-firstboot.sh --report --json` |
 | 量化判据 | ① 11 款均可启动；② Wayland 下屏幕共享可用；③ 必要时可回退 X11 会话 |
-| 本机状态 | `TOOL_MISSING`（原型机未安装这批软件；脚本不存在） |
-| 后果 | 该项未通过前，SM-1 不能判 `done`；不得用「本机没装」冒充通过 |
+| 本机状态 | `NA`（工具已交付；原型机 1/11 可达，需目标机实测） |
+| 后果 | 该项未通过前，SM-1 不能判 `done`；不得用「本机没装」冒充通过；`SUONA_DELIVERY=1` 时部分可达判 `FAIL` |
 
 ### 第 7 步 · 本地 LLM
 
 | 项 | 内容 |
 |---|---|
-| 工具 | `llm-verify.sh`（**未交付**，S-44） |
-| 命令 | 无（本机 `ollama` 未安装） |
+| 工具 | `scripts/30-llm-verify.sh`（已交付，S-44 检测部分） |
+| 命令 | `./scripts/30-llm-verify.sh [--bench]` |
 | 量化判据 | ① ROCm 正确识别 GPU；② `ollama` active；③ 14B ≥ 30 tok/s、30B-A3B ≈ 70、8B 常驻 3–4（A-xx 指标） |
-| 本机状态 | `TOOL_MISSING`（无 AMD GPU 加速环境、未装 Ollama） |
+| 本机状态 | `TOOL_MISSING`（本机无 ollama/ROCm；若装了 ollama 但核显不受支持则判 `NA`） |
 | 后果 | 同第 6 步，不得以「本机不适用」替代目标机型实测 |
 
 ### 第 8 步 · 回滚与安全
@@ -138,8 +138,8 @@ ls  logs/step-verify-<RUN_ID>/                 # 每步原始输出
 
 | 步 | 缺口 | 交付物 | 阻塞的里程碑 |
 |---|---|---|---|
-| 6 | 国产软件自检 | S-31 `suona-firstboot` | SM-1 判定、SM-2 |
-| 7 | LLM 性能实测 | S-44 `llm-verify.sh` | SM-2 指标回填 |
+| 6 | 国产软件自检 | 已交付 `29-suona-firstboot.sh`；**结论仍需目标机** | SM-1 判定、SM-2 |
+| 7 | LLM 性能实测 | 已交付 `30-llm-verify.sh`；**实测仍需 UM870** | SM-2 指标回填 |
 | 8 | 每台交付前执行 | S-51（依赖本清单 S-12） | 首批交付 S-52 |
 
 ## 6. 本机（原型）实测结论 2026-11-06
@@ -151,11 +151,11 @@ ls  logs/step-verify-<RUN_ID>/                 # 每步原始输出
 | 3 性能基准 | `PASS [原型]` | python 0.13s / sha256 1036 MB/s |
 | 4 系统配置 | `PASS` | 99-verify 45/0 |
 | 5 输入法 | `PASS` | 服务 active + 5/5 检查 |
-| 6 国产软件 | `TOOL_MISSING` | S-31 未交付 |
-| 7 本地 LLM | `TOOL_MISSING` | S-44 未交付 |
+| 6 国产软件 | `NA` | 工具已交付；本机 1/11，原型未预装 |
+| 7 本地 LLM | `TOOL_MISSING` | 本机无 ollama/ROCm |
 | 8 回滚与安全 | `PASS [原型]` | 5 批次；ufw 未启用已登记 |
 
-**结论：`PASS 6 / 8`，`TOOL_MISSING 2`，`FAIL 0`。**
+**结论（2026-11-15 复跑）：`PASS 6 / 8`，`NA 1`，`TOOL_MISSING 1`，`FAIL 0`。**
 按 §2 口径，**不能**宣称「8 步通过」；SM-1 仍为 `partial`，
 第 6/7 步须在目标机型 + 工具交付后补测。
 

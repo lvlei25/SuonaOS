@@ -11,7 +11,7 @@
 | REQ-07 | WhiteSur 桌面主题 | P2 | cancelled | 用户偏好系统默认外观 | `06-theme-whitesur.sh` |
 | REQ-08 | macOS 风格 Dock | P2 | cancelled | 已 `reset-recursively` | — |
 | REQ-09 | fcitx5 登录自启 | P0 | done | `systemctl --user is-active fcitx5.service` | systemd user unit |
-| REQ-10 | 候选框主题（深色圆角） | P1 | done | `Theme=Catppuccin-mocha-blue` 生效 | `08-ime-theme.sh` |
+| REQ-10 | 候选框主题（深色圆角） | P1 | done | 66 套可选；现由 REQ-41 接管明暗跟随 | `08-ime-theme.sh` |
 | REQ-11 | 静音 Wayland 诊断通知 | P1 | cancelled | 用户决定不再处理，接受通知出现 | — |
 | REQ-12 | 电池 / 供电检测 | P1 | done | `dmidecode -t 22` 与 `BAT0` 均确认电池存在且健康 | `battery-check.sh` |
 | REQ-13 | 文档与配置一致 | P0 | done | 旧自启路径 0 残留 ✓；07/08/99 文档已同步 systemd；Shell 结论与 Kimpanel 取舍已更正 | ISSUE-06 / TASK-03/09/10 |
@@ -28,11 +28,23 @@
 | REQ-24 | Dock 与顶栏透明度美化 | P2 | done | Dock `FIXED/0.5` 即时生效；顶栏 Blur my Shell 参数已写（待注销重登确认） | `docs/13` / ADR-24 |
 | REQ-25 | 水系主题桌面壁纸 | P2 | done | 14 张 3072×1920（Wikimedia CC，湖/瀑布/海滩/港湾）；每 30 分钟轮换；深/浅色均生效；署名 `CREDITS.txt` | `docs/14` / ADR-25 |
 | REQ-26 | 系统提示音主题（Suona 木腔） | P2 | done | 29 个事件音（含电池 3 个）、ffmpeg 本地合成零素材；峰值归一 -3.5 dB；`strace` 证实 libcanberra 读取本主题；99-verify 57/0 | `docs/15` / ADR-27 |
-| REQ-27 | 电池关键节点提示（20% / 10% / 充满） | P2 | done | `battery-low`/`battery-caution` 由 gsd-power 自动触发；充满由 user timer 按 `charge_control_end_threshold` 判定；99-verify 57/0 | `docs/16` / ADR-29 |
+| REQ-27 | 电池关键节点提示（20% / 10%） | P2 | done | `battery-low`/`battery-caution` 由 gsd-power 自动触发，仅需音效文件；**「充满提示」2026-11-15 按用户要求撤销**（timer 已 disable） | `docs/16` / ADR-29 |
 | REQ-28 | 深色模式随日落自动切换 | P2 | done | NOAA 本地算日出日落；10 分钟 timer；同时切 color-scheme 与 gtk-theme；状态去重 | `docs/17` / ADR-30 |
 | REQ-29 | 桌面与部分软件圆角优化 | P3 | done | GTK4 窗口/弹层 14px、GTK3 外框；Shell 层按 ADR-07 不动 | `docs/17` / ADR-30 |
 | REQ-30 | 输入法顶栏图标与系统风格统一 | P2 | done | 用户级 symbolic 图标 + kimpanel `createSymbolicIcon` 补丁；需注销生效 | `docs/17` / ADR-31 |
 | REQ-31 | 补齐音效主题缺失事件 | P3 | done | 新增 desktop-login/logoff、dialog-question、message-new-email、system-ready，29→34 | `docs/15` / ADR-27 |
+| REQ-32 | 蓝牙多点连接切让（音频占用排查） | P2 | done | `20-bt-release.sh` 列出/移走占用耳机的流；实测移流后 sink 转 IDLE；不做常驻服务（唤醒成本 > 收益） | `docs/18` / ADR-33 |
+
+| REQ-33 | 桌面流畅度基准与调优（先测后改） | P1 | done | 固定场景可重复采样；改动前后 10% 判据；负结果如实记录 | `21-shell-bench.sh` / `docs/20`、`docs/25` |
+| REQ-34 | SuonaOS 独立视觉令牌（**不模仿 macOS**） | P1 | done | 按钮回右侧、无 WhiteSur 残留、强调色与 token 一致 | `22-suona-identity.sh` / `docs/21` |
+| REQ-35 | 字体渲染参数（不换字体族） | P2 | done | conf.d 覆盖层生效；`font-name` 仍为系统默认 | `23-font-render.sh` / `docs/22` |
+| REQ-36 | 键位与手势 | P2 | done | 4 条键位注册、热角开启、冲突检测通过 | `24-keys-gestures.sh` / `docs/23` |
+| REQ-37 | 即时预览 + 剪贴板历史 | P2 | done | 空格预览可用；剪贴板服务 active 且可选取 | `25-quicklook-clipboard.sh` / `docs/24` |
+| REQ-38 | 系统级快照 | P1 | done | 首份快照 `2026-11-15_13-42-08`（161s / 42G）；`--list` Status OK | `26-snapshot.sh` / `docs/26` |
+| REQ-39 | 安全基线（默认拒绝 + 安全更新 + 端口审计） | P1 | done | ufw 激活、5353/udp 放行、unattended-upgrades enabled | `27-security-baseline.sh` / `docs/27` |
+| REQ-40 | 外设矩阵 / 电池抖动 / 产品骨架 | P2 | done | 外设矩阵可读；抖动可量化；29/30/autoinstall 交付（autoinstall 未实测） | `28`/`29`/`30`、`autoinstall/` |
+
+| REQ-41 | 候选框风格与桌面一致（跟随明暗 + 同色系 + 同字号） | P1 | done | 浅色 `latte-peach` / 深色 `mocha-peach`；字号 11；体检断言通过 | `14-auto-dark.sh` / `docs/08` §7 |
 
 ## 变更记录
 - 2026-11-03 REQ-07/08 `done` → `cancelled`：用户偏好系统自带 Dock。

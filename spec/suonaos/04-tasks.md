@@ -41,7 +41,7 @@
 | 编号 | 任务 | 状态 | 依赖 | 验收 |
 |---|---|---|---|---|
 | S-30 | 11 款国产软件适配（钉钉 patchelf / WPS 依赖 / libfuse2 / RustDesk 替换） | planned | S-14, S-21 | 11 款可启动 |
-| S-31 | `suona-firstboot` 服务：依赖/镜像/Wayland/字体检测 | planned | S-30 | 首次开机 0 手工配置 |
+| S-31 | `suona-firstboot` 服务：依赖/镜像/Wayland/字体检测 | in_progress | S-30 | 检测脚本已交付（`29-suona-firstboot.sh`）；镜像与安装仍待 UM870 |
 | S-32 | Flatpak 中科大/阿里镜像 | planned | S-21 | ≥10 MB/s |
 | S-33 | X11 会话后备（腾讯会议共享）+ 登录界面说明 | planned | S-21 | 可切换 |
 | S-34 | GNOME 50 三重缓冲 780M 复测 + 动效曲线 | planned | S-20 | 4K 概览 ≥60 FPS |
@@ -56,7 +56,7 @@
 | S-41 | `HSA_OVERRIDE_GFX_VERSION` profile.d 注入 | planned | S-40 | 用户无感 |
 | S-42 | Ollama + systemd 自启 + Qwen3-14B Q4 预下载 | planned | S-40 | 首次开机可用 |
 | S-43 | Open WebUI / localhost:8080 快捷方式 + Q4/Q5/Q8 切换脚本 | planned | S-42 | 可对话、可切换 |
-| S-44 | tok/s 实测（14B ≥30 / 30B-A3B ~70 / 8B 常驻 3–4） | planned | S-42 | 指标表回填 `05-acceptance-risks.md` |
+| S-44 | tok/s 实测（14B ≥30 / 30B-A3B ~70 / 8B 常驻 3–4） | in_progress | S-42 | 验证脚本已交付（`30-llm-verify.sh`）；实测待目标机 |
 | S-45 | 中文 RAG 模板（AnythingLLM 挂载工作文件夹） | planned | S-43 | 10 分钟搭出个人知识库 |
 
 ## W5–W6 集成与交付

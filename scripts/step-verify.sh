@@ -118,17 +118,40 @@ else
 fi
 
 step "6/8 国产软件 11 款 + 屏幕共享"
-if [ -x "$PROJECT_ROOT/scripts/suona-firstboot.sh" ] || [ -f "$PROJECT_ROOT/scripts/firstboot-check.sh" ]; then
-  record 6 "国产软件兼容" TOOL_MISSING "自检脚本存在但尚未纳入本清单（S-31 未完成）"
+FB="$PROJECT_ROOT/scripts/29-suona-firstboot.sh"
+if [ -x "$FB" ]; then
+  timeout 120 bash "$FB" --report --json >"$OUT_DIR/06-firstboot.json" 2>"$OUT_DIR/06-firstboot.err" || true
+  FB_INST=$(sed -n 's/.*"installed":\([0-9]*\).*/\1/p' "$OUT_DIR/06-firstboot.json" | head -1)
+  FB_TOTAL=$(sed -n 's/.*"total":\([0-9]*\).*/\1/p' "$OUT_DIR/06-firstboot.json" | head -1)
+  if [ -n "$FB_INST" ] && [ -n "$FB_TOTAL" ]; then
+    if [ "$FB_INST" -eq "$FB_TOTAL" ] && [ "$FB_TOTAL" -gt 0 ]; then
+      record 6 "国产软件兼容" PASS "$FB_INST/$FB_TOTAL 款可达"
+    elif [ "${SUONA_DELIVERY:-0}" = "1" ] && [ "$FB_INST" -gt 0 ]; then
+      # 交付态：有缺失就是 FAIL；原型态（默认）不把「没装」判成产品缺陷
+      record 6 "国产软件兼容" FAIL "$FB_INST/$FB_TOTAL 款可达（交付态要求全量）"
+    else
+      record 6 "国产软件兼容" NA "检测工具已交付；本机 $FB_INST/$FB_TOTAL（原型未预装，需目标机实测）"
+    fi
+  else
+    record 6 "国产软件兼容" TOOL_MISSING "自检输出无法解析（见 06-firstboot.err）"
+  fi
 else
-  record 6 "国产软件兼容" TOOL_MISSING "自检工具未交付（S-31），本机未装这批软件"
+  record 6 "国产软件兼容" TOOL_MISSING "S-31 未交付（缺 29-suona-firstboot.sh）"
 fi
 
 step "7/8 本地 LLM / tok/s"
-if [ -f "$PROJECT_ROOT/scripts/llm-verify.sh" ]; then
-  record 7 "本地 LLM" TOOL_MISSING "llm-verify.sh 存在但未纳入（S-44 未完成）"
+LLM="$PROJECT_ROOT/scripts/30-llm-verify.sh"
+if [ -x "$LLM" ]; then
+  timeout 180 bash "$LLM" >"$OUT_DIR/07-llm.log" 2>&1 || true
+  LLM_RES="$(sed -n 's/^RESULT: //p' "$OUT_DIR/07-llm.log" | tail -1)"
+  case "$LLM_RES" in
+    PASS) record 7 "本地 LLM" PASS "$(grep -E '判定|原因' "$OUT_DIR/07-llm.log" | tr '\n' ' ' | cut -c1-80)" ;;
+    FAIL) record 7 "本地 LLM" FAIL "环境齐但指标不达标（见 07-llm.log）" ;;
+    NA)   record 7 "本地 LLM" NA "$(sed -n 's/^  原因 *//p' "$OUT_DIR/07-llm.log" | tail -1 | cut -c1-70)" ;;
+    *)    record 7 "本地 LLM" TOOL_MISSING "ollama / ROCm 未安装，无法判定" ;;
+  esac
 else
-  record 7 "本地 LLM" TOOL_MISSING "llm-verify.sh 未交付（S-44），本机无 ollama/ROCm 环境"
+  record 7 "本地 LLM" TOOL_MISSING "S-44 未交付（缺 30-llm-verify.sh）"
 fi
 
 step "8/8 回滚与安全"
@@ -143,17 +166,55 @@ if [ -f "$PROJECT_ROOT/scripts/rescue.sh" ]; then
 fi
 UFW_ST=$(sudo -n ufw status 2>/dev/null | head -1)
 FS=$(findmnt -no FSTYPE / 2>/dev/null)
+
+# 快照数量（ADR-34）：同盘快照防误操作，交付时至少要有一个可回退点
+TS_N=""
+if command -v timeshift >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+  TS_OUT="$(sudo -n timeshift --list 2>&1 || true)"
+  if printf '%s' "$TS_OUT" | grep -qE '^(Mode|Device)[[:space:]]*:'; then
+    TS_N=$(printf '%s' "$TS_OUT" | awk '/^[[:space:]]*[0-9]+[[:space:]]+>/{n++} END{print n+0}')
+  else
+    TS_N="unconfigured"
+  fi
+fi
+
+# 交付态（SUONA_DELIVERY=1）才跑 5 分钟电池门禁；原型态只做 10 秒抽检，
+# 否则每次 step-verify 都要多花 5 分钟，没人会跑。
+GATE_FAIL=""
+if [ "${SUONA_DELIVERY:-0}" = "1" ]; then
+  if [ -x "$PROJECT_ROOT/scripts/28-peripherals-power.sh" ]; then
+    if timeout 400 bash "$PROJECT_ROOT/scripts/28-peripherals-power.sh" --gate --minutes 5 \
+         >>"$OUT_DIR/08-rollback.log" 2>&1; then
+      echo "battery gate: PASS" >>"$OUT_DIR/08-rollback.log"
+    else
+      GATE_FAIL="$GATE_FAIL battery"
+      echo "battery gate: FAIL" >>"$OUT_DIR/08-rollback.log"
+    fi
+  fi
+  case "${TS_N:-}" in
+    ''|unconfigured|0) GATE_FAIL="$GATE_FAIL snapshot" ;;
+  esac
+else
+  if [ -x "$PROJECT_ROOT/scripts/28-peripherals-power.sh" ]; then
+    timeout 60 bash "$PROJECT_ROOT/scripts/28-peripherals-power.sh" --battery 10 \
+      >>"$OUT_DIR/08-rollback.log" 2>&1 || true
+  fi
+fi
+
 {
   echo "备份批次数: ${RB:-0}"
   echo "rescue --dry-run: $([ $RESCUE_OK -eq 1 ] && echo OK || echo FAIL)"
   echo "ufw: ${UFW_ST:-不可读}"
+  echo "timeshift 快照: ${TS_N:-未安装/不可读}"
   echo "root fs: ${FS:-未知}（btrfs/LUKS 不适用则为 NA）"
+  echo "delivery gate: ${GATE_FAIL:-未启用}"
 } >>"$OUT_DIR/08-rollback.log"
-if [ "${RB:-0}" -ge 1 ] && [ $RESCUE_OK -eq 1 ] && [ -n "$UFW_ST" ]; then
-  NOTE="批次 ${RB}；ufw ${UFW_ST}；${FS} 无 Btrfs/LUKS(NA)"
+
+if [ "${RB:-0}" -ge 1 ] && [ $RESCUE_OK -eq 1 ] && [ -n "$UFW_ST" ] && [ -z "$GATE_FAIL" ]; then
+  NOTE="批次 ${RB}；ufw ${UFW_ST}；快照 ${TS_N:-无}；${FS} 无 Btrfs/LUKS(NA)"
   record 8 "回滚与安全" PASS "$NOTE"
 else
-  record 8 "回滚与安全" FAIL "批次=${RB:-0} rescue=$RESCUE_OK ufw=${UFW_ST:-?}"
+  record 8 "回滚与安全" FAIL "批次=${RB:-0} rescue=$RESCUE_OK ufw=${UFW_ST:-?} 快照=${TS_N:-?} gate=${GATE_FAIL:-无}"
 fi
 
 echo >&2

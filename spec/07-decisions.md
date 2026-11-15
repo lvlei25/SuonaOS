@@ -400,6 +400,13 @@ B 在生成端统一衰减（`SYS_DECAY_DB`）。
 后果：`99-verify.sh` 新增「电池提示」段 3 项，54 → 57；主题事件 26 → 29。
 回滚：`./scripts/13-battery-alert.sh --restore`（停 timer + 恢复 UPower.conf 备份）。
 
+**2026-11-15 变更**：用户要求撤销「充满提示」，理由是当初引入 timer 就是为了
+解决「电量变化误报提示音」，而实测证明那个误报来自 EC 的 `_STA` 抖动
+（见 ISSUE-33），与本 timer 无关。已执行
+`systemctl --user disable --now suona-battery-alert.timer`。
+`20%/10%` 不依赖 timer（`gsd-power` 内置事件名），功能不变；
+三个音效文件与脚本均保留，`--install` 可随时恢复。
+
 ## ADR-30 日落深色 + 圆角：用户级覆盖，不做 shell theme
 背景：2026-11-08 用户要求「暗色样式随日落开关」「桌面及部分软件圆角优化」。
 结论：
@@ -459,3 +466,58 @@ C 提供 symbolic 图标 + 扩展补丁。
 回滚：`15-rounding.sh --restore` 或 `gsettings set org.gnome.shell.extensions.user-theme name ''`。
 遗留：`~/.themes/WhiteSur-*` 共 100+ 个目录（ADR-07 回退后未删）仍占空间，
 另有 `~/.icons`、`~/.local/share/gnome-shell/extensions` 的残留，列为后续清理项。
+
+## ADR-33 蓝牙多点切换失败：提供手动释放工具，不做常驻服务
+背景：用户耳机（EDIFIER FitC）支持 multipoint，连接本机时另一设备播放无法自动切换。
+诊断：
+1. `pactl list short sinks` 显示 `bluez_output` 为 `RUNNING`；
+2. 挂在上面的只有 Chromium 一个流：`Corked: no`、`Buffer Latency: 0 usec`；
+3. `pw-top` 显示 `bluez_playback` 的 `RATE = 0` —— **有流但没有音频数据**；
+4. 执行 `pactl move-sink-input 522 61` 后，耳机立刻 `RUNNING → IDLE`，
+   `api.bluez5.transport` 变为空。
+结论：multipoint 切换要求「当前设备 A2DP 链路空闲」，**「有流」≠「有声音」**，
+只要流还挂着就阻止切让。这不是 Linux 特有缺陷（Windows/Android 同理）。
+处置：
+- **不做常驻服务**：实测轮询 10s 为 0.165% 单核但每天 8640 次唤醒
+  （影响 CPU 深睡，续航约 0.3~0.5%）；事件驱动方案常驻 5.4MB、几乎零 CPU，
+  但触发频率太低，收益不匹配。低频问题用一条命令更划算。
+- 提供 `scripts/20-bt-release.sh`：`--list` 列出占用、`--release` 移到内置输出、
+  `--watch` 前台监控（60s 静默阈值后自动释放）。
+- 治本仍需关闭占位应用：Chromium 用 `chrome://media-internals/` 定位。
+后果：REQ-32 / TASK-49 `done`；文档 `docs/18-蓝牙耳机.md`。
+脚本不写任何系统配置，仅运行时调用 `pactl move-sink-input`。
+回滚：`systemctl --user restart wireplumber` 即可恢复默认路由。
+
+## ADR-38 候选框跟随明暗，配色取 Catppuccin peach
+背景：桌面浅色 + 铜棕强调，候选框固定 mocha-blue（深蓝），输入时视觉割裂（ISSUE-40）。
+选项：跟随系统明暗自动切 / 固定浅色 / 固定深色 / 换第三方主题。
+结论：明暗双主题 `Catppuccin-latte-peach` 与 `Catppuccin-mocha-peach`，由 `14-auto-dark.sh` 同步切换。
+理由：Catppuccin 无铜色，`peach` 最接近 token 的 `#C8873F`；跟随明暗比固定单色更省心。
+后果：日落切换会重启一次 fcitx5（classicui 只在启动时读主题），每天两次；非 Catppuccin 主题时体检跳过该断言。
+
+2026-11-15 调整：配色由 `peach` 改为 `rosewater`（用户偏好更淡），其余结论不变。
+
+## ADR-34 系统快照用 Timeshift(rsync)，不在 ext4 上转 Btrfs
+背景：需要一层「整机回滚」补 `rollback.sh` 的空白（装驱动、误删系统文件）。
+选项：Timeshift(rsync) / btrfs-convert+snapper / LVM 快照。
+结论：本机选 Timeshift(rsync)，配置按根分区 UUID 写入并排除 `/home`。
+理由：唯一开发机 + Windows 双系统，在线转文件系统的失败代价不可接受；Btrfs+snapper 留给 UM870 出厂镜像（SREQ-09）。
+后果：同盘快照只防误操作、不防盘损；恢复不自动化，只给固定步骤（`--restore-help`）。
+
+## ADR-35 剪贴板历史不装 Shell 扩展：轮询 wl-clipboard + fzf
+背景：GNOME 无内置剪贴板历史；`wl-paste --watch` 依赖 wlroots data-control，Mutter 不实现（ISSUE-35）。
+结论：`suona-clip --daemon` 每秒读一次 selection，哈希去重后入库（上限 200），`Super+Shift+V` 用 fzf 选取。
+理由：零扩展（符合 ADR-24）、零新 UI 范式；代价是每秒一次短进程与终端内选择界面。
+后果：只采集文本；历史为本机 base64 明文，隐私边界写入 `docs/24`。
+补充（ISSUE-39）：读取优先走 XWayland `xclip`，因为每次 `wl-paste` 调用都会触发一条 Mutter 窗口堆栈断言。
+
+## ADR-36 视觉语言独立于 macOS，只做收口不做克隆
+背景：用户明确「艺术风格保持独立，不要在外观上模仿 mac」；WhiteSur 曾整批回退（ADR-07）。
+结论：保留 Yaru 控件与布局，只统一强调色、圆角梯度、窗口按钮位置、光标与字体渲染；禁止红绿灯按钮 / 全局菜单 / Launchpad 仿制 / 整套主题替换。
+理由：克隆主题跟 GNOME 版本强绑定、维护成本高，且无法沉淀自有资产；音效、壁纸、圆角令牌已是本项目独有识别度。
+后果：`22-suona-identity.sh` 负责落地；`99-verify` 正向断言「非 WhiteSur」，不断言审美。
+
+## ADR-37 流畅度以 `21-shell-bench.sh` 为唯一证据源
+背景：外观改动长期只有「改了」没有「测了」，且曾把 EC 锁频误判为「主题拖慢」（ISSUE-01）。
+结论：桌面流畅度只能由该脚本的指标 + 10% 判据下结论；20 秒样本离散度过大，改为 ≥60 秒 × 2 次取低值。
+后果：`docs/25` 只引用其输出；无基线的调优结论一律不接受；GPU 指标在 APU 上仅作趋势参考。

@@ -34,6 +34,20 @@
 | ISSUE-30 | 修改 kimpanel 扩展后 `fcitx5.service` 变 inactive，但仍有 fcitx5 进程 | resolved | Shell 重载 kimpanel 时触发 fcitx5 的 `--replace`：systemd 托管的旧实例以 status=0 正常退出，新实例被 GNOME Shell 派生（PPID=gnome-shell），systemd 侧因此显示 `inactive (dead)`，下次登录会再起一个造成双实例 | `kill` 派生实例后 `systemctl --user restart fcitx5.service`，进程 PPID 回到 `systemd --user`；`99-verify` 输入法段复验 5/5。教训：改 kimpanel 代码或重载扩展后，必须检查 `systemctl --user is-active fcitx5.service` | ADR-31 |
 | ISSUE-31 | 快捷设置「键盘」项点开无响应，日志报 `error writing brightness 2` | resolved | 报错里的 2 是**键盘背光档位**（`max_brightness=2`），不是屏幕亮度。upowerd 缓存的 `/sys/class/leds/tpacpi::kbd_backlight/brightness` 句柄在挂起/恢复后失效：`KbdBacklight.GetBrightness` 报 `error reading brightness`，但 `GetMaxBrightness` 正常、手动 `tee` 写 sysfs 成功，证明驱动无问题，是 upower 层句柄失效 | `sudo systemctl restart upower` 后 Set/Get 往返正常（1↔2），BAT0 未丢失，Shell 报错归零。已加系统级自愈 hook `/etc/systemd/system-sleep/50-suona-upower`（`scripts/17-sleep-hook.sh`）：resume 后先读 KbdBacklight，只在失效时才重启 upower，并在 `BAT*` 缺失时自动重载 `thinkpad_acpi` | ADR-29 |
 | ISSUE-32 | WorkBuddy 无法启动（点图标无反应/闪退） | resolved | `/opt/WorkBuddy/chrome-sandbox` 权限为 `0755`，**缺 setuid 位**（Electron 要求 `4755 root:root`）。同时 Ubuntu 默认 `kernel.apparmor_restrict_unprivileged_userns=1` 封掉了非特权 userns 沙箱，两条路都不可用，Chromium 内核直接 `FATAL: The SUID sandbox helper binary was found, but is not configured correctly` 退出 | `sudo chmod 4755 /opt/WorkBuddy/chrome-sandbox` 后启动正常（11 进程，无 FATAL，仅无害的 `GetVSyncParametersIfAvailable` 警告）。`dpkg --verify workbuddy` 无差异，说明包内容完好、只是权限位丢失（`dpkg --verify` 不校验权限）。**同批排查发现 `/opt/baidunetdisk/chrome-sandbox` 也是 0755**，已一并修复；`/opt/黑胶音乐` 原本就正确。已在 `99-verify.sh` 增加「Electron 沙箱」段，遍历 `/opt/*/chrome-sandbox` 断言 4755 | — |
+| ISSUE-33 | 电池 ACPI 设备间歇消失，顶栏无电量且间隔提示音 | observing | **EC 报告 `_STA` 的电池存在位反复翻转**：实测 31(bit4=1) ↔ 15(bit4=0) 每 3~60 秒切换，内核随之注销/重建 `power_supply`；`/sys/module/battery/` 只剩 2 项、`acpi_battery` 未注册；伴随 `percentage=-nan`、`no valid voltage` | 重启后曾短暂稳定约 30 分钟后复发；`_STA` 由 EC 提供，软件层无法干预；处置顺序：EC 静电复位 → BIOS 复位电池 → 报修 | `docs/19` |
+
+| ISSUE-34 | 文档数字再次漂移（README 重复条目、交付报告 49/18 过期） | resolved | 项数/脚本数靠手写，每新增检查项必然过期 | 新增 `spec-status.sh --facts` 作为单一来源；README/docs12/docs17 改为引用；重申「文档不写裸数字」 | REQ-33 / ADR-37 |
+| ISSUE-35 | `wl-paste --watch` 在 GNOME 上直接退出 | Mutter 未实现 wlroots data-control 协议 | 改为 1s 轮询 + 去重入库；实测无焦点也能读 selection | REQ-37 / ADR-35 |
+| ISSUE-36 | `timeshift --list` 无快照时返回非 0，被脚本误判「配置不可用」 | 用退出码代替输出判定，且 `pipefail` 下 `cmd\|grep` 继承非 0 | 改按 `Mode/Device` 行判定，并先把输出落变量再 grep | REQ-38 |
+| ISSUE-37 | fontconfig 覆盖层 XML 非法被自动删除 | XML 注释里写了 `--restore`，含两个连续减号 | 注释改为「restore 子命令」；校验改用 python minidom（不取外部 DTD） | REQ-35 |
+
+| ISSUE-38 | `timeshift --create` 在 `exclude` 非空时崩溃（`string_strip` assertion） | Timeshift 对 exclude 列表处理有缺陷；与 locale、snapshots 字段无关 | exclude 置空后 161s 成功；脚本改为写空数组并告警；首份 42G（含 /home） | REQ-38 / ADR-34 |
+
+| ISSUE-39 | `suona-clipboard` 每秒一条 Mutter 窗口堆栈断言，前台窗口可能闪动 | 每次 `wl-paste` 调用都会触发 `meta_window_set_stack_position_no_sync`（实测 1:1）；轮询=每秒一次 | 读取改走 XWayland `xclip`（10 次调用 0 条），无 `xclip` 时回退；复测 20s 内 0 条 | REQ-37 / ADR-35 |
+
+| ISSUE-40 | 候选框固定深蓝，与浅色桌面/铜棕强调色割裂（用户反馈「输入法风格不统一」） | `classicui.conf` 的 `Theme` 写死 `Catppuccin-mocha-blue`；日落脚本只切了 GNOME 两键，未管 fcitx5 | 改为明暗双主题（latte/mocha-peach），由 `14-auto-dark.sh` 同步切换并重启托管实例；字号对齐 11；体检新增一致性断言 | REQ-41 / ADR-38 |
+
+| ISSUE-41 | `gpu_busy_percent` 静置 68%、交互时 14–17%，与直觉相反 | APU 显示引擎/静置态固定开销混入读数，该值不代表「桌面负载」 | 从流畅度判据中剔除 GPU，仅看相对变化；人工场景基线以 CPU/RSS 为准 | REQ-33 / ADR-37 |
 
 ## 排查原则
 先看只读诊断再下结论，不用连续猜测代替测量；「配置写了」不等于「进程加载了」；

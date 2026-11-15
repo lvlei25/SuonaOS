@@ -47,11 +47,25 @@
 | TASK-41 | Dock 透明 + 顶栏毛玻璃 | done | — | Dock `FIXED/0.5` 生效；扩展已启用（待重登）；99-verify 美化段 3/3 | REQ-24 / ADR-24 |
 | TASK-42 | 水系壁纸轮换 | done | — | 14 张 3072×1920；XML 14 static/14 transition；深/浅色均生效；`--list` 可用 | REQ-25 / ADR-25 |
 | TASK-43 | 制作 Suona 声音主题 | done | — | 29 个事件音（木腔/瓷击/哨片/低木，含电池 3 个）；`--dry-run/--list/--preview/--restore` 可用；`strace` 证实加载本主题；99-verify 57/0 | REQ-26 / ADR-27 |
-| TASK-44 | 电池关键节点提示（20% / 10% / 充满） | done | — | 3 个事件音；UPower `Critical` 5→10；timer 每分钟去重；伪造 sysfs 单测 `full → 幂等 → idle` | REQ-27 / ADR-29 |
+| TASK-44 | 电池关键节点提示（20% / 10% / 充满） | cancelled | — | 2026-11-15 用户决定停用充满提示（`systemctl --user disable --now suona-battery-alert.timer`）；3 个事件音保留，20%/10% 仍由 gsd-power 触发；脚本保留可 `--install` 重装 | REQ-27 / ADR-29 |
 | TASK-45 | 深色随日落自动切换 | done | — | 上海 06:15/17:01 计算正确；timer 10min；19:25 实测切到 prefer-dark | REQ-28 / ADR-30 |
 | TASK-46 | GTK 圆角覆盖层 | done | — | 移除 9424 行 dark 软链；GTK4/GTK3 14px；`--radius` 可调 | REQ-29 / ADR-30 |
 | TASK-47 | 输入法顶栏图标单色化 | done | — | 用户级 `fcitx-pinyin-symbolic.svg` + kimpanel 补丁；`--status` 三项就位，待注销验证 | REQ-30 / ADR-31 |
 | TASK-48 | 补齐声音主题缺失事件 | done | — | 29→34；相对 Yaru 仅剩 `warty-startup`（Ubuntu 专用，GNOME 不触发） | REQ-31 / ADR-27 |
+| TASK-49 | 蓝牙耳机占用释放工具 | done | — | `20-bt-release.sh` 三模式；实测 `paplay` 流移动后耳机 IDLE；`--watch` 60s 静默阈值 | REQ-32 / ADR-33 |
+
+| TASK-50 | 建流畅度基准脚本与文档 | done | — | `21-shell-bench.sh` 可跑；`--compare` 可用；基线落 `logs/` | REQ-33 |
+| TASK-51 | 落地独立视觉令牌并清 macOS 残留 | done | — | 按钮回右侧；WhiteSur 光标移入 backup；体检 86/0 | REQ-34 |
+| TASK-52 | 字体渲染覆盖层 | done | — | conf.d XML 合法；hintstyle=1/rgba=1 | REQ-35 |
+| TASK-53 | 键位表与手势参数 | done | — | 4 条绑定；`<Super>v` 冲突改 `<Super><Shift>v` | REQ-36 |
+| TASK-54 | 即时预览与剪贴板历史 | done | — | gnome-sushi 安装；采集服务 active；E2E 入库 | REQ-37 |
+| TASK-55 | 流畅度逐项实验 | done | — | 模糊/主题两组对比；负结果 + 采样规则修正 | REQ-33 |
+| TASK-56 | Timeshift 快照落地 | done | — | 首份快照 2026-11-15_13-42-08（rsync/161s/42G）；exclude 崩溃已绕开 | REQ-38 / ISSUE-38 |
+| TASK-57 | 安全基线 | done | — | ufw 激活 + mdns 放行；自动更新 enabled | REQ-39 |
+| TASK-58 | 外设矩阵与电源门禁 | done | — | 矩阵可读；`--gate` 可执行；抖动率可量化 | REQ-40 |
+| TASK-59 | 产品骨架（firstboot / llm-verify / autoinstall） | done | — | 29 输出 1/11；30 输出 TOOL_MISSING；autoinstall 未实测 | REQ-40 |
+
+| TASK-60 | 候选框跟随系统明暗并对齐配色/字号 | done | — | `--force light` 切到 latte-peach；99-verify 88/0 | REQ-41 |
 
 ## 阻塞与等待
 TASK-36 是唯一未闭环项：需手机端开启无线调试（或插 USB）后执行 `--tcpip`。

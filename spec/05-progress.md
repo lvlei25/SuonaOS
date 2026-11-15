@@ -140,6 +140,31 @@
 | 11-12 | 拉取后自动 `xdg-open` 打开目标目录，`--no-open` 可关；顺带修掉 `--help` 因 `usage()` 定义晚于调用而报「未找到命令」的老 bug | REQ-22 |
 | 11-12 | 拉取目录改用 `xdg-user-dir DOWNLOAD`（中文环境 `~/下载`），不再写死 `~/Downloads`，避免文件落到没人看的目录 | REQ-22 |
 | 11-13 | 壁纸扩到 14 张：从 Wikimedia Featured pictures 四类（湖/瀑布/海滩/水体）取 10 张，统一裁切 3072×1920，CREDITS 追加授权，XML 更新为 14 static/14 transition | REQ-25 / TASK-42 |
+| 11-13 | 蓝牙 multipoint 不切换：定位为 Chromium 保持空流（RATE=0 但 sink RUNNING），A2DP 链路不释放；新增 `20-bt-release.sh`（--list/--release/--watch），实测移流后耳机转 IDLE | REQ-32 / ADR-33 |
+| 11-13 | 副作用修复：`--release` 会让 stream-restore 记住「应用→扬声器」，导致浏览器视频声音回不到耳机；新增 `--reset` 清记录（需重启 WirePlumber），实测清空后新流默认走耳机 | REQ-32 / ADR-33 |
+| 11-15 | 电池 ACPI 枚举抖动（BAT0 每 40s 闪一次）：`_STA` 恒 15 但 `acpi_battery` 未绑定，`/sys/module/battery/` 仅 2 项确认 init 失败；重启后自愈，充电阈值 75/80 恢复可写 | ISSUE-33 / `docs/19` |
+| 11-15 | 追加实测：`_STA` 在 31↔15 间翻转（bit4=电池存在位由 EC 清零），3 分钟电量恒为 47% 仍翻 5 次，排除「电量变化触发」；停用自己的 timer 后抖动频率不变，排除「检查频率干扰」 | ISSUE-33 |
+| 11-15 | 按用户要求撤销「充满提示」：`systemctl --user disable --now suona-battery-alert.timer`；20%/10% 由 gsd-power 独立触发不受影响，脚本与音效保留可 `--install` 恢复 | REQ-27 / TASK-44 / ADR-29 |
+| 11-15 | 新增 `21-shell-bench.sh`：静置基线 CPU 8.6–11.8%、RSS 360MB、GPU 68–69%（底噪）、频率 3.2–3.4GHz；确立 10% 判据与「频率 <50% 判无效」 | REQ-33 / ADR-37 |
+| 11-15 | 流畅度实验：关模糊 CPU −9.6%、关圆角主题噪声内；结论「模糊不是主因」+ 20s 样本不足，改 60s×2 | REQ-33 / docs/25 |
+| 11-15 | 落地独立视觉令牌：强调色 brown、按钮回右侧、WhiteSur 光标移入 backup、无 macOS 符号 | REQ-34 / ADR-36 |
+| 11-15 | 字体渲染覆盖层（hintslight/rgb），不换字体族；踩坑 XML 注释含 `--` 非法 | REQ-35 / ISSUE-37 |
+| 11-15 | 键位表 4 条（Super+Return / E / C / Shift+V）；`Super+V` 与通知栏冲突已改键 | REQ-36 / docs/23 |
+| 11-15 | gnome-sushi + suona-clip：`wl-paste --watch` 在 Mutter 不可用，改 1s 轮询；服务 active、E2E 入库 | REQ-37 / ISSUE-35 / ADR-35 |
+| 11-15 | ufw 默认拒绝 + 5353/udp 放行 + 无人值守安全更新；端口审计可读（ss 需 root 才见进程名） | REQ-39 / docs/27 |
+| 11-15 | Timeshift 安装并写入 rsync 配置（根 UUID / 排除 /home）；`--list` 无快照返回非 0 的误判已修 | REQ-38 / ISSUE-36 / ADR-34 |
+| 11-15 | 外设矩阵 + 电池抖动采样（10s 稳定）+ 交付门禁 `--gate`；`battery-check.sh` 补第 10 节 | REQ-40 / docs/28 |
+| 11-15 | 产品骨架：`29-suona-firstboot`（1/11 可达）、`30-llm-verify`（TOOL_MISSING）、autoinstall 未实测骨架 | REQ-40 / S-31 / S-44 |
+| 11-15 | 体检 62→86 项零失败；重启前体检 24→26 项零失败；8 步 PASS 6 / NA 1 / TOOL_MISSING 1；新增 `spec-status --facts` | REQ-33~40 / ISSUE-34 |
+| 11-15 | 文档漂移收口：README 重复条目删除、交付报告与 docs/17 数字改为引用 facts | ISSUE-34 |
+| 11-15 | 首个 Timeshift 快照建成：`2026-11-15_13-42-08`，161s / 42G；发现 exclude 非空必崩（ISSUE-38），改为空 exclude | REQ-38 / ISSUE-38 |
+| 11-15 | 8 步第 8 步接入快照断言与电池门禁（`SUONA_DELIVERY=1` 时跑 5 分钟 gate 并要求 ≥1 快照） | REQ-38 / A-21 |
+| 11-15 | 用户报「App 频繁重启」：定位为剪贴板守护每秒调用 `wl-paste` 触发 Mutter 窗口堆栈断言（1:1）；改走 `xclip` 后 20s 0 条 | ISSUE-39 / REQ-37 |
+| 11-15 | 顺带清理 IBus 失败单元（fcitx5 接管后 IBus 不再使用），`reset-failed` 后无失败单元 | ISSUE-30 关联 |
+| 11-15 | 用户反馈输入法风格不统一：定位候选框写死 `mocha-blue` 而桌面为浅色+铜棕；改为明暗双主题 latte/mocha-peach，字号对齐 11，日落脚本同步切换 | REQ-41 / ISSUE-40 / ADR-38 |
+| 11-15 | 候选框配色按用户偏好由 peach 改为 rosewater（更淡），明暗两套同步替换 | REQ-41 / ADR-38 |
+| 11-15 | 用户完成重登验收与人工场景基准：63s/212s 两次，CPU 12.5–13.3%、RSS 340–350MB、GPU 14–17% | REQ-33 / docs/25 |
+| 11-15 | 人工数据反证 GPU 指标：交互时 14–17% 反而低于静置 68%，已把 GPU 从判据中剔除，仅作趋势参考 | ISSUE-41 / ADR-37 |
 
 ## 待补
 TASK-36（需手机在线）、S-10 外部凭证、S-13~S-16 产品裁决与上游 v1.1 修订，
