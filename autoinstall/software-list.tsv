@@ -1,0 +1,19 @@
+# SuonaOS 国产软件清单（11 款）—— 只做「可达性检测」，不做静默预装
+#
+# 背景（SDEC-02 未裁决）：报告 4.3/6.2 写「全部预装」，6.3 又写「不内置 .deb 最安全」。
+# 在裁决前，产品话术统一为「开箱可达」，脚本只检测、不自动安装。
+#
+# 格式: 名称 <TAB> 检测命令 <TAB> 安装来源 <TAB> 备注
+#   - 检测命令取第一个词做 command -v；同时检查同名 .desktop 是否存在
+#   - 来源仅作说明，脚本不会据此下载（避免合规风险）
+微信	wechat	官方 deb / Flatpak	企业场景高频
+企业微信	wxwork	官方 deb	需域账号
+钉钉	dingtalk	官方 deb	会议/审批
+飞书	feishu	官方 deb	文档协作
+QQ	qq	官方 deb	个人沟通
+WPS Office	wps	官方 deb	文档兼容性优先
+腾讯会议	wemeet	官方 deb	Wayland 屏幕共享需 xdg-desktop-portal
+百度网盘	baidunetdisk	官方 deb	Electron，注意 chrome-sandbox 权限（ISSUE-32）
+搜狗输入法	sogou-qimpanel	官方 deb	与 fcitx5 二选一，默认不装
+网易云音乐	netease-cloud-music	官方 deb	可选
+剪映	jianying	官方 deb	可选，依赖较多

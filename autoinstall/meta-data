@@ -1,0 +1,4 @@
+# meta-data（NoCloud 数据源）
+# instance-id 每次重装建议改一次，否则 cloud-init 可能复用旧实例状态
+instance-id: suonaos-phase1-001
+local-hostname: suonaos

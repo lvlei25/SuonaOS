@@ -1,0 +1,53 @@
+#cloud-config
+# SuonaOS autoinstall 模板 —— 状态：**未实测**，仅为骨架（需在 UM870 上验证）
+#
+# 用法（会清空目标盘，务必先在虚拟机验一遍）：
+#   1) 把本目录放到 Ubuntu 26.04 ISO 的根目录（或做成第二张 U 盘）
+#   2) 启动参数加：autoinstall ds=nocloud;s=/cdrom/autoinstall/
+#   3) 安装完成后执行 ./scripts/step-verify.sh 复核
+#
+# 与产品 spec 的依赖：
+#   - SREQ-09 快照：目标机若要 Btrfs + snapper，需在此改 storage 布局（当前 ext4）
+#   - SREQ-05 国产软件：不在 packages 里预装（SDEC-02 未裁决），只装检测工具
+#   - SREQ-06 本地 LLM：不预下载模型（合规），只装 ollama 运行时
+autoinstall:
+  version: 1
+  locale: zh_CN.UTF-8
+  keyboard:
+    layout: us
+  timezone: Asia/Shanghai
+  identity:
+    hostname: suonaos
+    username: suona
+    password: "$6$rounds=4096$suonaos$REPLACE_WITH_REAL_HASH"
+  ssh:
+    install-server: false
+    allow-pw: false
+  storage:
+    layout:
+      name: direct
+      # 目标机型若走 Btrfs（SREQ-09），改为：
+      #   name: direct
+      #   match: {size: largest}
+      # 并在 late-commands 里装 snapper（Phase 2 再切，Phase 1 保持 ext4）
+  packages:
+    - zram-tools
+    - fcitx5
+    - fcitx5-chinese-addons
+    - fcitx5-config-qt
+    - fonts-noto-cjk
+    - gnome-sushi
+    - wl-clipboard
+    - fzf
+    - timeshift
+    - ufw
+    - unattended-upgrades
+    - rocminfo
+    - hwinfo
+  late-commands:
+    # 只落检测脚本，不静默安装第三方 deb（合规）
+    - curtin in-target --target=/target -- mkdir -p /opt/suonaos
+    - cp -r /cdrom/scripts /target/opt/suonaos/ || true
+    - curtin in-target --target=/target -- chmod +x /opt/suonaos/*.sh || true
+  user-data:
+    timezone: Asia/Shanghai
