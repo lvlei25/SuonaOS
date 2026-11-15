@@ -46,6 +46,8 @@
 
 | REQ-41 | 候选框风格与桌面一致（跟随明暗 + 同色系 + 同字号） | P1 | done | 浅色 `latte-peach` / 深色 `mocha-peach`；字号 11；体检断言通过 | `14-auto-dark.sh` / `docs/08` §7 |
 
+| REQ-42 | 快照自动化与空间水位 | P1 | done | 每日快照 enabled；`--prune --dry-run` 方向正确；空间阈值告警；`apt` 前打点 22s 完成 | `26-snapshot.sh` / `docs/26` §4~5 |
+
 ## 变更记录
 - 2026-11-03 REQ-07/08 `done` → `cancelled`：用户偏好系统自带 Dock。
 - 2026-11-03 REQ-06 `done` → `reverted`：卡顿排查期间回退，非性能原因。

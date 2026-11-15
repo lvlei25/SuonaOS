@@ -346,6 +346,20 @@ if command -v timeshift >/dev/null 2>&1; then
       else
         val "快照: 0 个（跑 26-snapshot.sh --snapshot \"基线\"）"
       fi
+      # 自动化与新鲜度：开了每日快照，且最近一份不超过 48 小时
+      TS_SCHED=$(sed -n 's/.*"schedule_daily"[^"]*"\([a-z]*\)".*/\1/p' /etc/timeshift/timeshift.json 2>/dev/null)
+      chk "每日快照已启用" "[ '${TS_SCHED}' = true ]"
+      TS_NEW=$(printf '%s' "$TS_OUT" | awk '/^[[:space:]]*[0-9]+[[:space:]]+>/{print $3}' | tail -1)
+      if [ -n "$TS_NEW" ]; then
+        # 名字形如 2026-11-15_14-21-28；日期与时间分开转，别用 sed 改第 N 个减号
+        TS_D="${TS_NEW%%_*}"; TS_T="${TS_NEW#*_}"; TS_T="${TS_T//-/:}"
+        TS_TS=$(date -d "$TS_D $TS_T" +%s 2>/dev/null)
+        if [ -n "$TS_TS" ]; then
+          TS_AGE=$(( ($(date +%s) - TS_TS) / 60 ))
+          chk "最近快照在 48 小时内" "[ '$TS_AGE' -le 2880 ]"
+          val "最近快照: $TS_NEW（${TS_AGE} 分钟前）"
+        fi
+      fi
       val "快照: $TS_N 个（rsync / ext4；同盘快照不防盘损）"
     else
       chk "Timeshift 配置可读" "false"

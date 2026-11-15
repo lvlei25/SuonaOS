@@ -38,7 +38,7 @@
 | 16 | 字体渲染参数（不换字体族） | `scripts/23-font-render.sh` | ✅ |
 | 17 | 键位与手势 | `scripts/24-keys-gestures.sh` | ✅ |
 | 18 | 即时预览 + 剪贴板历史 | `scripts/25-quicklook-clipboard.sh` | ✅ |
-| 19 | 系统快照 + 安全基线 | `scripts/26-snapshot.sh`、`scripts/27-security-baseline.sh` | ✅ 快照 1 份（42G） |
+| 19 | 系统快照 + 安全基线 | `scripts/26-snapshot.sh`、`scripts/27-security-baseline.sh` | ✅ 每日快照 + 2 份 |
 | 20 | 外设电源 + 产品骨架 | `scripts/28`/`29`/`30`、`autoinstall/` | ✅ |
 
 改动尺度：**标准**（允许 sysctl / 服务调整，每步备份 + 一键回滚）。
