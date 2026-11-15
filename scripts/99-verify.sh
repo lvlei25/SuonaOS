@@ -317,6 +317,30 @@ if gsettings list-keys org.gnome.desktop.interface 2>/dev/null | grep -qx enable
 fi
 val "触摸板: 点按 $(gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click 2>/dev/null) / 自然滚动 $(gsettings get org.gnome.desktop.peripherals.touchpad natural-scroll 2>/dev/null)"
 
+# 窗口/工作区（REQ-43）：只断言"必须有"的那几条，其余沿用系统默认，不做全量锁死
+WM_CLOSE=$(gsettings get org.gnome.desktop.wm.keybindings close 2>/dev/null)
+case "$WM_CLOSE" in
+  *"'<Super>Q'"*) chk "关闭窗口 Super+Q 已绑定" "true" ;;
+  *)              chk "关闭窗口 Super+Q 已绑定" "false" ;;
+esac
+WM_SW=$(gsettings get org.gnome.desktop.wm.keybindings switch-windows 2>/dev/null)
+# 注意别把数组值拼进 chk 的 eval 字符串：['<Super>grave'] 里的引号会把 eval 拆坏。
+if [ -n "$WM_SW" ] && [ "$WM_SW" != "@as []" ]; then
+  chk "同应用窗口切换已绑定" "true"
+else
+  chk "同应用窗口切换已绑定" "false"
+fi
+if gsettings list-keys org.gnome.shell.extensions.tiling-assistant >/dev/null 2>&1; then
+  TL=$(gsettings get org.gnome.shell.extensions.tiling-assistant tile-left-half 2>/dev/null)
+  TR=$(gsettings get org.gnome.shell.extensions.tiling-assistant tile-right-half 2>/dev/null)
+  case "$TL$TR" in
+    *"'<Super>Left'"*"'<Super>Right'"*) chk "半屏平铺键 Super+←/→ 就位" "true" ;;
+    *)                                  chk "半屏平铺键 Super+←/→ 就位" "false" ;;
+  esac
+  val "平铺: 左 $TL / 右 $TR"
+fi
+val "关窗: $WM_CLOSE / 同应用: $WM_SW"
+
 echo
 echo "════════ 即时预览与剪贴板 ════════"
 if pgrep -x sushi >/dev/null 2>&1 || pkg_installed gnome-sushi 2>/dev/null || command -v sushi >/dev/null 2>&1; then

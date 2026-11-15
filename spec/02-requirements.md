@@ -48,6 +48,8 @@
 
 | REQ-42 | 快照自动化与空间水位 | P1 | done | 每日快照 enabled；`--prune --dry-run` 方向正确；空间阈值告警；`apt` 前打点 22s 完成 | `26-snapshot.sh` / `docs/26` §4~5 |
 
+| REQ-43 | 窗口与工作区键位统一（补而不抢） | P2 | done | `Super+Q`/`Super+M`/`Super+反引号` 就位；半屏与工作区保留系统默认；回滚按记录还原 | `24-keys-gestures.sh` / `docs/23` §3 |
+
 ## 变更记录
 - 2026-11-03 REQ-07/08 `done` → `cancelled`：用户偏好系统自带 Dock。
 - 2026-11-03 REQ-06 `done` → `reverted`：卡顿排查期间回退，非性能原因。

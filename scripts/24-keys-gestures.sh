@@ -28,6 +28,8 @@ TPL="$PROJECT_ROOT/dotfiles/desktop/suona-keys.conf.template"
 CB_SCHEMA="org.gnome.settings-daemon.plugins.media-keys"
 CB_KEY="custom-keybindings"
 CB_ROOT="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/"
+WM_CONF="$HOME/.config/linux-tune/wm-keys.tsv"
+TA_SCHEMA="org.gnome.shell.extensions.tiling-assistant"
 ACTION=""
 DRY=0
 
@@ -85,6 +87,75 @@ check_conflict() {
   return 1
 }
 
+# ---- 窗口/工作区键位 ---------------------------------------------------------
+# 平铺（半屏/最大化/四分屏）的键位属于 tiling-assistant 扩展，不在 wm.keybindings；
+# 所以要"统一"必须同时管两套 schema，否则改一半等于没改（本机实测结论）。
+# 原则：能"补"就不"覆盖"——已有组合保留，只补缺失的；只有 switch-windows 是整体定义。
+wm_record() { # wm_record <schema> <key>
+  grep -qF "$1	$2	" "$WM_CONF" 2>/dev/null && return 0
+  local raw; raw="$(gsettings get "$1" "$2" 2>/dev/null)" || return 0
+  printf '%s\t%s\t%s\n' "$1" "$2" "$raw" >>"$WM_CONF"
+}
+
+ensure_binding() { # <schema> <key> <binding>  追加，不覆盖已有
+  local schema="$1" key="$2" bind="$3" cur val
+  cur="$(gsettings get "$schema" "$key" 2>/dev/null)" || { warn "读不到 $schema $key"; return 0; }
+  case "$cur" in
+    *"'$bind'"*) log "已有 $bind（$key），跳过"; return 0 ;;
+  esac
+  case "$cur" in
+    "@as []"|"[]") val="['$bind']" ;;
+    # 用 sed 把结尾的 ] 换成 ", '<新键>']"。
+    # 不要写 ${cur%']}：那个引号会打乱 bash 的引号解析（实测报 unexpected EOF），
+    # 而少去一个引号又会得到 ['X'', 'Y'] 这种非法 GVariant（报 expected ','）。
+    *)             val="$(printf '%s' "$cur" | sed "s/]$/, '$bind']/")" ;;
+  esac
+  if [ "$DRY" -eq 1 ]; then log "[dry-run] $key += $bind"; return 0; fi
+  wm_record "$schema" "$key"
+  gsettings set "$schema" "$key" "$val" && ok "$(echo "$key" | sed 's/.*keybindings\.//; s/^tile-/平铺 /') += $bind"
+}
+
+set_binding() { # <schema> <key> <gvariant>  整体替换
+  local schema="$1" key="$2" val="$3" cur
+  cur="$(gsettings get "$schema" "$key" 2>/dev/null)" || return 0
+  [ "$cur" = "$val" ] && return 0
+  if [ "$DRY" -eq 1 ]; then log "[dry-run] $key = $val"; return 0; fi
+  wm_record "$schema" "$key"
+  gsettings set "$schema" "$key" "$val" && ok "$(echo "$key" | sed 's/.*keybindings\.//') = $val"
+}
+
+wm_apply() {
+  mkdir -p "$(dirname "$WM_CONF")"
+  [ -f "$WM_CONF" ] || : >"$WM_CONF"
+  step "窗口与工作区键位（补缺失，不抢已有）"
+  ensure_binding org.gnome.desktop.wm.keybindings close "<Super>Q"
+  ensure_binding org.gnome.desktop.wm.keybindings minimize "<Super>M"
+  set_binding    org.gnome.desktop.wm.keybindings switch-windows "['<Super>grave']"
+  set_binding    org.gnome.desktop.wm.keybindings switch-windows-backward "['<Super><Shift>grave']"
+  # 半屏/最大化由扩展管理，只在缺失时补
+  ensure_binding "$TA_SCHEMA" tile-left-half  "<Super>Left"
+  ensure_binding "$TA_SCHEMA" tile-right-half "<Super>Right"
+  ensure_binding "$TA_SCHEMA" tile-maximize   "<Super>Up"
+  # 工作区：默认已有 Super+Alt+←/→，缺失才补
+  ensure_binding org.gnome.desktop.wm.keybindings switch-to-workspace-left  "<Super><Alt>Left"
+  ensure_binding org.gnome.desktop.wm.keybindings switch-to-workspace-right "<Super><Alt>Right"
+}
+
+wm_restore() {
+  [ -f "$WM_CONF" ] || { ok "没有需要回滚的窗口键位"; return 0; }
+  step "回滚窗口/工作区键位"
+  # 同一个键可能被记录多次，倒序回放才能回到最早的原始值
+  tac "$WM_CONF" | while IFS=$'\t' read -r schema key raw; do
+    [ -n "$schema" ] || continue
+    if gsettings set "$schema" "$key" "$raw" 2>/dev/null; then
+      ok "还原 $key = $raw"
+    else
+      warn "还原失败 $key"
+    fi
+  done
+  rm -f "$WM_CONF"
+}
+
 set_if_key() { # set_if_key <schema> <key> <value>
   gsettings list-keys "$1" 2>/dev/null | grep -qx "$2" || return 0
   if [ "$DRY" -eq 1 ]; then
@@ -115,6 +186,13 @@ if [ "$ACTION" = status ]; then
     fi
   done <"$TPL"
   echo
+  echo
+  echo "  ---- 窗口与工作区（--install 补齐）----"
+  printf '  %-14s %s\n' 关闭窗口 "$(gsettings get org.gnome.desktop.wm.keybindings close 2>/dev/null)"
+  printf '  %-14s %s\n' 最小化 "$(gsettings get org.gnome.desktop.wm.keybindings minimize 2>/dev/null)"
+  printf '  %-14s %s\n' 同应用切换 "$(gsettings get org.gnome.desktop.wm.keybindings switch-windows 2>/dev/null)"
+  printf '  %-14s %s\n' 右半屏 "$(gsettings get org.gnome.shell.extensions.tiling-assistant tile-right-half 2>/dev/null)"
+  printf '  %-14s %s\n' 切工作区 "$(gsettings get org.gnome.desktop.wm.keybindings switch-to-workspace-left 2>/dev/null)"
   echo "  热角        : $(gsettings get org.gnome.desktop.interface enable-hot-corners 2>/dev/null || echo '键不存在')"
   echo "  触摸板点按  : $(gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click 2>/dev/null)"
   echo "  自然滚动    : $(gsettings get org.gnome.desktop.peripherals.touchpad natural-scroll 2>/dev/null)"
@@ -147,19 +225,20 @@ if [ "$ACTION" = restore ]; then
       dconf reset -f "$path" 2>/dev/null || true
     fi
   done <"$TPL"
+  wm_restore
   ok "Suona 键位已移除（用户原有绑定未动）"
   exit 0
 fi
 
 # ---- install ---------------------------------------------------------------
-step "1/3 备份 media-keys（数组键无法用 backup_file）"
+step "1/4 备份 media-keys（数组键无法用 backup_file）"
 if [ "$DRY" -eq 1 ]; then
   log "[dry-run] dconf dump /org/gnome/settings-daemon/plugins/media-keys/"
 else
   dump_dconf "/org/gnome/settings-daemon/plugins/media-keys/" "media-keys-before-suona-keys"
 fi
 
-step "2/3 合并写入键位（只追加自己的路径）"
+step "2/4 合并写入启动器键位（只追加自己的路径）"
 ADDED=0; SKIPPED=0
 while IFS='|' read -r id name cmd binding; do
   id="$(echo "$id" | tr -d ' ')"
@@ -205,7 +284,9 @@ while IFS='|' read -r id name cmd binding; do
   ADDED=$((ADDED + 1))
 done <"$TPL"
 
-step "3/3 指针与边角行为"
+wm_apply
+
+step "4/4 指针与边角行为"
 set_if_key org.gnome.desktop.interface enable-hot-corners true
 set_if_key org.gnome.desktop.peripherals.touchpad tap-to-click true
 set_if_key org.gnome.desktop.peripherals.touchpad natural-scroll true

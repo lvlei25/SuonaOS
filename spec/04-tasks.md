@@ -69,6 +69,8 @@
 
 | TASK-61 | 快照自动化（每日/保留/空间/升级前打点） | done | — | `--schedule` 三项检查通过；`--prune 1 --dry-run` 指向最旧一份；`--before-upgrade` 增量 22s | REQ-42 |
 
+| TASK-62 | 窗口/工作区键位统一 | done | — | 三套 schema 已辨明；新增 3 条、校验 3 条；体检 93/0 | REQ-43 |
+
 ## 阻塞与等待
 TASK-36 是唯一未闭环项：需手机端开启无线调试（或插 USB）后执行 `--tcpip`。
 其余任务均为 `done` 或 `cancelled`，`in_progress` / `deferred` 已归零。
